@@ -10,4 +10,13 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function uom()
+    {
+        return $this->belongsTo(Uom::class);
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
