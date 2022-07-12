@@ -12,15 +12,14 @@
         <!-- Ionicons -->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
         <!-- Tempusdominus Bootstrap 4 -->
-        <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+        {{-- <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css"> --}}
         <!-- iCheck -->
-        <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+        {{-- <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css"> --}}
         <!-- Theme style -->
         <link rel="stylesheet" href="dist/css/adminlte.min.css">
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-        <!-- summernote -->
-        <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
+        
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
         <div class="wrapper">
@@ -162,7 +161,7 @@
                 <!-- Content Header (Page header) -->
                 <div class="content-header">
                     <div class="container-fluid">
-                        <div class="row mb-2">
+                        {{-- <div class="row mb-2">
                             <div class="col-sm-6">
                                 <h1 class="m-0">{{ $title }}</h1>
                             </div><!-- /.col -->
@@ -172,7 +171,7 @@
                                     <li class="breadcrumb-item active">{{ $title }}</li>
                                 </ol>
                             </div><!-- /.col -->
-                        </div><!-- /.row -->
+                        </div><!-- /.row --> --}}
                     </div><!-- /.container-fluid -->
                 </div>
                 <!-- /.content-header -->
@@ -180,8 +179,9 @@
                 <!-- Main content -->
                 <section class="content">
                     <div class="container-fluid">
-
-                        @yield('content-child')
+                        <div class="row">
+                            @yield('content-child')
+                        </div>
                         
                     </div><!-- /.container-fluid -->
                 </section>
@@ -201,10 +201,8 @@
 
         <!-- jQuery -->
         <script src="plugins/jquery/jquery.min.js"></script>
-        
         <!-- Tempusdominus Bootstrap 4 -->
-        <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    
+        <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script> 
         <!-- overlayScrollbars -->
         <script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
         <!-- AdminLTE App -->
