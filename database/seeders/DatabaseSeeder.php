@@ -19,54 +19,54 @@ class DatabaseSeeder extends Seeder
     {
 
         // \App\Models\User::factory(10)->create();
-        Uom::created([
+        Uom::create([
             "name" => "KG",
             "description" => "Kilogram",
             "is_active" => true
         ]);
-        Uom::created([
+        Uom::create([
             "name" => "GR",
             "description" => "Gram",
             "is_active" => true
         ]);
-        Uom::created([
+        Uom::create([
             "name" => "PCS",
             "description" => "Pieces",
             "is_active" => true
         ]);
-        Uom::created([
+        Uom::create([
             "name" => "Box",
             "description" => "Box",
             "is_active" => true
         ]);
-        Uom::created([
+        Uom::create([
             "name" => "Dus",
             "description" => "Karton",
             "is_active" => true
         ]);
 
-        Category::created([
+        Category::create([
             "name" => "Makanan dan Minuman",
             "description" => "Katagori untuk makanan dan minuman",
             "is_active" => true
         ]);
-        Category::created([
+        Category::create([
             "name" => "Susu Formula",
             "description" => "Katagori untuk susu formula",
             "is_active" => true
         ]);
-        Category::created([
+        Category::create([
             "name" => "Ibu dan Bayi",
             "description" => "Katagori untuk Ibu dan Bayi",
             "is_active" => true
         ]);
-        Category::created([
+        Category::create([
             "name" => "Perawatan Tubuh",
             "description" => "Katagori untuk perawatan tubuh",
             "is_active" => true
         ]);
 
-        Category::created([
+        Category::create([
             "name" => "Perawatan Rumah",
             "description" => "Katagori untuk perawatan rumah",
             "is_active" => true

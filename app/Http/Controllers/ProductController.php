@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('master/product',["title"=>"Product","menu"=>"Master"]);
+        return view('master/product', ["title" => "Product", "menu" => "Master", 'products' => Product::latest()->get()]);
     }
 
     /**
