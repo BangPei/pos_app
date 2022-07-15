@@ -18,6 +18,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [DashboardController::class, 'index']);
-Route::get('/product', [ProductController::class, 'index']);
+Route::resource('product', ProductController::class);
 Route::get('/category', [CategoryController::class, 'index']);
 Route::get('/uom', [UomController::class, 'index']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class ProductController extends Controller
 {
@@ -13,9 +14,13 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        return view('master/product', ["title" => "Product", "menu" => "Master", 'products' => Product::latest()->get()]);
+        $products = Product::all();
+        if ($request->ajax()) {
+            return datatables()->of($products)->make(true);
+        }
+        return view('master/product', ["title" => "Product", "menu" => "Master",]);
     }
 
     /**

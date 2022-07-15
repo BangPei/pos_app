@@ -11,15 +11,11 @@
         <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
         <!-- Ionicons -->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-        <!-- Tempusdominus Bootstrap 4 -->
-        {{-- <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css"> --}}
-        <!-- iCheck -->
-        {{-- <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css"> --}}
-        <!-- Theme style -->
+
         <link rel="stylesheet" href="dist/css/adminlte.min.css">
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-        
+        @yield('content-class')
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
         <div class="wrapper">
@@ -207,8 +203,6 @@
         <script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
         <!-- AdminLTE App -->
         <script src="dist/js/adminlte.js"></script>
-        <!-- AdminLTE for demo purposes -->
-        {{-- <script src="dist/js/demo.js"></script> --}}
-    
+        @yield('content-script')
     </body>
 </html>
