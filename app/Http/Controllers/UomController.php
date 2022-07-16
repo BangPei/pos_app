@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Uom;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class UomController extends Controller
 {
@@ -12,9 +13,13 @@ class UomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        return view('master/uom',["title"=>"Uom","menu"=>"Master"]);
+        $listuom = Uom::all();
+        if ($request->ajax()) {
+            return datatables()->of($listuom)->make(true);
+        }
+        return view('master/uom', ["title" => "Uom", "menu" => "Master"]);
     }
 
     /**

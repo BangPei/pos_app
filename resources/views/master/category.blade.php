@@ -1,61 +1,81 @@
 @extends('layouts.main-layout')
+@section('content-class')
+  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+@endsection
 
 @section('content-child')
-<div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-chart-pie mr-1 text-primary"></i>
-                {{ $title }}
-            </h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
-                    <i class="fas fa-plus-circle"></i> Tambah
-                </button>
-            </div>
-        </div><!-- /.card-header -->
-        <div class="card-body">
-            <div class="tab-content p-0">
-                
-            </div>
-        </div><!-- /.card-body -->
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">List Kategori</h2>
+      <div class="card-tools">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+            <i class="fas fa-plus-circle"></i> Tambah
+        </button>
+      </div>
     </div>
+    <div class="card-body table-responsive">
+      <table class="table table-striped table-bordered table-sm " id="table-category">
+        <thead>
+          <tr>
+            <th>Kategori</th>
+            <th>Deskripsi</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
 </div>
+@endsection
 
-<div class="modal fade" id="modal-default"  data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Form Kategori</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <form action="">
-                            <div class="form-group">
-                                <label for="category-text">Kategori</label>
-                                <input type="text" class="form-control" id="category-text" name="category-text" placeholder="Kategori">
-                            </div>
-                            <div class="form-group">
-                                <label for="description-text">Deskripsi</label>
-                                <textarea type="text" class="form-control" id="description-text" name="description-text" placeholder="Deskripsi"></textarea>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="is-active">
-                                <label class="form-check-label" for="is-active">Aktif</label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+@section('content-script')
+<script src="plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="js/script.js"></script>
+
+<script>
+  $(document).ready(function(){
+    $('#table-category').DataTable({
+      processing:true,
+      serverSide:true,
+      ajax:{
+        url:"{{ route('category.index') }}",
+        type:"GET",
+      },
+      columns:[
+        {
+          data:"name",
+          defaultContent:"--"
+        },
+        {
+          data:"description",
+          defaultContent:"--"
+        },
+        {
+          data:"is_active",
+          defaultContent:"--",
+          mRender:function(data,type,full){
+            return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+          }
+        },
+        {
+					data: 'id',
+					mRender: function(data, type, full) {
+						return '<a title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a> ' +
+							'<a class="btn bg-gradient-danger delete-category"><i class="fa fa-trash"></i></a>'
+					}
+				}
+      ],
+      columnDefs: [
+          { 
+            className: "text-center",
+            targets: [2,3]
+          },
+        ],
+      order:[[0,'asc']]
+    })
+  })
+</script>
 @endsection

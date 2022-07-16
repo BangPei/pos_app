@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class CategoryController extends Controller
 {
@@ -12,9 +13,13 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        return view('master/category',["title"=>"Category","menu"=>"Master"]);
+        $categories = Category::all();
+        if ($request->ajax()) {
+            return datatables()->of($categories)->make(true);
+        }
+        return view('master/category', ["title" => "Category", "menu" => "Master"]);
     }
 
     /**

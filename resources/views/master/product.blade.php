@@ -7,10 +7,15 @@
 <div class="col-md-12">
   <div class="card">
     <div class="card-header">
-      <h5>List Produk</h5>
+      <h2 class="card-title">List Produk</h2>
+      <div class="card-tools">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+            <i class="fas fa-plus-circle"></i> Tambah
+        </button>
+      </div>
     </div>
-    <div class="card-body">
-      <table class="table table-striped table-bordered" id="table-product">
+    <div class="card-body table-responsive">
+      <table class="table table-striped table-bordered table-sm " id="table-product">
         <thead>
           <tr>
             <th>Barcode</th>
@@ -31,6 +36,7 @@
 @section('content-script')
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="js/script.js"></script>
 
 <script>
   $(document).ready(function(){
@@ -60,7 +66,10 @@
         },
         {
           data:"price",
-          defaultContent:"0"
+          defaultContent:"0",
+          mRender:function(data,type,full){
+            return `Rp. ${formatNumber(data)}`
+          }
         },
         {
           data:"is_active",
