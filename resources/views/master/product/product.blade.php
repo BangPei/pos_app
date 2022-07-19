@@ -9,9 +9,9 @@
     <div class="card-header">
       <h2 class="card-title">List Produk</h2>
       <div class="card-tools">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+        <a class="btn btn-primary" href="/product/create">
             <i class="fas fa-plus-circle"></i> Tambah
-        </button>
+        </a>
       </div>
     </div>
     <div class="card-body table-responsive">

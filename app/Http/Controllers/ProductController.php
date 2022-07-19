@@ -20,7 +20,7 @@ class ProductController extends Controller
         if ($request->ajax()) {
             return datatables()->of($products)->make(true);
         }
-        return view('master/product', ["title" => "Product", "menu" => "Master",]);
+        return view('master/product/product', ["title" => "Product", "menu" => "Master",]);
     }
 
     /**
@@ -30,7 +30,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('master/product/form', ["title" => "Form Product", "menu" => "Master",]);
     }
 
     /**
