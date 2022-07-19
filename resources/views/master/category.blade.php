@@ -9,9 +9,9 @@
     <div class="card-header">
       <h2 class="card-title">List Kategori</h2>
       <div class="card-tools">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
-            <i class="fas fa-plus-circle"></i> Tambah
-        </button>
+        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+          <i class="fas fa-plus-circle"></i> Tambah
+        </a>
       </div>
     </div>
     <div class="card-body table-responsive">
