@@ -199,9 +199,11 @@
         <script src="/plugins/jquery/jquery.min.js"></script>
         <!-- Tempusdominus Bootstrap 4 -->
         <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script> 
+        <script src="/dist/js/adminlte.js"></script>
+        <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
         @yield('content-script')
         <!-- AdminLTE App -->
-        <script src="/dist/js/adminlte.js"></script>
         <script src="/js/script.js"></script>
     </body>
 </html>

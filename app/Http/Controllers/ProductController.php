@@ -48,7 +48,15 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product = $request->validate([
+            'barcode' => 'required',
+            'name' => 'required',
+            'price' => 'required',
+            'category_id' => 'required',
+            'uom_id' => 'required',
+        ]);
+
+        return $product;
     }
 
     /**

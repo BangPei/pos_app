@@ -12,20 +12,29 @@
         
       </div>
       <div class="card-body ">
-        <form action="">
+        <form form-validate=true method="POST" action="/product">
             @csrf
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="barcode">Barcode</label>
-                        <input type="text" autofocus="true" class="form-control" name="barcode" id="barcode">
-                        
-                      </div>
+                        <input required value="{{ old('barcode') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
+                        @error('barcode')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="name">Nama Produk</label>
-                        <input type="text" class="form-control" name="name" id="name">
+                        <input required  type="text" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
+                        @error('name')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                       </div>
                 </div>
             </div>
@@ -33,10 +42,14 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="uom_id">Satuan</label>
-                        <select name="uom_id" id="uom_id" class="form-control">
-                            <option value="" disabled selected>--pilih Satuan--</option>
+                        <select required name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
+                            <option disabled selected>--pilih Satuan--</option>
                             @foreach ($uoms as $uom)
-                                <option value="{{$uom->id}}">{{$uom->name}}</option>
+                                @if (old('uom_id')==$uom->id)
+                                    <option selected value="{{$uom->id}}">{{$uom->name}}</option>
+                                @else
+                                    <option value="{{$uom->id}}">{{$uom->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
@@ -44,10 +57,14 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="category_id">Kategori</label>
-                        <select name="category_id" id="category_id" class="form-control">
+                        <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
                             <option value="" disabled selected>--pilih Kategori--</option>
                             @foreach ($categories as $ct)
-                                <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                @if (old('category_id')==$ct->id)
+                                    <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                @else
+                                    <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                       </div>
@@ -55,8 +72,13 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="price">Harga</label>
-                        <input onkeypress="return IsNumeric(event);" type="text" class="form-control number2" name="price" id="price">
-                      </div>
+                        <input value="{{ old('price') }}" required onkeypress="return IsNumeric(event);" type="text" class="form-control number2 @error('price') is-invalid @enderror" name="price" id="price">
+                        @error('price')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                 </div>
             </div>
             <div class="row">

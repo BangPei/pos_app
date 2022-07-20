@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('barcode')->unique();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->foreignId('uom_id');
             $table->foreignId('category_id');
             $table->float('price');
