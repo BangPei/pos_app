@@ -79,8 +79,14 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return '<a title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a> ' +
-							'<a class="btn bg-gradient-danger delete-product"><i class="fa fa-trash"></i></a>'
+						return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a>
+                <form action="/product/${full.barcode}" method="POST" class="d-inline">
+                  @method('DELETE')
+                  @csrf
+                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Produk ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
+                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
+                  </button>
+                </form>`
 					}
 				}
       ],

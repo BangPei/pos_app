@@ -73,7 +73,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
         //
     }
@@ -84,9 +84,15 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Product $product)
     {
-        //
+        return view('master/product/form', [
+            "title" => "Product Form",
+            "menu" => "Master",
+            "categories" => Category::all(),
+            "uoms" => Uom::all(),
+            "product" => $product,
+        ]);
     }
 
     /**
@@ -98,7 +104,25 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = $request->validate([
+            'barcode' => 'required',
+            'name' => 'required',
+            'price' => 'required',
+            'category_id' => 'required',
+            'uom_id' => 'required',
+            'description' => '',
+        ]);
+
+        $product['price'] = floatval(str_replace(',', '', $product['price']));
+        Product::where('barcode', $product['barcode'])->update([
+            'name' => $product['name'],
+            'barcode' => $product['barcode'],
+            'price' => $product['price'],
+            'category_id' => $product['category_id'],
+            'uom_id' => $product['uom_id'],
+            'description' => $product['description'],
+        ]);
+        return Redirect::to('product');
     }
 
     /**
@@ -107,8 +131,18 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        //
+        $product['is_active'] = $product['is_active'] == 1 ? 0 : 1;
+        Product::where('barcode', $product->barcode)->update([
+            'barcode' => $product->barcode,
+            'name' => $product->name,
+            'price' => $product->price,
+            'category_id' => $product->category_id,
+            'uom_id' => $product->uom_id,
+            'description' => $product->description,
+            'is_active' => $product->is_active,
+        ]);
+        return Redirect::to('product');
     }
 }

@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="/dist/css/adminlte.min.css">
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+        <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
         @yield('content-class')
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
@@ -202,6 +204,7 @@
         <script src="/dist/js/adminlte.js"></script>
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+        <script src="/plugins/select2/js/select2.full.min.js"></script>
         @yield('content-script')
         <!-- AdminLTE App -->
         <script src="/js/script.js"></script>

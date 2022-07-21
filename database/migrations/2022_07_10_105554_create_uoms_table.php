@@ -16,7 +16,6 @@ class CreateUomsTable extends Migration
         Schema::create('uoms', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('slug')->unique();
             $table->string('description');
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -12,13 +12,16 @@
         
       </div>
       <div class="card-body ">
-        <form form-validate=true method="POST" action="/product">
+        <form form-validate=true method="POST" action="{{ !isset($product)?"/product":"/product/$product->barcode" }}">
+            @if (isset($product))
+                @method('PUT')
+            @endif
             @csrf
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="barcode">Barcode</label>
-                        <input required value="{{ old('barcode') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
+                        <input {{ isset($product)? 'readonly':'' }} required value="{{ old('barcode',$product->barcode??'') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
                         @error('barcode')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -29,7 +32,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="name">Nama Produk</label>
-                        <input required  type="text" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
+                        <input required  type="text" value="{{ old('name',$product->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
                         @error('name')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -45,7 +48,7 @@
                         <select required name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
                             <option disabled selected>--pilih Satuan--</option>
                             @foreach ($uoms as $uom)
-                                @if (old('uom_id')==$uom->id)
+                                @if (old('uom_id',$product->uom_id??'')==$uom->id)
                                     <option selected value="{{$uom->id}}">{{$uom->name}}</option>
                                 @else
                                     <option value="{{$uom->id}}">{{$uom->name}}</option>
@@ -60,7 +63,7 @@
                         <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
                             <option value="" disabled selected>--pilih Kategori--</option>
                             @foreach ($categories as $ct)
-                                @if (old('category_id')==$ct->id)
+                                @if (old('category_id',$product->category_id??'')==$ct->id)
                                     <option selected value="{{$ct->id}}">{{$ct->name}}</option>
                                 @else
                                     <option value="{{$ct->id}}">{{$ct->name}}</option>
@@ -72,7 +75,7 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="price">Harga</label>
-                        <input value="{{ old('price') }}" required onkeypress="return IsNumeric(event);" type="text" class="form-control number2 @error('price') is-invalid @enderror" name="price" id="price">
+                        <input value="{{ old('price',$product->price??0) }}" required onkeypress="return IsNumeric(event);" type="text" class="form-control number2 @error('price') is-invalid @enderror" name="price" id="price">
                         @error('price')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -85,7 +88,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="description">Deskripsi</label>
-                        <textarea class="form-control" name="description" id="description" cols="30" rows="2"></textarea>
+                        <textarea class="form-control" name="description" id="description" cols="30" rows="2">{{ old('description',$product->description??'') }}</textarea>
                       </div>
                 </div>
             </div>
@@ -98,8 +101,4 @@
       </div>
     </div>
   </div>
-@endsection
-
-@section('content-script')
-<script src="/plugins/select2/js/select2.full.min.js"></script>
 @endsection
