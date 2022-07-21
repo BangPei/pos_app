@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Uom;
+use GuzzleHttp\Promise\Create;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class ProductController extends Controller
@@ -54,9 +57,14 @@ class ProductController extends Controller
             'price' => 'required',
             'category_id' => 'required',
             'uom_id' => 'required',
+            'description' => '',
         ]);
 
-        return $product;
+        // $product['slug'] = Str::lower($product['name']);
+        // $product['slug'] = str_replace(' ', '-', $product['slug']);
+        $product['price'] = floatval(str_replace(',', '', $product['price']));
+        Product::Create($product);
+        return Redirect::to('product');
     }
 
     /**
