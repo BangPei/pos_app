@@ -9,7 +9,7 @@
     <div class="card-header">
       <h2 class="card-title">List Kategori</h2>
       <div class="card-tools">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-description" data-backdrop="static" data-keyboard="false">
           <i class="fas fa-plus-circle"></i> Tambah
         </a>
       </div>
@@ -28,6 +28,8 @@
     </div>
   </div>
 </div>
+
+@include('component.modal-description')
 @endsection
 
 @section('content-script')
@@ -36,8 +38,9 @@
 <script src="js/script.js"></script>
 
 <script>
+  let dataId = "";
   $(document).ready(function(){
-    $('#table-category').DataTable({
+    categoryTable= $('#table-category').DataTable({
       processing:true,
       serverSide:true,
       ajax:{
@@ -63,7 +66,7 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return '<a title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a> ' +
+						return '<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a> ' +
 							'<a class="btn bg-gradient-danger delete-category"><i class="fa fa-trash"></i></a>'
 					}
 				}
@@ -76,6 +79,14 @@
         ],
       order:[[0,'asc']]
     })
+  })
+
+  $('#table-category').on('click','.edit-category',function() {
+    let data = categoryTable.row($(this).parents('tr')).data();
+    console.log(data);
+    dataId = data.id;
+    $('#name').val(data.name??'--');
+    $('#description').val(data.description??'');
   })
 </script>
 @endsection

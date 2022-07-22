@@ -45,32 +45,42 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="uom_id">Satuan</label>
-                        <select required name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
-                            <option disabled selected>--pilih Satuan--</option>
-                            @foreach ($uoms as $uom)
-                                @if (old('uom_id',$product->uom_id??'')==$uom->id)
-                                    <option selected value="{{$uom->id}}">{{$uom->name}}</option>
-                                @else
-                                    <option value="{{$uom->id}}">{{$uom->name}}</option>
-                                @endif
-                            @endforeach
-                        </select>
+                        <div class="input-group mb-3">
+                            <select required name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
+                                <option disabled selected>--pilih Satuan--</option>
+                                @foreach ($uoms as $uom)
+                                    @if (old('uom_id',$product->uom_id??'')==$uom->id)
+                                        <option selected value="{{$uom->id}}">{{$uom->name}}</option>
+                                    @else
+                                        <option value="{{$uom->id}}">{{$uom->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary bg-secondary" type="button"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="category_id">Kategori</label>
-                        <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
-                            <option value="" disabled selected>--pilih Kategori--</option>
-                            @foreach ($categories as $ct)
-                                @if (old('category_id',$product->category_id??'')==$ct->id)
-                                    <option selected value="{{$ct->id}}">{{$ct->name}}</option>
-                                @else
-                                    <option value="{{$ct->id}}">{{$ct->name}}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                      </div>
+                        <div class="input-group mb-3">
+                            <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
+                                <option value="" disabled selected>--pilih Kategori--</option>
+                                @foreach ($categories as $ct)
+                                    @if (old('category_id',$product->category_id??'')==$ct->id)
+                                        <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @else
+                                        <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary bg-secondary" type="button"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
@@ -94,7 +104,8 @@
             </div>
             <div class="row">
                 <div class="col-12 text-center">
-                    <button type="submit" class="btn btn-primary "><i class="fas fa-save"></i> Submit</button>
+                    <button type="button" onclick="history.back()" class="btn btn-default "><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <button type="submit" class="btn btn-primary "><i class="fas fa-save"></i> Simpan</button>
                 </div>
             </div>
           </form>
