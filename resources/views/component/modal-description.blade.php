@@ -10,7 +10,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form autocomplete="OFF">
+          <form autocomplete="OFF" id="form-description">
             <div class="form-group">
               <label for="name" class="col-form-label">Kategori</label>
               <input required type="text" name="name" class="form-control" id="name">
@@ -19,11 +19,14 @@
               <label for="description" class="col-form-label">Deskripsi</label>
               <textarea class="form-control" name="description" id="description"></textarea>
             </div>
+            <hr>
+            <div class="row">
+              <div class="col-12 text-right">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="btn-modal-description"><i class="fas fa-save"></i> Simpan</button>
+              </div>
+            </div>
           </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
         </div>
       </div>
     </div>

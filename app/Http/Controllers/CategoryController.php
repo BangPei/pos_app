@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class CategoryController extends Controller
@@ -40,7 +41,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category = Category::created($request);
+
+        return response()->json($category);
     }
 
     /**

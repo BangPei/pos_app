@@ -79,14 +79,12 @@
         ],
       order:[[0,'asc']]
     })
-  })
-
-  $('#table-category').on('click','.edit-category',function() {
-    let data = categoryTable.row($(this).parents('tr')).data();
-    console.log(data);
-    dataId = data.id;
-    $('#name').val(data.name??'--');
-    $('#description').val(data.description??'');
+    $('#table-category').on('click','.edit-category',function() {
+      let data = categoryTable.row($(this).parents('tr')).data();
+      dataId = data.id;
+      $('#name').val(data.name??'--');
+      $('#description').val(data.description??'');
+    })
   })
 </script>
 @endsection

@@ -10,6 +10,10 @@ $(document).ready(function(){
 		});
 	});
 
+	$('.modal').on('hidden.bs.modal', function (event) {
+		resetForm($('#form-description'))
+	  })
+
 	$('form[data-vaidate=true]').validate({
 		rules: {
 		  email: {
@@ -56,4 +60,45 @@ function IsNumeric(event) {
 	if (!(event.shiftKey == false && (keycode == 8 || keycode == 37 || keycode == 46 || keycode == 110 ||keycode==13|| (keycode >= 48 && keycode <= 57)))) {
 		event.preventDefault();
 	}
+}
+
+function formValid(form, callback) {
+	form.unbind().submit(function () {
+		if (form.valid()) {
+			callback();
+		}
+		return false;
+	})
+}
+
+function resetForm(form) {
+	form.find("input").val("");
+	form.find("input[type='checkbox']").prop("checked", false);
+	form.find("textarea").val("");
+	form.find("select").prop('selectedIndex', 0).trigger('change');
+	form.find(".error").removeClass("error");
+	form.find("#handling-error").remove();
+}
+
+function ajax(data, url, method, callback, callbackError) {
+	$.ajax({
+		url: url,
+		data: JSON.stringify(data),
+		type: method,
+		headers: {
+			"Content-Type": "application/json",
+			"Cache-Control": "no-cache",
+			"Authorization": token,
+			// "x-client-data": xclientdata
+		},
+		success: function (a, b, c) {
+			json = a;
+			textStatus = b;
+			jqXHR = c;
+			callback();
+		},
+		error: function (a, b, c) {
+			callbackError();
+		}
+	});
 }
