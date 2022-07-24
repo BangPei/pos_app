@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Uom;
-
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -77,6 +77,6 @@ class DatabaseSeeder extends Seeder
             "is_active" => true
         ]);
 
-        // Product::factory(30)->create();
+        User::factory(30)->create();
     }
 }
