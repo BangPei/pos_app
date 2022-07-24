@@ -79,6 +79,7 @@
         ],
       order:[[0,'asc']]
     })
+    $('div.dataTables_filter input', categoryTable.table().container()).focus();
     $('#table-category').on('click','.edit-category',function() {
       let data = categoryTable.row($(this).parents('tr')).data();
       dataId = data.id;

@@ -38,7 +38,7 @@
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
   $(document).ready(function(){
-    $('#table-product').DataTable({
+    tblProduct = $('#table-product').DataTable({
       processing:true,
       serverSide:true,
       ajax:{
@@ -102,6 +102,7 @@
         ],
       order:[[1,'asc']]
     })
+    $('div.dataTables_filter input', tblProduct.table().container()).focus();
   })
 </script>
 @endsection

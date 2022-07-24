@@ -37,7 +37,7 @@
 
 <script>
   $(document).ready(function(){
-    $('#table-uom').DataTable({
+    tblUom=$('#table-uom').DataTable({
       processing:true,
       serverSide:true,
       ajax:{
@@ -76,6 +76,7 @@
         ],
       order:[[0,'asc']]
     })
+    $('div.dataTables_filter input', tblUom.table().container()).focus();
   })
 </script>
 @endsection
