@@ -9,7 +9,7 @@
     <div class="card-header">
       <h2 class="card-title">List Kategori</h2>
       <div class="card-tools">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-description" data-backdrop="static" data-keyboard="false">
+        <a class="btn btn-primary" id="btn-add" data-toggle="modal" data-target="#modal-description" data-backdrop="static" data-keyboard="false">
           <i class="fas fa-plus-circle"></i> Tambah
         </a>
       </div>
@@ -38,7 +38,6 @@
 <script src="js/script.js"></script>
 
 <script>
-  let dataId = "";
   $(document).ready(function(){
     categoryTable= $('#table-category').DataTable({
       processing:true,
@@ -66,8 +65,14 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return '<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a> ' +
-							'<a class="btn bg-gradient-danger delete-category"><i class="fa fa-trash"></i></a>'
+						return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a>
+                <form action="/category/${data}" method="POST" class="d-inline">
+                  @method('DELETE')
+                  @csrf
+                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
+                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
+                  </button>
+                </form>`
 					}
 				}
       ],
@@ -82,9 +87,20 @@
     $('div.dataTables_filter input', categoryTable.table().container()).focus();
     $('#table-category').on('click','.edit-category',function() {
       let data = categoryTable.row($(this).parents('tr')).data();
-      dataId = data.id;
+      $('#id').val(data.id??'--');
       $('#name').val(data.name??'--');
       $('#description').val(data.description??'');
+      $('#form-method').append(`
+        @method('put')
+      `)
+      $('#form-description').attr('action',`/category/${data.id}`)
+    })
+
+    $('#btn-add').on('click',function(){
+      $('#form-description').attr('action','/category')
+      $('#form-method').append(`
+        @method('post')
+      `)
     })
   })
 </script>

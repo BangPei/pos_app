@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\Console\Input\Input;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class CategoryController extends Controller
@@ -41,9 +42,12 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = Category::created($request);
-
-        return response()->json($category);
+        $category = $request->validate([
+            'name' => 'required',
+            'description' => '',
+        ]);
+        Category::Create($category);
+        return Redirect::to('category');
     }
 
     /**
@@ -77,7 +81,16 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $category = $request->validate([
+            'name' => 'required',
+            'description' => '',
+        ]);
+        $category['id'] = $request->input('id');
+        Category::where('id', $category['id'])->update([
+            'name' => $category['name'],
+            'description' => $category['description'],
+        ]);
+        return Redirect::to('category');
     }
 
     /**
@@ -88,6 +101,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category['is_active'] = $category['is_active'] == 1 ? 0 : 1;
+        Category::where('id', $category->id)->update([
+            'name' => $category->name,
+            'description' => $category->description,
+            'is_active' => $category->is_active,
+        ]);
+        return Redirect::to('category');
     }
 }
