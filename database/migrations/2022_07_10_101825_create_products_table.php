@@ -20,6 +20,8 @@ class CreateProductsTable extends Migration
             $table->string('description')->nullable();
             $table->foreignId('uom_id');
             $table->foreignId('category_id');
+            $table->foreignId('created_by');
+            $table->foreignId('edit_by');
             $table->float('price');
             $table->boolean('is_active')->default(true);
             $table->timestamps();

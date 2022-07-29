@@ -9,9 +9,9 @@
     <div class="card-header">
       <h2 class="card-title">List Satuan</h2>
       <div class="card-tools">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
-            <i class="fas fa-plus-circle"></i> Tambah
-        </button>
+        <a class="btn btn-primary" id="btn-add" data-toggle="modal" data-target="#modal-description" data-backdrop="static" data-keyboard="false">
+          <i class="fas fa-plus-circle"></i> Tambah
+        </a>
       </div>
     </div>
     <div class="card-body table-responsive">
@@ -28,6 +28,7 @@
     </div>
   </div>
 </div>
+@include('component.modal-description')
 @endsection
 
 @section('content-script')
@@ -63,8 +64,14 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return '<a title="Edit" class="btn bg-gradient-success edit-uom"><i class="fas fa-edit"></i></a> ' +
-							'<a class="btn bg-gradient-danger delete-uom"><i class="fa fa-trash"></i></a>'
+						return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-uom"><i class="fas fa-edit"></i></a>
+                <form action="/uom/${data}" method="POST" class="d-inline">
+                  @method('DELETE')
+                  @csrf
+                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Satuan ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
+                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
+                  </button>
+                </form>`
 					}
 				}
       ],
@@ -77,6 +84,23 @@
       order:[[0,'asc']]
     })
     $('div.dataTables_filter input', tblUom.table().container()).focus();
+    $('#table-uom').on('click','.edit-uom',function() {
+      let data = categoryTable.row($(this).parents('tr')).data();
+      $('#id').val(data.id??'--');
+      $('#name').val(data.name??'--');
+      $('#description').val(data.description??'');
+      $('#form-method').append(`
+        @method('put')
+      `)
+      $('#form-description').attr('action',`/uom/${data.id}`)
+    })
+
+    $('#btn-add').on('click',function(){
+      $('#form-description').attr('action','/uom')
+      $('#form-method').append(`
+        @method('post')
+      `)
+    })
   })
 </script>
 @endsection

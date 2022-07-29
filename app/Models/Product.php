@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $with = ['category', 'uom'];
+    protected $with = ['category', 'uom', 'user'];
 
     public function uom()
     {
@@ -19,6 +19,10 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getRouteKeyName()

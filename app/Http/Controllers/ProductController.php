@@ -58,11 +58,15 @@ class ProductController extends Controller
             'category_id' => 'required',
             'uom_id' => 'required',
             'description' => '',
+            'created_by' => '',
+            'edit_by' => '',
         ]);
 
         // $product['slug'] = Str::lower($product['name']);
         // $product['slug'] = str_replace(' ', '-', $product['slug']);
         $product['price'] = floatval(str_replace(',', '', $product['price']));
+        $product['created_by'] = auth()->user()->id;
+        $product['edit_by'] = auth()->user()->id;
         Product::Create($product);
         return Redirect::to('product');
     }
@@ -114,6 +118,7 @@ class ProductController extends Controller
         ]);
 
         $product['price'] = floatval(str_replace(',', '', $product['price']));
+        $product['edit_by'] = auth()->user()->id;
         Product::where('barcode', $product['barcode'])->update([
             'name' => $product['name'],
             'barcode' => $product['barcode'],
@@ -121,6 +126,7 @@ class ProductController extends Controller
             'category_id' => $product['category_id'],
             'uom_id' => $product['uom_id'],
             'description' => $product['description'],
+            'edit_by' => $product['edit_by'],
         ]);
         return Redirect::to('product');
     }
@@ -142,6 +148,8 @@ class ProductController extends Controller
             'uom_id' => $product->uom_id,
             'description' => $product->description,
             'is_active' => $product->is_active,
+            'created_by' => $product->created_by,
+            'edit_by' => $product->edit_by,
         ]);
         return Redirect::to('product');
     }

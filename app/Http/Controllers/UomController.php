@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Uom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class UomController extends Controller
@@ -40,7 +41,12 @@ class UomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $uom = $request->validate([
+            'name' => 'required',
+            'description' => '',
+        ]);
+        Uom::Create($uom);
+        return Redirect::to('uom');
     }
 
     /**
@@ -74,7 +80,16 @@ class UomController extends Controller
      */
     public function update(Request $request, Uom $uom)
     {
-        //
+        $uom = $request->validate([
+            'name' => 'required',
+            'description' => '',
+        ]);
+        $uom['id'] = $request->input('id');
+        Uom::where('id', $uom['id'])->update([
+            'name' => $uom['name'],
+            'description' => $uom['description'],
+        ]);
+        return Redirect::to('uom');
     }
 
     /**
@@ -85,6 +100,12 @@ class UomController extends Controller
      */
     public function destroy(Uom $uom)
     {
-        //
+        $uom['is_active'] = $uom['is_active'] == 1 ? 0 : 1;
+        Uom::where('id', $uom->id)->update([
+            'name' => $uom->name,
+            'description' => $uom->description,
+            'is_active' => $uom->is_active,
+        ]);
+        return Redirect::to('uom');
     }
 }
