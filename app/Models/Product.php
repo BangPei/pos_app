@@ -10,7 +10,13 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $with = ['category', 'uom', 'user'];
+    protected $hidden = [
+        'category_id',
+        'uom_id',
+        'created_by_id',
+        'edit_by_id',
+    ];
+    protected $with = ['category', 'uom', 'created_by', 'edit_by'];
 
     public function uom()
     {
@@ -20,7 +26,11 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function user()
+    public function created_by()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function edit_by()
     {
         return $this->belongsTo(User::class);
     }

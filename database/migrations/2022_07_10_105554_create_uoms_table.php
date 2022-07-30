@@ -18,6 +18,8 @@ class CreateUomsTable extends Migration
             $table->string('name')->unique();
             $table->string('description');
             $table->boolean('is_active')->default(true);
+            $table->foreignId('created_by_id');
+            $table->foreignId('edit_by_id');
             $table->timestamps();
         });
     }

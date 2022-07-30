@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Uom;
-use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -58,15 +56,15 @@ class ProductController extends Controller
             'category_id' => 'required',
             'uom_id' => 'required',
             'description' => '',
-            'created_by' => '',
-            'edit_by' => '',
+            'created_by_id' => '',
+            'edit_by_id' => '',
         ]);
 
         // $product['slug'] = Str::lower($product['name']);
         // $product['slug'] = str_replace(' ', '-', $product['slug']);
         $product['price'] = floatval(str_replace(',', '', $product['price']));
-        $product['created_by'] = auth()->user()->id;
-        $product['edit_by'] = auth()->user()->id;
+        $product['created_by_id'] = auth()->user()->id;
+        $product['edit_by_id'] = auth()->user()->id;
         Product::Create($product);
         return Redirect::to('product');
     }
@@ -118,7 +116,7 @@ class ProductController extends Controller
         ]);
 
         $product['price'] = floatval(str_replace(',', '', $product['price']));
-        $product['edit_by'] = auth()->user()->id;
+        $product['edit_by_id'] = auth()->user()->id;
         Product::where('barcode', $product['barcode'])->update([
             'name' => $product['name'],
             'barcode' => $product['barcode'],
@@ -126,7 +124,7 @@ class ProductController extends Controller
             'category_id' => $product['category_id'],
             'uom_id' => $product['uom_id'],
             'description' => $product['description'],
-            'edit_by' => $product['edit_by'],
+            'edit_by_id' => $product['edit_by_id'],
         ]);
         return Redirect::to('product');
     }
@@ -148,8 +146,8 @@ class ProductController extends Controller
             'uom_id' => $product->uom_id,
             'description' => $product->description,
             'is_active' => $product->is_active,
-            'created_by' => $product->created_by,
-            'edit_by' => $product->edit_by,
+            'created_by_id' => $product->created_by_id,
+            'edit_by_id' => auth()->user()->id,
         ]);
         return Redirect::to('product');
     }

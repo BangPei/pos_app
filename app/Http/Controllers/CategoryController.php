@@ -45,7 +45,11 @@ class CategoryController extends Controller
         $category = $request->validate([
             'name' => 'required',
             'description' => '',
+            'created_by_id' => '',
+            'edit_by_id' => '',
         ]);
+        $category['created_by_id'] = auth()->user()->id;
+        $category['edit_by_id'] = auth()->user()->id;
         Category::Create($category);
         return Redirect::to('category');
     }
@@ -86,9 +90,11 @@ class CategoryController extends Controller
             'description' => '',
         ]);
         $category['id'] = $request->input('id');
+        $category['edit_by_id'] = auth()->user()->id;
         Category::where('id', $category['id'])->update([
             'name' => $category['name'],
             'description' => $category['description'],
+            'edit_by_id' => $category['edit_by_id'],
         ]);
         return Redirect::to('category');
     }
@@ -106,6 +112,8 @@ class CategoryController extends Controller
             'name' => $category->name,
             'description' => $category->description,
             'is_active' => $category->is_active,
+            'created_by_id' => $category->created_by_id,
+            'edit_by_id' => auth()->user()->id,
         ]);
         return Redirect::to('category');
     }

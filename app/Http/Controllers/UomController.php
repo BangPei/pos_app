@@ -44,7 +44,11 @@ class UomController extends Controller
         $uom = $request->validate([
             'name' => 'required',
             'description' => '',
+            'created_by_id' => '',
+            'edit_by_id' => '',
         ]);
+        $uom['created_by_id'] = auth()->user()->id;
+        $uom['edit_by_id'] = auth()->user()->id;
         Uom::Create($uom);
         return Redirect::to('uom');
     }
@@ -85,9 +89,11 @@ class UomController extends Controller
             'description' => '',
         ]);
         $uom['id'] = $request->input('id');
+        $uom['edit_by_id'] = auth()->user()->id;
         Uom::where('id', $uom['id'])->update([
             'name' => $uom['name'],
             'description' => $uom['description'],
+            'edit_by_id' => $uom['edit_by_id'],
         ]);
         return Redirect::to('uom');
     }
@@ -105,6 +111,8 @@ class UomController extends Controller
             'name' => $uom->name,
             'description' => $uom->description,
             'is_active' => $uom->is_active,
+            'created_by_id' => $uom->created_by_id,
+            'edit_by_id' => auth()->user()->id,
         ]);
         return Redirect::to('uom');
     }
