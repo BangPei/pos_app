@@ -54,4 +54,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Uom::class);
     }
+    public function directSales()
+    {
+        return $this->hasMany(DirectSales::class);
+    }
 }

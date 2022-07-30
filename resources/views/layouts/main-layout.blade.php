@@ -97,7 +97,7 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ ($title=='Product' || 'Uom' || 'Category')?'menu-open':'' }}">
+                        <li class="nav-item {{ (Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
@@ -126,11 +126,28 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="pages/widgets.html" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>Widgets</p>
+                        <li class="nav-item {{ (Request::is('transaction*'))?'menu-open':'' }}">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon far fa-money-bill-alt"></i>
+                                <p>
+                                    Transaksi
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/transaction" class="nav-link {{Request::is('transaction*')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Aplikasi Kasir</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link ">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pembelian</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-header">User</li>
                         <li class="nav-item">
@@ -141,7 +158,7 @@
                         </li>
                         <li class="nav-header">EXAMPLES</li>
                         <li class="nav-item">
-                            <a href="pages/calendar.html" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon far fa-calendar-alt"></i>
                                 <p>Calendar</p>
                             </a>

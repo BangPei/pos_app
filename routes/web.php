@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UomController;
@@ -28,3 +29,4 @@ Route::resource('user', UserController::class)->middleware('auth');
 Route::resource('product', ProductController::class)->middleware('auth');
 Route::resource('category', CategoryController::class)->middleware('auth');
 Route::resource('uom', UomController::class)->middleware('auth');
+Route::resource('transaction', DirectSalesController::class)->middleware('auth');
