@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\DirectSales;
 use App\Http\Requests\StoreDirectSalesRequest;
 use App\Http\Requests\UpdateDirectSalesRequest;
+use App\Models\Product;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DirectSalesController extends Controller
 {
@@ -13,8 +15,12 @@ class DirectSalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
+        $products = Product::all();
+        if ($request->ajax()) {
+            return datatables()->of($products)->make(true);
+        }
         return view('transaction/direct_sales', ["title" => "Aplikasi Kasir", "menu" => "Transaksi"]);
     }
 
