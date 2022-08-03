@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Uom extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'is_active'];
+    protected $guarded = ['id'];
     protected $with = ['created_by', 'edit_by'];
     protected $hidden = ['created_by_id', 'edit_by_id',];
 

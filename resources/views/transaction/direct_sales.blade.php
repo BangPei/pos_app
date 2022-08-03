@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="col-md-8 col-sm-12">
-          <table class="table table-striped table-bordered table-sm " id="table-order">
+          <table class="table table-striped table-bordered table-sm" id="table-order">
             <thead>
               <tr>
                 <th>No</th>
@@ -67,7 +67,7 @@
 </div>
 
 <div class="modal fade" id="modal-product" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-title">List Product</h5>
@@ -75,19 +75,23 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body table-responsive">
-        <table class="table table-striped table-bordered" id="table-product">
-          <thead>
-            <tr>
-              <th>Barcode</th>
-              <th>Nama</th>
-              <th>Satuan</th>
-              <th>Kategori</th>
-              <th>Harga</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-        </table>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 table-responsive">
+            <table class="table table-striped table-bordered" width="100%" id="table-product">
+              <thead>
+                <tr>
+                  <th>Barcode</th>
+                  <th>Nama</th>
+                  <th>Satuan</th>
+                  <th>Kategori</th>
+                  <th>Harga</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -194,14 +198,7 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a>
-                <form action="/product/${full.barcode}" method="POST" class="d-inline">
-                  @method('DELETE')
-                  @csrf
-                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Produk ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
-                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
-                  </button>
-                </form>`
+						return `<a href="#" title="delete" class="btn bg-gradient-success delete-product"><i class="fas fa-check"></i></a>`
 					}
 				}
       ],
