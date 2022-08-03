@@ -98,6 +98,39 @@ class DatabaseSeeder extends Seeder
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
+        Product::create([
+            "barcode" => "8992736211275",
+            "name" => "Sasa Saus Tomat 24's x 8 gr",
+            "description" => "Saus tomat sasa",
+            "is_active" => true,
+            "uom_id" => 5,
+            "category_id" => 1,
+            "created_by_id" => 2,
+            "edit_by_id" => 2,
+            "price" => 7000,
+        ]);
+        Product::create([
+            "barcode" => "8993005121011",
+            "name" => "Caladine cream 15 gr",
+            "description" => "Caladine obat kulit anak",
+            "is_active" => true,
+            "uom_id" => 2,
+            "category_id" => 1,
+            "created_by_id" => 2,
+            "edit_by_id" => 2,
+            "price" => 17000.00,
+        ]);
+        Product::create([
+            "barcode" => "8888103209108",
+            "name" => "Cussons Baby Cologne Soft Touch 100 ml",
+            "description" => "Parfum bayi merek cussons",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 2,
+            "edit_by_id" => 2,
+            "price" => 20000.00,
+        ]);
 
         User::factory(5)->create();
     }

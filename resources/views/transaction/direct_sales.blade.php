@@ -10,7 +10,7 @@
       <h2 class="card-title">Form Penjualan</h2>
       <div class="card-tools">
         <a class="btn btn-primary" id="btn-product" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-          <i class="fas fa-eye"></i> List Product
+          <i class="fas fa-eye"></i> List Produk
         </a>
       </div>
     </div>
@@ -48,7 +48,6 @@
           <table class="table table-striped table-bordered table-sm" id="table-order">
             <thead>
               <tr>
-                <th>No</th>
                 <th>Nama</th>
                 <th>Satuan</th>
                 <th>Qty</th>
@@ -109,27 +108,30 @@
       paging: false,
       searching: false,
       ordering:  false,
-      select: true,
       data:dsDetail,
       columns:[
         {
-          data:null,
-          defaultContent:"--"
-        },
-        {
           data:"product.name",
+          bSortable: false,
           defaultContent:"--"
         },
         {
           data:"product.uom.name",
+          bSortable: false,
           defaultContent:"--"
         },
         {
           data:"qty",
-          defaultContent:"0"
+          bSortable: false,
+          defaultContent:"0",
+          mRender:function(data,type,full){
+            return `<input name="qty" value="${data?formatNumber(data):0}" onkeypress="return IsNumeric(event);" class="number2 text-right" style="width:100%" placeholder="0" />`
+            // return `Rp. ${formatNumber(data)}`
+          }
         },
         {
           data:"price",
+          bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
             return `Rp. ${formatNumber(data)}`
@@ -137,6 +139,7 @@
         },
         {
           data:"total",
+          bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
             return `Rp. ${formatNumber(data)}`
@@ -144,13 +147,16 @@
         },
         {
           data:"discount",
+          bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
-            return `Rp. ${formatNumber(data)}`
+            return `<input name="discount" value="${data?formatNumber(data):0}" onkeypress="return IsNumeric(event);" class="number2 text-right" style="width:100%" placeholder="0" />`
+            // return `Rp. ${formatNumber(data)}`
           }
         },
         {
 					data: null,
+          bSortable: false,
 					mRender: function(data, type, full) {
 						return `<a href="#" title="Hapus" class="btn bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
 					}
@@ -159,7 +165,7 @@
       columnDefs: [
           { 
             className: "text-right",
-            targets: [3,4,5,6]
+            targets: [2,3,4,5]
           },
         ],
     })
@@ -198,7 +204,7 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a href="#" title="delete" class="btn bg-gradient-success delete-product"><i class="fas fa-check"></i></a>`
+						return `<a href="#" title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
 					}
 				}
       ],
@@ -210,6 +216,31 @@
         ],
     })
     $('div.dataTables_filter input', tblProduct.table().container()).focus();
+
+    $('#table-product').on('click','.add-product',function() {
+      let product = tblProduct.row($(this).parents('tr')).data();
+      if (dsDetail.some(item => item.product.id === product.id)) {
+        dsDetail.forEach(data => {
+          if (data.product_id == product.id) {
+            data.qty++;
+            data.total = data.price*data.qty
+          }
+        });
+      }else{
+        let detail = {
+            product:product,
+            product_id:product.id,
+            qty:1,
+            price:product.price,
+            discount:0,
+            total:product.price*1
+          }
+          dsDetail.push(detail);
+      }
+      
+      reloadJsonDataTable(tblOrder,dsDetail)
+      $("#modal-product").modal('hide');
+    })
   })
 </script>
 @endsection

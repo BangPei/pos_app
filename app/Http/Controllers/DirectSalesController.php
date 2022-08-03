@@ -42,7 +42,8 @@ class DirectSalesController extends Controller
      */
     public function store(StoreDirectSalesRequest $request)
     {
-        //
+        $ds = json_decode($request, true);
+        var_dump($ds);
     }
 
     /**
