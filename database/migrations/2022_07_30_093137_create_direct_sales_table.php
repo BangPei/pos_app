@@ -19,8 +19,10 @@ class CreateDirectSalesTable extends Migration
             $table->string('customer_name')->nullable();
             $table->float('amount');
             $table->float('discount');
+            $table->float('additional_discount');
             $table->float('cash');
             $table->float('change');
+            $table->float('subtotal');
             $table->integer('total_item');
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');

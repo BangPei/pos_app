@@ -55,6 +55,11 @@ $(document).ready(function(){
 function formatNumber(total) {
 	return parseFloat(total).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString().replace('.00', '');
 }
+
+function numberFormat(num) {
+	return $.fn.dataTable.render.number(',', '.', 2, '').display(num)
+}
+
 function IsNumeric(event) {
 	var keycode = event.which;
 	if (!(event.shiftKey == false && (keycode == 8 || keycode == 37 || keycode == 46 || keycode == 110 ||keycode==13|| (keycode >= 48 && keycode <= 57)))) {
@@ -117,4 +122,15 @@ function tableNumber(table) {
 			cell.innerHTML = i + 1;
 		});
 	}).draw();
+}
+
+function keyupTableNumber(table) {
+	table.on('keyup', '.number2', function(event) {
+		if (event.which >= 37 && event.which <= 40) return;
+		$(this).val(function(index, value) {
+			return value
+				.replace(/\D/g, "")
+				.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		});
+	});
 }
