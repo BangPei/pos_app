@@ -241,6 +241,12 @@
       reloadJsonDataTable(tblOrder,dsDetail)
       $("#modal-product").modal('hide');
     })
+
+    $('#table-order').on('click', '.delete-product', function() {
+        let data = tblOrder.row($(this).parents('tr')).index();
+        dsDetail.splice(data, 1);
+        reloadJsonDataTable(tblOrder, dsDetail);
+    });
   })
 </script>
 @endsection
