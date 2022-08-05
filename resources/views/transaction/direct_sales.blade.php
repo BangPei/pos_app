@@ -69,6 +69,14 @@
             <div class="col-sm-2 font-weight-bold">Rp.</div>
             <div class="col-sm-4 font-weight-bold text-right" id="change">0</div>
           </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-4 font-weight-bold">Nama Pembeli</div>
+            <div class="col-sm-2 font-weight-bold">:</div>
+            <div class="col-sm-6 text-right">
+              <input type="text" placeholder="nama Pembeli" id="customer-name" class="font-weight-bold" style="width: 100%">
+            </div>
+          </div>
           <hr>
           <div class="row">
             <div class="col-md-12 col-sam-12 col-xs-12 text-center">
@@ -324,9 +332,16 @@
     });
     $('#discount-2').on('change', function() {
         let value = $(this).val().replace(/,/g, "");
-        console.log(value)
         directSales.additional_discount = parseFloat(value===""?0:value);
         countTotality();
+    });
+    $('#cash').on('change', function() {
+        let value = $(this).val().replace(/,/g, "");
+        directSales.cash = parseFloat(value===""?0:value);
+        
+        directSales.change = directSales.cash-directSales.amount;
+        $("#cash").html(formatNumber(directSales.cash))
+        $("#change").html(formatNumber(directSales.change))
     });
     $('#table-order').on('change', '.discount-order', function() {
         let data = tblOrder.row($(this).parents('tr')).data();
