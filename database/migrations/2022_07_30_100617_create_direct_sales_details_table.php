@@ -15,12 +15,12 @@ class CreateDirectSalesDetailsTable extends Migration
     {
         Schema::create('direct_sales_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ds_id');
+            $table->foreignId('direct_sales_id');
             $table->foreignId('product_id');
             $table->float('price');
             $table->integer('qty');
             $table->float('discount');
-            $table->integer('total');
+            $table->float('total');
             $table->timestamps();
         });
     }

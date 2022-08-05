@@ -81,7 +81,7 @@
           <div class="row">
             <div class="col-md-12 col-sam-12 col-xs-12 text-center">
               <a class="btn btn-danger" id="btn-cancel"><i class="fas fa-trash"></i> Batal</a>
-              <a class="btn btn-primary" id="btn-save"><i class="fas fa-save"></i> Simpan</a>
+              <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary" id="btn-save"><i class="fas fa-save"></i> Simpan</a>
             </div>
           </div>
           {{-- <hr style="margin:0 !important">
@@ -163,6 +163,7 @@
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
   let directSales= {
+    "_token": "{{ csrf_token() }}",
     code:null,
     customer_name:null,
     amount:0,
@@ -350,6 +351,19 @@
         reloadJsonDataTable(tblOrder, directSales.details);
     });
   })
+
+  function saveTransaction(){
+    directSales.customer_name = $("#customer-name").val();
+    $.ajax({
+      data:directSales,
+      url:"{{ route('transaction.store') }}",
+      type:"POST",
+      dataType:"json",
+      success:function (params) {
+        console.log(params);
+      }
+    })
+  }
 
   function countTotality() {
     let subtotal = 0;

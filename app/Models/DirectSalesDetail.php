@@ -10,7 +10,7 @@ class DirectSalesDetail extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $hidden = ['ds_id', 'product_id', 'directSales'];
+    protected $hidden = ['direct_sales_id', 'product_id'];
     protected $with = ['directSales', 'product'];
 
     public function directSales()

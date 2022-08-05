@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\DirectSales;
-use App\Http\Requests\StoreDirectSalesRequest;
 use App\Http\Requests\UpdateDirectSalesRequest;
+use App\Models\DirectSalesDetail;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DirectSalesController extends Controller
@@ -40,10 +41,49 @@ class DirectSalesController extends Controller
      * @param  \App\Http\Requests\StoreDirectSalesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreDirectSalesRequest $request)
+    public function store(Request $request)
     {
-        $ds = json_decode($request, true);
-        var_dump($ds);
+        $code = "DS";
+        $currDate = date("ymd");
+        $n = 0;
+        $n2 = "";
+        $models = DirectSales::where('code', 'LIKE', "%{$currDate}%")->orderBy('code', 'desc')->take(1)->get();
+        if (count($models) != 0) {
+            $n2 = substr($models[0]->code, -4);
+            $n2 = str_pad($n2 + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $n2 = str_pad($n + 1, 4, 0, STR_PAD_LEFT);
+        }
+
+        $fullCode = $code . "" . $currDate . "" . $n2;
+        $ds = new DirectSales();
+        $ds->code = $fullCode;
+        $ds->customer_name = $request->customer_name;
+        $ds->amount = $request->amount;
+        $ds->discount = $request->discount;
+        $ds->additional_discount = $request->additional_discount;
+        $ds->cash = $request->cash;
+        $ds->change = $request->change;
+        $ds->subtotal = $request->subtotal;
+        $ds->total_item = $request->total_item;
+        $ds->created_by_id = auth()->user()->id;
+        $ds->edit_by_id = auth()->user()->id;
+        $ds->save();
+
+        $details = [];
+        for ($i = 0; $i < count($request->details); $i++) {
+            $detail = new DirectSalesDetail();
+            $details[] = [
+                $detail->direct_sales_id => $ds["id"],
+                $detail->product_id => $request->details[$i]["product_id"],
+                $detail->price => $request->details[$i]["price"],
+                $detail->qty => $request->details[$i]["qty"],
+                $detail->discount => $request->details[$i]["discount"],
+                $detail["total"] => $request->details[$i]["total"]
+            ];
+        }
+        DirectSalesDetail::insert($details);
+        return response()->json($ds);
     }
 
     /**
