@@ -18,11 +18,12 @@ class DirectSalesController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $products = Product::all();
+        $directSales = DirectSales::all();
         if ($request->ajax()) {
-            return datatables()->of($products)->make(true);
+            return datatables()->of($directSales)->make(true);
         }
-        return view('transaction/direct_sales', ["title" => "Aplikasi Kasir", "menu" => "Transaksi"]);
+        // var_dump($directSales);
+        return view('transaction.index', ["title" => "Detail Transaksi Keluar", "menu" => "Transaksi"]);
     }
 
     /**
@@ -30,9 +31,13 @@ class DirectSalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(UtilitiesRequest $request)
     {
-        //
+        $products = Product::all();
+        if ($request->ajax()) {
+            return datatables()->of($products)->make(true);
+        }
+        return view('transaction/direct_sales', ["title" => "Aplikasi Kasir", "menu" => "Transaksi"]);
     }
 
     /**
@@ -73,16 +78,16 @@ class DirectSalesController extends Controller
         $details = [];
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new DirectSalesDetail();
-            $details[] = [
-                $detail->direct_sales_id => $ds["id"],
-                $detail->product_id => $request->details[$i]["product_id"],
-                $detail->price => $request->details[$i]["price"],
-                $detail->qty => $request->details[$i]["qty"],
-                $detail->discount => $request->details[$i]["discount"],
-                $detail["total"] => $request->details[$i]["total"]
-            ];
+            $detail->direct_sales_id = $ds["id"];
+            $detail->product_id = $request->details[$i]["product_id"];
+            $detail->price = $request->details[$i]["price"];
+            $detail->qty = $request->details[$i]["qty"];
+            $detail->discount = $request->details[$i]["discount"];
+            $detail->subtotal = $request->details[$i]["subtotal"];
+            $detail->save();
+            array_push($details, $detail);
         }
-        DirectSalesDetail::insert($details);
+        $ds->details = $details;
         return response()->json($ds);
     }
 

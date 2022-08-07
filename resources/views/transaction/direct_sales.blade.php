@@ -1,6 +1,6 @@
 @extends('layouts.main-layout')
 @section('content-class')
-  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 @endsection
 
 @section('content-child')
@@ -159,8 +159,8 @@
 @endsection
 
 @section('content-script')
-<script src="plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
   let directSales= {
     "_token": "{{ csrf_token() }}",
@@ -210,7 +210,7 @@
           }
         },
         {
-          data:"total",
+          data:"subtotal",
           bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
@@ -298,7 +298,7 @@
         directSales.details.forEach(data => {
           if (data.product_id == product.id) {
             data.qty = data.qty+1;
-            data.total = parseFloat(data.price)*parseInt(data.qty)
+            data.subtotal = parseFloat(data.price)*parseInt(data.qty)
           }
         });
       }else{
@@ -308,7 +308,7 @@
             qty:1,
             price:parseFloat(product.price),
             discount:0,
-            total:parseFloat(product.price)*1
+            subtotal:parseFloat(product.price)*1
           }
           directSales.details.push(detail);
       }
@@ -361,6 +361,9 @@
       dataType:"json",
       success:function (params) {
         console.log(params);
+      },
+      error:function(params){
+        console.log(params)
       }
     })
   }
@@ -371,8 +374,8 @@
     let discount = 0;
     directSales.details.forEach(data=>{
       qty = qty+data.qty;
-      data.total = data.qty*data.price;
-      subtotal =subtotal+ data.total
+      data.subtotal = data.qty*data.price;
+      subtotal =subtotal+ data.subtotal
       discount = discount+(data.discount*data.qty);
     })
     directSales.subtotal = subtotal;

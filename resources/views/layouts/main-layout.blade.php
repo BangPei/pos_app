@@ -69,7 +69,7 @@
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <!-- Brand Logo -->
-                <a href="index3.html" class="brand-link">
+                <a href="/" class="brand-link">
                     <img src="/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                     <span class="brand-text font-weight-light">Toko SS</span>
                 </a>
@@ -130,21 +130,21 @@
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon far fa-money-bill-alt"></i>
                                 <p>
-                                    Transaksi
+                                    Aplikasi Kasir
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/transaction" class="nav-link {{Request::is('transaction*')?'active':''}}">
+                                    <a href="/transaction/create" class="nav-link {{Request::is('transaction/create')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Aplikasi Kasir</p>
+                                        <p>Penjualan</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link ">
+                                    <a href="/transaction" class="nav-link {{Request::is('transaction')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Pembelian</p>
+                                        <p>Detail Penjualan</p>
                                     </a>
                                 </li>
                             </ul>

@@ -11,7 +11,7 @@ class DirectSales extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_by_id', 'edit_by_id'];
-    protected $with = ['createdBy', 'editBy', 'details'];
+    protected $with = ['createdBy', 'editBy'];
 
     public function createdBy()
     {
@@ -21,8 +21,13 @@ class DirectSales extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function details()
+    // public function details()
+    // {
+    //     return $this->hasMany(DirectSalesDetail::class);
+    // }
+
+    public function getRouteKeyName()
     {
-        return $this->hasMany(DirectSalesDetail::class);
+        return 'code';
     }
 }
