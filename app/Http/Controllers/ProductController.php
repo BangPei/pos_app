@@ -75,9 +75,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(Request $request)
     {
-        //
+        $product = new Product();
+        if ($request->ajax()) {
+            $product = Product::where('barcode', $request->barcode)->get();
+        }
+        return response()->json($product);
     }
 
     /**

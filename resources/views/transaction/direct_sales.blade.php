@@ -350,6 +350,22 @@
         countTotality();
         reloadJsonDataTable(tblOrder, directSales.details);
     });
+
+    $('#barcode').on('keyup',function(){
+      let val = $(this).val();
+      $.ajax({
+          url:`{{URL::to('product/show')}}`,
+          type:"GET",
+          data:{"barcode":val},
+          dataType:"json",
+          success:function (params) {
+            console.log(params);
+          },
+          error:function(params){
+            console.log(params)
+          }
+      })
+    })
   })
 
   function saveTransaction(){
