@@ -153,6 +153,12 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 2,
             "price" => 27000.00,
         ]);
+        User::create([
+            "name" => "Administrator",
+            "password" => "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+            "username" => "admin",
+            "remember_token" => "s8NzT1lWhV",
+        ]);
 
         User::factory(5)->create();
     }

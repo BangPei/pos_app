@@ -13,10 +13,10 @@ class DirectSalesDetail extends Model
     protected $hidden = ['product_id'];
     protected $with = ['product'];
 
-    // public function directSales()
-    // {
-    //     return $this->belongsTo(DirectSales::class);
-    // }
+    public function directSales()
+    {
+        return $this->belongsTo(DirectSales::class);
+    }
     public function product()
     {
         return $this->belongsTo(Product::class);
