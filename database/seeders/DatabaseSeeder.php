@@ -131,6 +131,28 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 2,
             "price" => 20000.00,
         ]);
+        Product::create([
+            "barcode" => "8999909000544",
+            "name" => "Marlboro Black 20 btg",
+            "description" => "Rokok Marlboro Marlong",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 2,
+            "edit_by_id" => 2,
+            "price" => 32000.00,
+        ]);
+        Product::create([
+            "barcode" => "8992946523533",
+            "name" => "Shinzui Sakura 420 ml",
+            "description" => "Sabun Cair Shinzui 420 ml",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 2,
+            "edit_by_id" => 2,
+            "price" => 27000.00,
+        ]);
 
         User::factory(5)->create();
     }

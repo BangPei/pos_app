@@ -56,7 +56,7 @@
             defaultContent:"--",
             className:"text-center",
             mRender:function(data, type,full){
-                return moment().format("DD MMMM YYYY HH:mm:ss")
+                return moment(data).format("DD MMMM YYYY HH:mm:ss")
             }
         },
         {
@@ -81,7 +81,7 @@
         {
 		    data: 'id',
 			mRender: function(data, type, full) {
-				return `<a href="/transaction/${full.code}/show" title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a></form>`
+				return `<a href="/transaction/${full.code}/edit" title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a></form>`
 				}
 			}
         ],

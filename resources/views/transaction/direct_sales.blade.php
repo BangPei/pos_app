@@ -294,25 +294,7 @@
 
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
-      if (directSales.details.some(item => item.product.id === product.id)) {
-        directSales.details.forEach(data => {
-          if (data.product_id == product.id) {
-            data.qty = data.qty+1;
-            data.subtotal = parseFloat(data.price)*parseInt(data.qty)
-          }
-        });
-      }else{
-        let detail = {
-            product:product,
-            product_id:product.id,
-            qty:1,
-            price:parseFloat(product.price),
-            discount:0,
-            subtotal:parseFloat(product.price)*1
-          }
-          directSales.details.push(detail);
-      }
-      
+      addProduct(product)
       reloadJsonDataTable(tblOrder,directSales.details)
       countTotality();
       $("#modal-product").modal('hide');
@@ -350,23 +332,40 @@
         countTotality();
         reloadJsonDataTable(tblOrder, directSales.details);
     });
-
-    $('#barcode').on('keyup',function(){
-      let val = $(this).val();
-      $.ajax({
-          url:`{{URL::to('product/show')}}`,
-          type:"GET",
-          data:{"barcode":val},
-          dataType:"json",
-          success:function (params) {
-            console.log(params);
-          },
-          error:function(params){
-            console.log(params)
-          }
-      })
+ 
+    $('#barcode').unbind().bind('keyup',function(e){
+      if(e.keyCode == 13){
+        let val = $(this).val();
+        if (val !="") {
+          $.ajax({
+              url:`{{URL::to('product/show')}}`,
+              type:"GET",
+              data:{"barcode":val},
+              dataType:"json",
+              success:function (item) {
+                if ( Object.keys(item).length != 0) {
+                  addProduct(item)
+                  reloadJsonDataTable(tblOrder,directSales.details)
+                  countTotality();
+                  $("#barcode").val("")
+                }else{
+                  $("#barcode").val(val.toLowerCase())
+                }
+              },
+              error:function(params){
+                console.log(params)
+              }
+          })
+        }
+      }
     })
   })
+
+  function onKeyPressHandler(){
+    setTimeout(() => {
+      setInterval
+    }, 10)
+  }
 
   function saveTransaction(){
     directSales.customer_name = $("#customer-name").val();
@@ -404,6 +403,27 @@
     $('#total-qty').html(formatNumber(directSales.total_item))
     $('#total').html(formatNumber(directSales.amount))
     $("#barcode").focus();
+  }
+
+  function addProduct(params) {
+    if (directSales.details.some(item => item.product.id === params.id)) {
+        directSales.details.forEach(data => {
+          if (data.product_id == params.id) {
+            data.qty = data.qty+1;
+            data.subtotal = parseFloat(data.price)*parseInt(data.qty)
+          }
+        });
+      }else{
+        let detail = {
+            product:params,
+            product_id:params.id,
+            qty:1,
+            price:parseFloat(params.price),
+            discount:0,
+            subtotal:parseFloat(params.price)*1
+          }
+          directSales.details.push(detail);
+      }
   }
 </script>
 @endsection

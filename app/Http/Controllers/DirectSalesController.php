@@ -19,6 +19,10 @@ class DirectSalesController extends Controller
     public function index(UtilitiesRequest $request)
     {
         $directSales = DirectSales::all();
+        foreach ($directSales as $ds) {
+            $dsDetails = DirectSalesDetail::where('direct_sales_id', $ds->id)->get();
+            $ds->details = $dsDetails;
+        }
         if ($request->ajax()) {
             return datatables()->of($directSales)->make(true);
         }

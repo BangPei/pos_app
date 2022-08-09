@@ -11,7 +11,7 @@ class DirectSalesDetail extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['product_id'];
-    protected $with = ['directSales', 'product'];
+    protected $with = ['product'];
 
     // public function directSales()
     // {

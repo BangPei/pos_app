@@ -79,7 +79,7 @@ class ProductController extends Controller
     {
         $product = new Product();
         if ($request->ajax()) {
-            $product = Product::where('barcode', $request->barcode)->get();
+            $product = Product::where('barcode', $request->barcode)->first();
         }
         return response()->json($product);
     }
