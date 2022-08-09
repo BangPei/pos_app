@@ -84,25 +84,6 @@
               <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary" id="btn-save"><i class="fas fa-save"></i> Simpan</a>
             </div>
           </div>
-          {{-- <hr style="margin:0 !important">
-          <div class="row pt-1">
-            <div class="col-sm-12">
-              <div class="form-group">
-                <input type="text" name="barcode-2" autofocus placeholder="Scann Barcode" class="form-control">
-              </div>
-            </div>
-            <div class="col-md-8 col-sm-12">
-              <div class="form-group">
-                <input type="text" name="name" readonly autofocus placeholder="Nama Barang" class="form-control">
-              </div>
-            </div>
-            <div class="col-md-4 col-sm-12">
-              <div class="form-group">
-                <input type="text" name="qty" autofocus placeholder="Qty" class="form-control">
-              </div>
-            </div>
-            <div class="col-sm-12"><a href="#" class="btn btn-block btn-primary">input</a></div>
-          </div> --}}
         </div>
         <div class="col-md-8 col-sm-12">
           <table class="table table-striped table-bordered table-sm" id="table-order">
@@ -278,7 +259,7 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a href="#" title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
+						return `<a onclick="javascript.void(0)" title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
 					}
 				}
       ],
@@ -290,7 +271,6 @@
         ],
     })
     $('div.dataTables_filter input', tblProduct.table().container()).focus();
-    $("#barcode").focus();
 
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
@@ -298,7 +278,9 @@
       reloadJsonDataTable(tblOrder,directSales.details)
       countTotality();
       $("#modal-product").modal('hide');
-      $("#barcode").focus()
+    })
+    $('#modal-product').on('hidden.bs.modal', function (e) {
+      $('#barcode').focus()
     })
 
     $('#table-order').on('click', '.delete-product', function() {
@@ -333,7 +315,7 @@
         reloadJsonDataTable(tblOrder, directSales.details);
     });
  
-    $('#barcode').unbind().bind('keyup',function(e){
+    $('#barcode').on('keypress',function(e){
       if(e.keyCode == 13){
         let val = $(this).val();
         if (val !="") {
@@ -402,7 +384,8 @@
     $('#discount-1').html(formatNumber(directSales.discount))
     $('#total-qty').html(formatNumber(directSales.total_item))
     $('#total').html(formatNumber(directSales.amount))
-    $("#barcode").focus();
+    $('#barcode').animate({left:0,duration:'slow'});
+    $('#barcode').focus();
   }
 
   function addProduct(params) {
