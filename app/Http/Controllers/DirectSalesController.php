@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\DirectSales;
 use App\Http\Requests\UpdateDirectSalesRequest;
+use App\Models\DefaultPayment;
 use App\Models\DirectSalesDetail;
+use App\Models\PaymentType;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
@@ -27,7 +29,13 @@ class DirectSalesController extends Controller
             return datatables()->of($directSales)->make(true);
         }
         // var_dump($directSales);
-        return view('transaction.index', ["title" => "Detail Transaksi Keluar", "menu" => "Transaksi"]);
+        return view(
+            'transaction.index',
+            [
+                "title" => "Detail Transaksi Keluar",
+                "menu" => "Transaksi",
+            ]
+        );
     }
 
     /**
@@ -41,7 +49,14 @@ class DirectSalesController extends Controller
         if ($request->ajax()) {
             return datatables()->of($products)->make(true);
         }
-        return view('transaction/direct_sales', ["title" => "Aplikasi Kasir", "menu" => "Transaksi"]);
+        $defaultPayment = DefaultPayment::first();
+        $paymentType = PaymentType::all();
+        return view('transaction/direct_sales', [
+            "title" => "Aplikasi Kasir",
+            "menu" => "Transaksi",
+            "payment" => $paymentType,
+            "defaultPayment" => $defaultPayment,
+        ]);
     }
 
     /**
@@ -77,6 +92,7 @@ class DirectSalesController extends Controller
         $ds->total_item = $request->total_item;
         $ds->created_by_id = auth()->user()->id;
         $ds->edit_by_id = auth()->user()->id;
+        $ds->payment_type_id = $request->payment_type_id;
         $ds->save();
 
         $details = [];

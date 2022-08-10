@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDirectSalesTable extends Migration
+class CreateDefaultPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,8 @@ class CreateDirectSalesTable extends Migration
      */
     public function up()
     {
-        Schema::create('direct_sales', function (Blueprint $table) {
+        Schema::create('default_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->string('customer_name')->nullable();
-            $table->float('amount');
-            $table->float('discount');
-            $table->float('additional_discount');
-            $table->float('cash');
-            $table->float('change');
-            $table->float('subtotal');
-            $table->integer('total_item');
             $table->foreignId('payment_type_id');
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
@@ -38,6 +29,6 @@ class CreateDirectSalesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('direct_sales');
+        Schema::dropIfExists('default_payments');
     }
 }

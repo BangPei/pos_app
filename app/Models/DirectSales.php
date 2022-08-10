@@ -11,7 +11,7 @@ class DirectSales extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_by_id', 'edit_by_id'];
-    protected $with = ['createdBy', 'editBy', 'details'];
+    protected $with = ['createdBy', 'editBy', 'details', 'paymentType'];
 
     public function createdBy()
     {
@@ -20,6 +20,10 @@ class DirectSales extends Model
     public function editBy()
     {
         return $this->belongsTo(User::class);
+    }
+    public function paymentType()
+    {
+        return $this->belongsTo(PaymentType::class);
     }
     public function details()
     {

@@ -57,7 +57,27 @@
           </div>
           <hr>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Uang Cash</div>
+            <div class="col-sm-4 font-weight-bold">Tipe Pembayaran</div>
+            <div class="col-sm-2 font-weight-bold">:</div>
+            <div class="col-sm-6 text-right">
+              <select name="payment-type" id="payment-type" class="form-control">
+                @foreach ($payment as $pt)
+                @if (isset($defaultPayment))
+                    @if ($pt->id === $defaultPayment->$payment_type_id)
+                      <option selected value="{{$pt->id}}">{{$pt->name}}</option>
+                    @else
+                      <option value="{{$pt->id}}">{{$pt->name}}</option>
+                      @endif
+                  @else
+                      <option value="{{$pt->id}}">{{$pt->name}}</option>
+                @endif
+                  
+                @endforeach
+            </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 font-weight-bold">Uang Tunai</div>
             <div class="col-sm-2 font-weight-bold">:</div>
             <div class="col-sm-6 text-right">
               <input type="text" placeholder="0" id="cash" class="text-right font-weight-bold number2" style="width: 100%">
@@ -225,52 +245,55 @@
 
     keyupTableNumber($('#table-order'))
 
-    tblProduct = $('#table-product').DataTable({
-      processing:true,
-      serverSide:true,
-      ajax:{
-        url:"{{ route('product.index') }}",
-        type:"GET",
-      },
-      columns:[
-        {
-          data:"barcode",
-          defaultContent:"--"
+    $('#modal-product').on('show.bs.modal', function (e) {
+      tblProduct = $('#table-product').DataTable({
+        processing:true,
+        serverSide:true,
+        ajax:{
+          url:"{{ route('product.index') }}",
+          type:"GET",
         },
-        {
-          data:"name",
-          defaultContent:"--"
-        },
-        {
-          data:"uom.name",
-          defaultContent:"--"
-        },
-        {
-          data:"category.name",
-          defaultContent:"--"
-        },
-        {
-          data:"price",
-          defaultContent:"0",
-          mRender:function(data,type,full){
-            return `Rp. ${formatNumber(data)}`
-          }
-        },
-        {
-					data: 'id',
-					mRender: function(data, type, full) {
-						return `<a onclick="javascript.void(0)" title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
-					}
-				}
-      ],
-      columnDefs: [
-          { 
-            className: "text-center",
-            targets: [2,3,5]
+        columns:[
+          {
+            data:"barcode",
+            defaultContent:"--"
           },
+          {
+            data:"name",
+            defaultContent:"--"
+          },
+          {
+            data:"uom.name",
+            defaultContent:"--"
+          },
+          {
+            data:"category.name",
+            defaultContent:"--"
+          },
+          {
+            data:"price",
+            defaultContent:"0",
+            mRender:function(data,type,full){
+              return `Rp. ${formatNumber(data)}`
+            }
+          },
+          {
+            data: 'id',
+            mRender: function(data, type, full) {
+              return `<a title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
+            }
+          }
         ],
+        columnDefs: [
+            { 
+              className: "text-center",
+              targets: [2,3,5]
+            },
+          ],
+      })
+      $('div.dataTables_filter input', tblProduct.table().container()).focus();
     })
-    $('div.dataTables_filter input', tblProduct.table().container()).focus();
+
 
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
@@ -281,6 +304,7 @@
     })
     $('#modal-product').on('hidden.bs.modal', function (e) {
       $('#barcode').focus()
+      $('#table-product').DataTable().destroy();
     })
 
     $('#table-order').on('click', '.delete-product', function() {
@@ -341,16 +365,21 @@
         }
       }
     })
+
+    $(window).bind('beforeunload', function(){
+      if (directSales.details.length!=0) {
+        return "Do you want to exit this page?";
+      }
+    });
   })
 
-  function onKeyPressHandler(){
-    setTimeout(() => {
-      setInterval
-    }, 10)
-  }
-
   function saveTransaction(){
+    if (directSales.details.length==0 || $('#cash').val()=="") {
+      alert('Transaksi atau Uang Cash Tidak boleh kosong')
+      return false;
+    }
     directSales.customer_name = $("#customer-name").val();
+    directSales.payment_type_id = $('#payment-type').val();
     $.ajax({
       data:directSales,
       url:"{{ route('transaction.store') }}",

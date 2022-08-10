@@ -16,7 +16,7 @@
           </div>
           <input type="text" name="id" class="form-control" style="display: none" id="id">
           <div class="form-group">
-            <label for="name" class="col-form-label">Kategori</label>
+            <label for="name" class="col-form-label">Nama</label>
             <input required type="text" name="name" class="form-control" id="name">
           </div>
           <div class="form-group">

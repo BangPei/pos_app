@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Atm;
 use App\Models\Category;
+use App\Models\PaymentType;
 use App\Models\Product;
 use App\Models\Uom;
 use App\Models\User;
@@ -98,6 +100,72 @@ class DatabaseSeeder extends Seeder
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
+
+        PaymentType::create([
+            "name" => "Debit",
+            "description" => "Tipe Pembayaran Dengan Debit",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        PaymentType::create([
+            "name" => "Kartu Kredit",
+            "description" => "Tipe Pembayaran Dengan Kartu Kredit",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        PaymentType::create([
+            "name" => "Tunai",
+            "description" => "Tipe Pembayaran Dengan Tunai",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        PaymentType::create([
+            "name" => "Transfer",
+            "description" => "Tipe Pembayaran Dengan Transfer",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        PaymentType::create([
+            "name" => "E-money",
+            "description" => "Tipe Pembayaran Dengan E-money",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        PaymentType::create([
+            "name" => "Hutang",
+            "description" => "Tipe Pembayaran Dengan Hutang",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+
+        Atm::create([
+            "name" => "BCA",
+            "description" => "Pembayaran Dengan ATM BCA",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        Atm::create([
+            "name" => "Mandiri",
+            "description" => "Pembayaran Dengan ATM Mandiri",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+        Atm::create([
+            "name" => "BNI",
+            "description" => "Pembayaran Dengan ATM BNI",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
+
         Product::create([
             "barcode" => "8992736211275",
             "name" => "Sasa Saus Tomat 24's x 8 gr",

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Symfony\Component\Console\Input\Input;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class CategoryController extends Controller
