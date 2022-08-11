@@ -10,7 +10,7 @@ class DirectSales extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $hidden = ['created_by_id', 'edit_by_id'];
+    protected $hidden = ['created_by_id', 'edit_by_id', 'payment_type_id'];
     protected $with = ['createdBy', 'editBy', 'details', 'paymentType'];
 
     public function createdBy()

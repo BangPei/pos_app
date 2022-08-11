@@ -97,7 +97,7 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ (Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
+                        <li class="nav-item {{ (Request::is('bank*')||Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
@@ -128,6 +128,12 @@
                                     <a href="/payment" class="nav-link {{Request::is('payment*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Tipe Pembayaran</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/bank" class="nav-link {{Request::is('bank*')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Bank</p>
                                     </a>
                                 </li>
                             </ul>

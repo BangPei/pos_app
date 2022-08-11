@@ -1,6 +1,6 @@
 @extends('layouts.main-layout')
 @section('content-class')
-  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 @endsection
 
 @section('content-child')
@@ -20,6 +20,7 @@
           <tr>
             <th>Tipe Pembayaran</th>
             <th>Deskripsi</th>
+            <th>Set Utama</th>
             <th>Status</th>
             <th>Aksi</th>
           </tr>
@@ -33,9 +34,8 @@
 @endsection
 
 @section('content-script')
-<script src="plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="js/script.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
   $(document).ready(function(){
@@ -54,6 +54,13 @@
         {
           data:"description",
           defaultContent:"--"
+        },
+        {
+          data:"is_default",
+          defaultContent:"--",
+          mRender:function(data,type,full){
+            return `<input data-id="${full.id}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" ${data==1? 'checked' : '' }>`
+          }
         },
         {
           data:"is_active",

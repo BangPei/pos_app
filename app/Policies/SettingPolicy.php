@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\DefaultPayment;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class DefaultPaymentPolicy
+class SettingPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class DefaultPaymentPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DefaultPayment  $defaultPayment
+     * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, DefaultPayment $defaultPayment)
+    public function view(User $user, Setting $setting)
     {
         //
     }
@@ -48,10 +48,10 @@ class DefaultPaymentPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DefaultPayment  $defaultPayment
+     * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, DefaultPayment $defaultPayment)
+    public function update(User $user, Setting $setting)
     {
         //
     }
@@ -60,10 +60,10 @@ class DefaultPaymentPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DefaultPayment  $defaultPayment
+     * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, DefaultPayment $defaultPayment)
+    public function delete(User $user, Setting $setting)
     {
         //
     }
@@ -72,10 +72,10 @@ class DefaultPaymentPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DefaultPayment  $defaultPayment
+     * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, DefaultPayment $defaultPayment)
+    public function restore(User $user, Setting $setting)
     {
         //
     }
@@ -84,10 +84,10 @@ class DefaultPaymentPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DefaultPayment  $defaultPayment
+     * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, DefaultPayment $defaultPayment)
+    public function forceDelete(User $user, Setting $setting)
     {
         //
     }

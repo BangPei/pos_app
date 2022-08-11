@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AtmController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,7 @@ Route::resource('user', UserController::class)->middleware('auth');
 Route::resource('product', ProductController::class)->middleware('auth');
 Route::resource('category', CategoryController::class)->middleware('auth');
 Route::resource('payment', PaymentTypeController::class)->middleware('auth');
-Route::resource('atm', PaymentTypeController::class)->middleware('auth');
+Route::resource('bank', AtmController::class)->middleware('auth');
 Route::resource('uom', UomController::class)->middleware('auth');
+Route::resource('setting', SettingController::class)->middleware('auth');
 Route::resource('transaction', DirectSalesController::class)->middleware('auth');

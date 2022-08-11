@@ -105,6 +105,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Debit",
             "description" => "Tipe Pembayaran Dengan Debit",
             "is_active" => true,
+            "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -112,6 +113,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Kartu Kredit",
             "description" => "Tipe Pembayaran Dengan Kartu Kredit",
             "is_active" => true,
+            "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -119,6 +121,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Tunai",
             "description" => "Tipe Pembayaran Dengan Tunai",
             "is_active" => true,
+            "is_default" => true,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -126,6 +129,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Transfer",
             "description" => "Tipe Pembayaran Dengan Transfer",
             "is_active" => true,
+            "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -133,6 +137,7 @@ class DatabaseSeeder extends Seeder
             "name" => "E-money",
             "description" => "Tipe Pembayaran Dengan E-money",
             "is_active" => true,
+            "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -140,6 +145,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Hutang",
             "description" => "Tipe Pembayaran Dengan Hutang",
             "is_active" => true,
+            "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -158,13 +164,7 @@ class DatabaseSeeder extends Seeder
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
-        Atm::create([
-            "name" => "BNI",
-            "description" => "Pembayaran Dengan ATM BNI",
-            "is_active" => true,
-            "created_by_id" => 1,
-            "edit_by_id" => 1,
-        ]);
+
 
         Product::create([
             "barcode" => "8992736211275",

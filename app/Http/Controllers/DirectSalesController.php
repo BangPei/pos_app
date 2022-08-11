@@ -49,13 +49,11 @@ class DirectSalesController extends Controller
         if ($request->ajax()) {
             return datatables()->of($products)->make(true);
         }
-        $defaultPayment = DefaultPayment::first();
         $paymentType = PaymentType::all();
         return view('transaction/direct_sales', [
             "title" => "Aplikasi Kasir",
             "menu" => "Transaksi",
             "payment" => $paymentType,
-            "defaultPayment" => $defaultPayment,
         ]);
     }
 

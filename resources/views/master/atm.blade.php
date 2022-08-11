@@ -43,7 +43,7 @@
       processing:true,
       serverSide:true,
       ajax:{
-        url:"{{ route('atm.index') }}",
+        url:"{{ route('bank.index') }}",
         type:"GET",
       },
       columns:[
