@@ -177,6 +177,7 @@
     details:[]
   };
   $(document).ready(function(){
+    $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
       searching: false,
