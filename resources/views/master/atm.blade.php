@@ -66,7 +66,7 @@
 			data: 'id',
 			mRender: function(data, type, full) {
 				return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-atm"><i class="fas fa-edit"></i></a>
-                <form action="/atm/${data}" method="POST" class="d-inline">
+                <form action="/bank/${data}" method="POST" class="d-inline">
                 @method('DELETE')
                 @csrf
                 <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
@@ -93,11 +93,11 @@
       $('#form-method').append(`
         @method('put')
       `)
-      $('#form-description').attr('action',`/atm/${data.id}`)
+      $('#form-description').attr('action',`/bank/${data.id}`)
     })
 
     $('#btn-add').on('click',function(){
-      $('#form-description').attr('action','/atm')
+      $('#form-description').attr('action','/bank')
       $('#form-method').append(`
         @method('post')
       `)

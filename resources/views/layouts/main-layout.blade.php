@@ -168,6 +168,13 @@
                                 <p>User</p>
                             </a>
                         </li>
+                        <li class="nav-header">Setting</li>
+                        <li class="nav-item">
+                            <a href="/setting" class="nav-link {{Request::is('setting')?'active':''}}">
+                                <i class="nav-icon fa fa-cogs"></i>
+                                <p>Pengaturan</p>
+                            </a>
+                        </li>
                         <li class="nav-header">EXAMPLES</li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">

@@ -62,16 +62,7 @@
             <div class="col-sm-6 text-right">
               <select name="payment-type" id="payment-type" class="form-control">
                 @foreach ($payment as $pt)
-                @if (isset($defaultPayment))
-                    @if ($pt->id === $defaultPayment->$payment_type_id)
-                      <option selected value="{{$pt->id}}">{{$pt->name}}</option>
-                    @else
-                      <option value="{{$pt->id}}">{{$pt->name}}</option>
-                      @endif
-                  @else
-                      <option value="{{$pt->id}}">{{$pt->name}}</option>
-                @endif
-                  
+                  <option {{ $pt->is_default?'selected':""}} data-atm="{{ $pt->show_atm }}" data-id="{{$pt->id}}">{{$pt->name}}</option>
                 @endforeach
             </select>
             </div>

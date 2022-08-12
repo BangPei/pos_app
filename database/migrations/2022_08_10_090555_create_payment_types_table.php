@@ -18,9 +18,13 @@ class CreatePaymentTypesTable extends Migration
             $table->string('name')->unique();
             $table->string('description');
             $table->boolean('is_active')->default(true);
+            $table->boolean('paid_off')->default(true);
             $table->boolean('is_default')->default(false);
+            $table->boolean('reduce_option')->default(false);
+            $table->boolean('show_atm')->default(false);
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
+            $table->foreignId('reduce_id')->nullable();
             $table->timestamps();
         });
     }

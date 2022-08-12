@@ -6,6 +6,7 @@ use App\Models\Atm;
 use App\Models\Category;
 use App\Models\PaymentType;
 use App\Models\Product;
+use App\Models\Reduce;
 use App\Models\Uom;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -108,6 +109,10 @@ class DatabaseSeeder extends Seeder
             "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_id" => 1,
+            "reduce_option" => true,
+            "show_atm" => true,
+            "paid_off" => true,
         ]);
         PaymentType::create([
             "name" => "Kartu Kredit",
@@ -116,6 +121,10 @@ class DatabaseSeeder extends Seeder
             "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_id" => 2,
+            "reduce_option" => false,
+            "show_atm" => false,
+            "paid_off" => true,
         ]);
         PaymentType::create([
             "name" => "Tunai",
@@ -124,6 +133,9 @@ class DatabaseSeeder extends Seeder
             "is_default" => true,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_option" => false,
+            "show_atm" => false,
+            "paid_off" => true,
         ]);
         PaymentType::create([
             "name" => "Transfer",
@@ -132,6 +144,9 @@ class DatabaseSeeder extends Seeder
             "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_option" => false,
+            "show_atm" => false,
+            "paid_off" => true,
         ]);
         PaymentType::create([
             "name" => "E-money",
@@ -140,6 +155,9 @@ class DatabaseSeeder extends Seeder
             "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_option" => false,
+            "show_atm" => false,
+            "paid_off" => true,
         ]);
         PaymentType::create([
             "name" => "Hutang",
@@ -148,6 +166,9 @@ class DatabaseSeeder extends Seeder
             "is_default" => false,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+            "reduce_option" => false,
+            "show_atm" => false,
+            "paid_off" => false,
         ]);
 
         Atm::create([
@@ -163,6 +184,21 @@ class DatabaseSeeder extends Seeder
             "is_active" => true,
             "created_by_id" => 1,
             "edit_by_id" => 1,
+        ]);
+
+        Reduce::create([
+            "name" => "Debit",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "reduce" => 1,
+        ]);
+        Reduce::create([
+            "name" => "Kartu Kredit",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "reduce" => 2,
         ]);
 
 

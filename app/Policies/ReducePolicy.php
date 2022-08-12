@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Setting;
 use App\Models\User;
+use App\Models\reduce;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class SettingPolicy
+class ReducePolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class SettingPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Setting  $setting
+     * @param  \App\Models\reduce  $reduce
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Setting $setting)
+    public function view(User $user, reduce $reduce)
     {
         //
     }
@@ -48,10 +48,10 @@ class SettingPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Setting  $setting
+     * @param  \App\Models\reduce  $reduce
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Setting $setting)
+    public function update(User $user, reduce $reduce)
     {
         //
     }
@@ -60,10 +60,10 @@ class SettingPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Setting  $setting
+     * @param  \App\Models\reduce  $reduce
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Setting $setting)
+    public function delete(User $user, reduce $reduce)
     {
         //
     }
@@ -72,10 +72,10 @@ class SettingPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Setting  $setting
+     * @param  \App\Models\reduce  $reduce
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Setting $setting)
+    public function restore(User $user, reduce $reduce)
     {
         //
     }
@@ -84,10 +84,10 @@ class SettingPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Setting  $setting
+     * @param  \App\Models\reduce  $reduce
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Setting $setting)
+    public function forceDelete(User $user, reduce $reduce)
     {
         //
     }

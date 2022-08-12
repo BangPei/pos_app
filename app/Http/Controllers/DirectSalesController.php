@@ -8,6 +8,7 @@ use App\Models\DefaultPayment;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use App\Models\Product;
+use App\Models\Reduce;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
