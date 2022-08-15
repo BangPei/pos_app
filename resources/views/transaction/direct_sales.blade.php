@@ -67,18 +67,30 @@
             </select>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-4 font-weight-bold">Uang Tunai</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-6 text-right">
-              <input type="text" placeholder="0" id="cash" class="text-right font-weight-bold number2" style="width: 100%">
+          <div id="cash-area">
+            <div class="row">
+              <div class="col-sm-4 font-weight-bold">Uang Tunai</div>
+              <div class="col-sm-2 font-weight-bold">:</div>
+              <div class="col-sm-6 text-right">
+                <div class="row">
+                  <div class="col-5">
+                    <label for="is-cash">
+                      <i style="font-size: 10px !important">Uang Pas</i>
+                    </label>
+                    <input type="checkbox" id="is-cash">
+                  </div>
+                  <div class="col-7">
+                    <input type="text" placeholder="0" id="cash" class="text-right font-weight-bold number2" style="width: 100%">
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4 font-weight-bold">Kembalian</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-2 font-weight-bold">Rp.</div>
-            <div class="col-sm-4 font-weight-bold text-right" id="change">0</div>
+            <div class="row">
+              <div class="col-sm-4 font-weight-bold">Kembalian</div>
+              <div class="col-sm-2 font-weight-bold">:</div>
+              <div class="col-sm-2 font-weight-bold">Rp.</div>
+              <div class="col-sm-4 font-weight-bold text-right" id="change">0</div>
+            </div>
           </div>
           <br>
           <div class="row">
@@ -230,7 +242,19 @@
       columnDefs: [
           { 
             className: "text-right",
-            targets: [2,3,4,5]
+            targets: [1,2,3,4,5]
+          },
+          { width: '8%',
+            targets: [1,2,5]
+          },
+          { width: '20%',
+            targets: 0
+          },
+          { width: '5%',
+            targets: 6
+          },
+          { width: '10%',
+            targets: [3,4]
           },
         ],
     })
@@ -315,13 +339,18 @@
         let value = $(this).val().replace(/,/g, "");
         directSales.additional_discount = parseFloat(value===""?0:value);
         countTotality();
+        $('#is-cash').prop('checked',false)
+        directSales.cash = 0;
+        directSales.change = 0;
+        $("#cash").val(formatNumber(directSales.cash))
+        $("#change").html(formatNumber(directSales.change))
     });
     $('#cash').on('change', function() {
         let value = $(this).val().replace(/,/g, "");
         directSales.cash = parseFloat(value===""?0:value);
         
         directSales.change = directSales.cash-directSales.amount;
-        $("#cash").html(formatNumber(directSales.cash))
+        $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
     });
     $('#table-order').on('change', '.discount-order', function() {
@@ -329,7 +358,25 @@
         data.discount =parseFloat($(this).val().replace(/,/g, ""));
         countTotality();
         reloadJsonDataTable(tblOrder, directSales.details);
+        $('#is-cash').prop('checked',false)
+        directSales.cash = 0;
+        directSales.change = 0;
+        $("#cash").val(formatNumber(directSales.cash))
+        $("#change").html(formatNumber(directSales.change))
     });
+
+    $('#is-cash').on('change',function () {
+      val = $(this).prop('checked')
+      if (val) {
+        directSales.cash = directSales.amount;
+        directSales.change = directSales.cash-directSales.amount;
+      }else{
+        directSales.cash = 0;
+        directSales.change = 0;
+      }
+      $("#cash").val(formatNumber(directSales.cash))
+      $("#change").html(formatNumber(directSales.change))
+    })
  
     $('#barcode').on('keypress',function(e){
       if(e.keyCode == 13){
