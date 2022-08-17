@@ -23,6 +23,7 @@ class CreateDirectSalesTable extends Migration
             $table->float('cash');
             $table->float('change');
             $table->float('subtotal');
+            $table->integer('reduce');
             $table->integer('total_item');
             $table->foreignId('payment_type_id');
             $table->foreignId('created_by_id');

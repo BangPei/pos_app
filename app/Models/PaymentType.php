@@ -13,12 +13,13 @@ class PaymentType extends Model
     protected $with = ['created_by', 'edit_by', 'reduce'];
     protected $hidden = ['created_by_id', 'edit_by_id', 'reduce_id'];
 
-    protected $casts = [
+    public $casts = [
         'is_active' => 'boolean',
         'paid_off' => 'boolean',
         'is_default' => 'boolean',
         'reduce_option' => 'boolean',
         'show_atm' => 'boolean',
+        'show_cash' => 'boolean',
     ];
 
     public function created_by()
@@ -32,5 +33,9 @@ class PaymentType extends Model
     public function reduce()
     {
         return $this->belongsTo(Reduce::class);
+    }
+    public function direcSales()
+    {
+        return $this->hasMany(DirectSales::class);
     }
 }

@@ -22,6 +22,7 @@ class CreatePaymentTypesTable extends Migration
             $table->boolean('is_default')->default(false);
             $table->boolean('reduce_option')->default(false);
             $table->boolean('show_atm')->default(false);
+            $table->boolean('show_cash')->default(false);
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
             $table->foreignId('reduce_id')->nullable();

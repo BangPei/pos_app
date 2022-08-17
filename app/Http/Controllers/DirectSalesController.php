@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DirectSales;
 use App\Http\Requests\UpdateDirectSalesRequest;
+use App\Models\Atm;
 use App\Models\DefaultPayment;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
@@ -51,10 +52,14 @@ class DirectSalesController extends Controller
             return datatables()->of($products)->make(true);
         }
         $paymentType = PaymentType::all();
+        $banks = Atm::all();
+        // print($paymentType);
+        // die();
         return view('transaction/direct_sales', [
             "title" => "Aplikasi Kasir",
             "menu" => "Transaksi",
             "payment" => $paymentType,
+            "bank" => $banks,
         ]);
     }
 
@@ -92,6 +97,7 @@ class DirectSalesController extends Controller
         $ds->created_by_id = auth()->user()->id;
         $ds->edit_by_id = auth()->user()->id;
         $ds->payment_type_id = $request->payment_type_id;
+        $ds->reduce = $request->reduce;
         $ds->save();
 
         $details = [];

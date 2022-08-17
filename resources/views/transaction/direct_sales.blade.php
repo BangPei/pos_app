@@ -43,6 +43,13 @@
               <input type="text" placeholder="0" id="discount-2" class="text-right font-weight-bold number2" style="width: 100%">
             </div>
           </div>
+          <div id="reduce-area" class="d-none">
+            <div class="row">
+              <div class="col-sm-4 font-weight-bold">Biaya Kartu (<span id="reduce-persentage">0</span>%)</div>
+              <div class="col-sm-2 font-weight-bold">:</div>
+              <div class="col-sm-6 font-weight-bold text-right" id="reduce">0</div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-sm-4 font-weight-bold">Total Qty</div>
             <div class="col-sm-2 font-weight-bold">:</div>
@@ -62,9 +69,21 @@
             <div class="col-sm-6 text-right">
               <select name="payment-type" id="payment-type" class="form-control">
                 @foreach ($payment as $pt)
-                  <option {{ $pt->is_default?'selected':""}} data-atm="{{ $pt->show_atm }}" data-id="{{$pt->id}}">{{$pt->name}}</option>
+                  <option value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
                 @endforeach
             </select>
+            </div>
+          </div>
+          <div id="atm-area" class="d-none">
+            @foreach ($bank as $b)
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="bank" id="bank-{{ $b->id }}" value="{{ $b->id }}">
+                <label class="form-check-label" for="bank-{{ $b->id }}">{{ $b->name }}</label>
+              </div>
+            @endforeach
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="bank" id="bank-other" value="other">
+              <label class="form-check-label" for="bank-other">Lainnya</label>
             </div>
           </div>
           <div id="cash-area">
@@ -97,7 +116,7 @@
             <div class="col-sm-4 font-weight-bold">Nama Pembeli</div>
             <div class="col-sm-2 font-weight-bold">:</div>
             <div class="col-sm-6 text-right">
-              <input type="text" placeholder="nama Pembeli" id="customer-name" class="font-weight-bold" style="width: 100%">
+              <input type="text" placeholder="Nama Pembeli" id="customer-name" class="font-weight-bold" style="width: 100%">
             </div>
           </div>
           <hr>
@@ -177,6 +196,7 @@
     change:0,
     total_item:0,
     subtotal:0,
+    reduce:0,
     details:[]
   };
   $(document).ready(function(){
@@ -331,7 +351,8 @@
     });
     $('#table-order').on('change', '.qty-order', function() {
         let data = tblOrder.row($(this).parents('tr')).data();
-        data.qty =parseInt($(this).val().replace(/,/g, ""));
+        let val = $(this).val() ==""?"1":$(this).val()
+        data.qty =parseInt(val.replace(/,/g, ""));
         countTotality();
         reloadJsonDataTable(tblOrder, directSales.details);
     });
@@ -355,7 +376,8 @@
     });
     $('#table-order').on('change', '.discount-order', function() {
         let data = tblOrder.row($(this).parents('tr')).data();
-        data.discount =parseFloat($(this).val().replace(/,/g, ""));
+        let val = $(this).val() ==""?"0":$(this).val()
+        data.discount =parseFloat(val.replace(/,/g, ""));
         countTotality();
         reloadJsonDataTable(tblOrder, directSales.details);
         $('#is-cash').prop('checked',false)
@@ -410,11 +432,76 @@
         return "Do you want to exit this page?";
       }
     });
+
+    $('#payment-type').on('change',function(){
+      let showAtm = $(this).find(':selected').attr('data-atm');
+      let showCash = $(this).find(':selected').attr('show-cash');
+      let dataReduce = $(this).find(':selected').attr('data-reduce');
+      if (showAtm!="") {
+        $('#atm-area').removeClass('d-none')
+        $('#cash-area').addClass('d-none')
+        $('#reduce-area').addClass('d-none')
+        directSales.cash = 0;
+        directSales.change = 0;
+        directSales.reduce=0;
+        $("#cash").val(formatNumber(directSales.cash))
+        $("#change").html(formatNumber(directSales.change))
+        $('#reduce-persentage').html("0")
+      }else if(showCash!=""){
+        directSales.reduce=0;
+        $('#reduce-area').addClass('d-none')
+        $('#atm-area').addClass('d-none')
+        $('#cash-area').removeClass('d-none')
+        $('#reduce-persentage').html("0")
+      }else{
+        $('#atm-area').addClass('d-none')
+        $('#cash-area').addClass('d-none')
+        $('#reduce-area').addClass('d-none')
+        directSales.cash = 0;
+        directSales.change = 0;
+        directSales.reduce=0;
+        $('#reduce-persentage').html("0")
+        $("#cash").val(formatNumber(directSales.cash))
+        $("#change").html(formatNumber(directSales.change))
+        if (dataReduce!="") {
+          $('#reduce-area').removeClass('d-none')
+          directSales.reduce=parseInt(dataReduce);
+          $('#reduce-persentage').html(dataReduce)
+        }
+      }
+      countTotality()
+    })
+
+    $('input[name="bank"]').on('change',function(){
+      let val = $(this).val();
+      let dataReduce = $('#payment-type').find(':selected').attr('data-reduce');
+      if (val == "other") {
+        directSales.reduce=parseInt(dataReduce);
+        $('#reduce-persentage').html(dataReduce)
+        $('#reduce-area').removeClass('d-none')
+      }else{
+        directSales.reduce=0;
+        $('#reduce-area').addClass('d-none')
+        $('#reduce-persentage').html("0")
+      }
+      countTotality()
+    })
   })
 
   function saveTransaction(){
-    if (directSales.details.length==0 || $('#cash').val()=="") {
-      alert('Transaksi atau Uang Cash Tidak boleh kosong')
+    let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
+    let dataCash = $("#payment-type").find(':selected').attr('show-cash');
+    let dataBank = $('input[name="bank"]:checked').val();
+    if (directSales.details.length==0) {
+      alert('Transaksi Tidak boleh kosong')
+      return false;
+    }
+    if (dataAtm!="" && dataBank==undefined) {
+      alert('Silahkan Pilih ATM')
+      return false;
+    }
+    if (dataCash!="" && $('#cash').val()=="") {
+      alert('Uang Tunai Tidak Boleh Kosong')
       return false;
     }
     directSales.customer_name = $("#customer-name").val();
@@ -446,8 +533,10 @@
     directSales.subtotal = subtotal;
     directSales.discount = discount;
     directSales.total_item = qty;
-    
-    directSales.amount = directSales.subtotal-(directSales.discount+(directSales.additional_discount))
+    let subAmount = directSales.subtotal-(directSales.discount+(directSales.additional_discount))
+    let persentResult = (subAmount*(directSales.reduce/100));
+    directSales.amount = subAmount+persentResult;
+    $('#reduce').html(formatNumber(persentResult))
     $('#subtotal').html(formatNumber(directSales.subtotal))
     $('#discount-1').html(formatNumber(directSales.discount))
     $('#total-qty').html(formatNumber(directSales.total_item))

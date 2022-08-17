@@ -112,6 +112,7 @@ class DatabaseSeeder extends Seeder
             "reduce_id" => 1,
             "reduce_option" => true,
             "show_atm" => true,
+            "show_cash" => false,
             "paid_off" => true,
         ]);
         PaymentType::create([
@@ -124,6 +125,7 @@ class DatabaseSeeder extends Seeder
             "reduce_id" => 2,
             "reduce_option" => false,
             "show_atm" => false,
+            "show_cash" => false,
             "paid_off" => true,
         ]);
         PaymentType::create([
@@ -135,6 +137,7 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 1,
             "reduce_option" => false,
             "show_atm" => false,
+            "show_cash" => true,
             "paid_off" => true,
         ]);
         PaymentType::create([
@@ -146,6 +149,7 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 1,
             "reduce_option" => false,
             "show_atm" => false,
+            "show_cash" => false,
             "paid_off" => true,
         ]);
         PaymentType::create([
@@ -157,6 +161,7 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 1,
             "reduce_option" => false,
             "show_atm" => false,
+            "show_cash" => false,
             "paid_off" => true,
         ]);
         PaymentType::create([
@@ -168,6 +173,7 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 1,
             "reduce_option" => false,
             "show_atm" => false,
+            "show_cash" => false,
             "paid_off" => false,
         ]);
 
@@ -257,6 +263,29 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 2,
             "price" => 27000.00,
         ]);
+        Product::create([
+            "barcode" => "8998103010809",
+            "name" => "Carex Sabun Cuci Tangan Aloe Vera 2x200 ml",
+            "description" => "Sabun Cuci Tangan Carex 2x200 ml",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "price" => 20500.00,
+        ]);
+        Product::create([
+            "barcode" => "8992802021166",
+            "name" => "Prenagen Lactamom Stroberi 200 gr",
+            "description" => "Susu Ibu Menyusui (Prenagen)",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "price" => 45000.00,
+        ]);
+
         User::create([
             "name" => "Administrator",
             "password" => "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
