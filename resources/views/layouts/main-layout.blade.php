@@ -136,6 +136,12 @@
                                         <p>Bank</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="/supplier" class="nav-link {{Request::is('bank*')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Supplier</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item {{ (Request::is('transaction*'))?'menu-open':'' }}">
@@ -157,6 +163,29 @@
                                     <a href="/transaction" class="nav-link {{Request::is('transaction')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Detail Penjualan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item {{ (Request::is('order*'))?'menu-open':'' }}">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon far fa-money-bill-alt"></i>
+                                <p>
+                                    Aplikasi Pembelian
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/order/create" class="nav-link {{Request::is('order/create')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pembelian</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/order" class="nav-link {{Request::is('order')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Detail Pembelian</p>
                                     </a>
                                 </li>
                             </ul>
