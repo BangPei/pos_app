@@ -285,6 +285,17 @@ class DatabaseSeeder extends Seeder
             "edit_by_id" => 1,
             "price" => 45000.00,
         ]);
+        Product::create([
+            "barcode" => "8851818936812",
+            "name" => "Laurier Relax Night 30cm 16pcs",
+            "description" => "Pembalut Wanita laurier",
+            "is_active" => true,
+            "uom_id" => 3,
+            "category_id" => 3,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "price" => 15000.00,
+        ]);
 
         User::create([
             "name" => "Administrator",
