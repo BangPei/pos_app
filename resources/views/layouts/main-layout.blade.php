@@ -190,6 +190,29 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item {{ (Request::is('multiple-discount*'))?'menu-open':'' }}">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fa fa-tag"></i>
+                                <p>
+                                    Diskon
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/multiple-discount" class="nav-link {{Request::is('multiple-discount')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Paket Diskon</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Promo Toko</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-header">User</li>
                         <li class="nav-item">
                             <a href="/user" class="nav-link">
@@ -197,6 +220,7 @@
                                 <p>User</p>
                             </a>
                         </li>
+                        
                         <li class="nav-header">Setting</li>
                         <li class="nav-item">
                             <a href="/setting" class="nav-link {{Request::is('setting')?'active':''}}">
