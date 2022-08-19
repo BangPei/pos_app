@@ -28,5 +28,12 @@ class ReduceSeeder extends Seeder
             "edit_by_id" => 1,
             "reduce" => 2,
         ]);
+        Reduce::create([
+            "name" => "PPN",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+            "reduce" => 11,
+        ]);
     }
 }

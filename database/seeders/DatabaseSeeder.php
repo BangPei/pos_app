@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Atm;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([ProductSeeder::class]);
         $this->call([ReduceSeeder::class]);
-        $this->call([ReduceSeeder::class]);
+        $this->call([AtmSeeder::class]);
         $this->call([PaymentTypeSeeder::class]);
         $this->call([CategorySeeder::class]);
         $this->call([UomSeeder::class]);

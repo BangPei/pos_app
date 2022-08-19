@@ -137,7 +137,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/supplier" class="nav-link {{Request::is('bank*')?'active':''}}">
+                                    <a href="/supplier" class="nav-link {{Request::is('supplier*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Supplier</p>
                                     </a>

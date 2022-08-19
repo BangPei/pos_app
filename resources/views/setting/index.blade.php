@@ -6,7 +6,7 @@
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-        <h2 class="card-title">Potangan Tambahan</h2>
+        <h2 class="card-title">Potongan Tambahan</h2>
         <div class="card-tools">
             <a class="btn btn-primary" id="btn-add" data-toggle="modal" data-target="#modal-description" data-backdrop="static" data-keyboard="false">
             <i class="fas fa-plus-circle"></i> Tambah
