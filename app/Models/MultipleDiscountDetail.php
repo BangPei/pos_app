@@ -9,7 +9,7 @@ class MultipleDiscountDetail extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $hidden = ['product_id'];
+    protected $hidden = ['product_id', 'multiple_discount_id'];
     protected $with = ['product'];
 
     public function multipleDiscount()

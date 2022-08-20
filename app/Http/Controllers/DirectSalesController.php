@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\DirectSales;
 use App\Http\Requests\UpdateDirectSalesRequest;
 use App\Models\Atm;
-use App\Models\DefaultPayment;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use App\Models\Product;
-use App\Models\Reduce;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 

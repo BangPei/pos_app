@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\MultipleDiscount;
-use App\Http\Requests\StoreMultipleDiscountRequest;
 use App\Http\Requests\UpdateMultipleDiscountRequest;
+use App\Models\MultipleDiscountDetail;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class MultipleDiscountController extends Controller
@@ -47,9 +48,29 @@ class MultipleDiscountController extends Controller
      * @param  \App\Http\Requests\StoreMultipleDiscountRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMultipleDiscountRequest $request)
+    public function store(Request $request)
     {
-        //
+        $md = new MultipleDiscount();
+        $md->name = $request['name'];
+        $md->min_qty = $request['min_qty'];
+        $md->discount = $request['discount'];
+        $md->is_active = true;
+        $md->created_by_id = auth()->user()->id;
+        $md->edit_by_id = auth()->user()->id;
+        $md->save();
+
+        $details = [];
+
+        for ($i = 0; $i < count($request->details); $i++) {
+            $detail = new MultipleDiscountDetail();
+            $detail->multiple_discount_id = $md["id"];
+            $detail->product_id = $request->details[$i]["product_id"];
+            $detail->is_active = true;
+            $detail->save();
+            array_push($details, $detail);
+        }
+        $md->details = $details;
+        return response()->json($md);
     }
 
     /**

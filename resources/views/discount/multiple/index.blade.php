@@ -52,16 +52,25 @@
             defaultContent:"--"
           },
           {
-            data:"name",
-            defaultContent:"--"
+            data:"min_qty",
+            defaultContent:"--",
+            mRender:function(data,type,full){
+              return `${data} Pcs - Diskon Rp. ${formatNumber(full.discount)}`
+            }
           },
           {
-            data:"name",
+            data:"details",
             defaultContent:"--",
+            mRender:function(data,type,full){
+              return `${data.length} Product`
+            }
           },
           {
-            data:"name",
+            data:"is_active",
             defaultContent:"--",
+            mRender:function(data,type,full){
+              return `<span class="badge badge-${data?'success':'danger'}">${data?'Aktif':'Tidak Aktif'}</span>`
+            }
           },
           {
               data: 'id',

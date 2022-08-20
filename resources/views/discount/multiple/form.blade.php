@@ -13,7 +13,6 @@
         </div>
         <div class="card-body ">
             <form autocomplete="off">
-                @csrf
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
@@ -24,43 +23,43 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="qty">Qty</label>
-                            <input required  type="text" class="form-control" name="qty" id="qty">
+                            <input required  type="text" class="form-control number2" name="min_qty" id="min_qty">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="discount">Diskon</label>
-                            <input required  type="text" class="form-control" name="discount" id="discount">
+                            <input required  type="text" class="form-control number2" name="discount" id="discount">
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <a class="btn btn-primary" href="" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+                            <i class="fas fa-plus-circle"></i> Tambah Produk
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered table-sm" id="table-product-discount">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Harga</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col md-12 text-center">
+                        <button type="button" onclick="saveMultipleDiscount()" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                    </div>
+                </div>
             </form>
-            <div class="row">
-                <div class="col-md-12 text-right">
-                    <a class="btn btn-primary" href="" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-                        <i class="fas fa-plus-circle"></i> Tambah Produk
-                    </a>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <table class="table table-striped table-bordered table-sm" id="table-product-discount">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>Harga</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col md-12 text-center">
-                    <button class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -102,6 +101,7 @@
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
 <script>
     let multipleDiscount = {
+        "_token": "{{ csrf_token() }}",
         name:null,
         min_qty:0,
         discount:0,
@@ -226,6 +226,32 @@
             reloadJsonDataTable(tblProductDiscount, multipleDiscount.details);
         })
     })
+
+    function saveMultipleDiscount(){
+        let name = $('#name').val();
+        let min_qty = $('#min_qty').val();
+        let discount = $('#discount').val();
+        if (name == "" || min_qty =="" || discount =="") {
+            alert('Nama Promosi, Qty dan Discount tidak boleh kosong');
+            return false;
+        }
+        multipleDiscount.name = name;
+        multipleDiscount.min_qty = parseInt(min_qty.replace(/,/g, ""));
+        multipleDiscount.discount = parseFloat(discount.replace(/,/g, ""));
+
+        $.ajax({
+            data:multipleDiscount,
+            url:"{{ route('multiple-discount.store') }}",
+            type:"POST",
+            dataType:"json",
+            success:function (params) {
+                console.log(params);
+            },
+            error:function(params){
+                console.log(params)
+            }
+        })
+    }
 </script>
 @endsection
 

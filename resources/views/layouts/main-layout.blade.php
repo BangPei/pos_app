@@ -200,7 +200,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/multiple-discount" class="nav-link {{Request::is('multiple-discount')?'active':''}}">
+                                    <a href="/multiple-discount" class="nav-link {{Request::is('multiple-discount*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Paket Diskon</p>
                                     </a>
