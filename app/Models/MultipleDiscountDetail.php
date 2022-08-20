@@ -20,4 +20,9 @@ class MultipleDiscountDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'product_id';
+    }
 }

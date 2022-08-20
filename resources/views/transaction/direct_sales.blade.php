@@ -137,6 +137,7 @@
                 <th>Harga</th>
                 <th>Jumlah</th>
                 <th>Diskon</th>
+                <th>Program</th>
                 <th>#</th>
               </tr>
             </thead>
@@ -252,6 +253,15 @@
           }
         },
         {
+          data:"program",
+          bSortable: false,
+          defaultContent:"0",
+          mRender:function(data,type,full){
+            return `Rp. ${formatNumber(data)}`
+            // return `Rp. ${formatNumber(data)}`
+          }
+        },
+        {
 					data: null,
           bSortable: false,
 					mRender: function(data, type, full) {
@@ -262,16 +272,16 @@
       columnDefs: [
           { 
             className: "text-right",
-            targets: [1,2,3,4,5]
+            targets: [1,2,3,4,5,6]
           },
           { width: '8%',
-            targets: [1,2,5]
+            targets: [1,2,5,6]
           },
           { width: '20%',
             targets: 0
           },
           { width: '5%',
-            targets: 6
+            targets: 7
           },
           { width: '10%',
             targets: [3,4]
@@ -550,7 +560,27 @@
         directSales.details.forEach(data => {
           if (data.product_id == params.id) {
             data.qty = data.qty+1;
-            data.subtotal = parseFloat(data.price)*parseInt(data.qty)
+            data.subtotal = parseFloat(data.price)*parseInt(data.qty);
+            data.program = 0;
+            $.ajax({
+              url:`{{URL::to('multiple-discount-detail/show')}}`,
+              type:"GET",
+              data:{"product_id":data.product_id},
+              dataType:"json",
+              success:function (item) {
+                let mod = 0;
+                console.log(data.qty)
+                for (let i = 1; i <= data.qty; i++) {
+                  if(i%item.program.min_qty==0){
+                      mod = mod+1
+                  }
+                }
+                data.program = mod*item.program.discount;
+              },
+              error:function(params){
+                console.log(params)
+              }
+            })
           }
         });
       }else{
@@ -560,7 +590,8 @@
             qty:1,
             price:parseFloat(params.price),
             discount:0,
-            subtotal:parseFloat(params.price)*1
+            subtotal:parseFloat(params.price)*1,
+            program:0,
           }
           directSales.details.push(detail);
       }

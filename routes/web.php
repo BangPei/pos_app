@@ -6,13 +6,13 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
+use App\Http\Controllers\MultipleDiscountDetailController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
-use App\Models\MultipleDiscount;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,3 +41,4 @@ Route::resource('uom', UomController::class)->middleware('auth');
 Route::resource('setting', SettingController::class)->middleware('auth');
 Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');
+Route::resource('multiple-discount-detail', MultipleDiscountDetailController::class)->middleware('auth');
