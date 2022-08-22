@@ -122,8 +122,8 @@
           <hr>
           <div class="row">
             <div class="col-md-12 col-sam-12 col-xs-12 text-center">
-              <a class="btn btn-danger" id="btn-cancel"><i class="fas fa-trash"></i> Batal</a>
-              <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary" id="btn-save"><i class="fas fa-save"></i> Simpan</a>
+              <a class="btn btn-danger" onclick="cancelTransaction()"><i class="fas fa-trash"></i> Batal</a>
+              <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</a>
             </div>
           </div>
         </div>
@@ -265,7 +265,7 @@
 					data: null,
           bSortable: false,
 					mRender: function(data, type, full) {
-						return `<a href="#" title="Hapus" class="btn bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
+						return `<a title="Hapus" class="btn bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
 					}
 				}
       ],
@@ -343,9 +343,7 @@
 
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
-      addProduct(product)
-      reloadJsonDataTable(tblOrder,directSales.details)
-      countTotality();
+      addProduct(product);
       $("#modal-product").modal('hide');
     })
     $('#modal-product').on('hidden.bs.modal', function (e) {
@@ -363,8 +361,25 @@
         let data = tblOrder.row($(this).parents('tr')).data();
         let val = $(this).val() ==""?"1":$(this).val()
         data.qty =parseInt(val.replace(/,/g, ""));
-        countTotality();
-        reloadJsonDataTable(tblOrder, directSales.details);
+       
+        getMultipleDiscount(data.product_id,data.product,
+          function(json){
+            if (Object.keys(json).length != 0){
+              let mod = 0;
+              for (let i = 1; i <= data.qty; i++) {
+                if(i%json.program.min_qty==0){
+                    mod = mod+1
+                }
+              }
+              data.program = mod*json.program.discount;
+            }
+            countTotality();
+            reloadJsonDataTable(tblOrder, directSales.details);
+          },
+          function(error){
+            console.log(error)
+          }
+        )
     });
     $('#discount-2').on('change', function() {
         let value = $(this).val().replace(/,/g, "");
@@ -420,10 +435,8 @@
               data:{"barcode":val},
               dataType:"json",
               success:function (item) {
-                if ( Object.keys(item).length != 0) {
-                  addProduct(item)
-                  reloadJsonDataTable(tblOrder,directSales.details)
-                  countTotality();
+                if (Object.keys(item).length != 0) {
+                  addProduct(item);
                   $("#barcode").val("")
                 }else{
                   $("#barcode").val(val.toLowerCase())
@@ -538,7 +551,7 @@
       qty = qty+data.qty;
       data.subtotal = data.qty*data.price;
       subtotal =subtotal+ data.subtotal
-      discount = discount+(data.discount*data.qty);
+      discount = discount+(data.discount*data.qty)+data.program;
     })
     directSales.subtotal = subtotal;
     directSales.discount = discount;
@@ -556,35 +569,27 @@
   }
 
   function addProduct(params) {
-    if (directSales.details.some(item => item.product.id === params.id)) {
-        directSales.details.forEach(data => {
-          if (data.product_id == params.id) {
-            data.qty = data.qty+1;
-            data.subtotal = parseFloat(data.price)*parseInt(data.qty);
-            data.program = 0;
-            $.ajax({
-              url:`{{URL::to('multiple-discount-detail/show')}}`,
-              type:"GET",
-              data:{"product_id":data.product_id},
-              dataType:"json",
-              success:function (item) {
+    getMultipleDiscount(params.id,params,
+      function(json){
+        if (directSales.details.some(item => item.product.id === params.id)) {
+          directSales.details.forEach(data => {
+            if (data.product_id == params.id) {
+              data.qty = data.qty+1;
+              data.subtotal = parseFloat(data.price)*parseInt(data.qty);
+              data.program = 0;
+              if (Object.keys(json).length != 0){
                 let mod = 0;
-                console.log(data.qty)
                 for (let i = 1; i <= data.qty; i++) {
-                  if(i%item.program.min_qty==0){
+                  if(i%json.program.min_qty==0){
                       mod = mod+1
                   }
                 }
-                data.program = mod*item.program.discount;
-              },
-              error:function(params){
-                console.log(params)
+                data.program = mod*json.program.discount;
               }
-            })
-          }
-        });
-      }else{
-        let detail = {
+            }
+          });
+        }else{
+          let detail = {
             product:params,
             product_id:params.id,
             qty:1,
@@ -593,8 +598,49 @@
             subtotal:parseFloat(params.price)*1,
             program:0,
           }
+          if (Object.keys(json).length != 0){
+            let mod = 0;
+            for (let i = 1; i <= detail.qty; i++) {
+              if(i%json.program.min_qty==0){
+                  mod = mod+1
+              }
+            }
+            detail.program = mod*json.program.discount;
+          }
           directSales.details.push(detail);
+        }
+        reloadJsonDataTable(tblOrder,directSales.details);
+        countTotality();
+      },function(json){
+        console.log(json)
       }
+    )
+  }
+
+  function getMultipleDiscount(id,product,callback,callbackError) {
+    try {
+      $.ajax({
+        url:`{{URL::to('multiple-discount-detail/show')}}`,
+        type:"GET",
+        data:{"product_id":id},
+        dataType:"json",
+        success:function (item) {
+          callback(item)
+        },
+        error:function(json){
+          console.log(json)
+          callbackError(json)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function cancelTransaction() {
+    directSales.details = [];
+    reloadJsonDataTable(tblOrder,directSales.details);
+    countTotality();
   }
 </script>
 @endsection
