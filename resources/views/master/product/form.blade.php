@@ -17,6 +17,24 @@
                 @method('PUT')
             @endif
             @csrf
+
+            <div class="row">
+                <div class="col-md-12">
+                    @if (session()->has('message'))
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ session('message') }}</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <!-- /.card-tools -->
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="form-group">

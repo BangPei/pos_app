@@ -66,7 +66,8 @@ class ProductController extends Controller
         $product['created_by_id'] = auth()->user()->id;
         $product['edit_by_id'] = auth()->user()->id;
         Product::Create($product);
-        return Redirect::to('product');
+        session()->flash('message', $product['name'] . ' Berhasil disimpan.');
+        return Redirect::to('/product/create');
     }
 
     /**
@@ -130,7 +131,8 @@ class ProductController extends Controller
             'description' => $product['description'],
             'edit_by_id' => $product['edit_by_id'],
         ]);
-        return Redirect::to('product');
+        session()->flash('message', 'Berhasil merubah ' . $product['name']);
+        return Redirect::to('/product' . '/' . $product['barcode'] . '/' . 'edit');
     }
 
     /**
