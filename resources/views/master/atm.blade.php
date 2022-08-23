@@ -5,6 +5,20 @@
 
 @section('content-child')
 <div class="col-md-12">
+  @if (session()->has('message'))
+  <div class="card card-success">
+      <div class="card-header">
+          <h3 class="card-title">{{ session('message') }}</h3>
+          <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+              </button>
+          </div>
+          <!-- /.card-tools -->
+      </div>
+  </div>
+  @endif
+</div>
+<div class="col-md-12">
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">List Bank ATM</h2>
@@ -59,7 +73,7 @@
           data:"is_active",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            return `<div class="badge badge-${data?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
           }
         },
         {
@@ -69,8 +83,8 @@
                 <form action="/bank/${data}" method="POST" class="d-inline">
                 @method('DELETE')
                 @csrf
-                <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
-                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
+                <button title="${full.is_active?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
+                    ${full.is_active?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
                 </button>
                 </form>`
 			}

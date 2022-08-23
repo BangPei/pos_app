@@ -50,6 +50,7 @@ class UomController extends Controller
         $uom['created_by_id'] = auth()->user()->id;
         $uom['edit_by_id'] = auth()->user()->id;
         Uom::Create($uom);
+        session()->flash('message', 'Berhasil menambahkan satuan ' . $uom['name']);
         return Redirect::to('uom');
     }
 
@@ -95,6 +96,7 @@ class UomController extends Controller
             'description' => $uom['description'],
             'edit_by_id' => $uom['edit_by_id'],
         ]);
+        session()->flash('message', 'Berhasil merubah satuan ' . $uom['name']);
         return Redirect::to('uom');
     }
 

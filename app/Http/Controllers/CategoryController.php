@@ -50,6 +50,7 @@ class CategoryController extends Controller
         $category['created_by_id'] = auth()->user()->id;
         $category['edit_by_id'] = auth()->user()->id;
         Category::Create($category);
+        session()->flash('message', 'Berhasil menambahkan kategori ' . $category['name']);
         return Redirect::to('category');
     }
 
@@ -95,6 +96,7 @@ class CategoryController extends Controller
             'description' => $category['description'],
             'edit_by_id' => $category['edit_by_id'],
         ]);
+        session()->flash('message', 'Berhasil merubah kategori ' . $category['name']);
         return Redirect::to('category');
     }
 

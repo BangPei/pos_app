@@ -5,6 +5,20 @@
 
 @section('content-child')
 <div class="col-md-12">
+    @if (session()->has('message'))
+    <div class="card card-success">
+        <div class="card-header">
+            <h3 class="card-title">{{ session('message') }}</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                </button>
+            </div>
+            <!-- /.card-tools -->
+        </div>
+    </div>
+    @endif
+</div>
+<div class="col-md-12">
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">List Satuan</h2>
@@ -85,7 +99,7 @@
     })
     $('div.dataTables_filter input', tblUom.table().container()).focus();
     $('#table-uom').on('click','.edit-uom',function() {
-      let data = categoryTable.row($(this).parents('tr')).data();
+      let data = tblUom.row($(this).parents('tr')).data();
       $('#id').val(data.id??'--');
       $('#name').val(data.name??'--');
       $('#description').val(data.description??'');

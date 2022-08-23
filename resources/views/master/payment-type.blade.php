@@ -1,6 +1,7 @@
 @extends('layouts.main-layout')
 @section('content-class')
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.css">
 @endsection
 
 @section('content-child')
@@ -59,37 +60,39 @@
           data:"is_default",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<input data-id="${full.id}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" ${data==1? 'checked' : '' }>`
+            return `<div class="custom-control custom-switch">
+                      <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                      <label class="custom-control-label" for="switch-${full.id}"></label>
+                    </div>`
           }
         },
         {
           data:"is_active",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            return `
+            <div class="icheck-primary d-inline">
+              <input type="checkbox" id="checkboxPrimary1" ${data?'checked':''}>
+              <label for="checkboxPrimary1">
+              </label>
+            </div>
+            `
           }
         },
         {
 			data: 'id',
 			mRender: function(data, type, full) {
-				return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-payment"><i class="fas fa-edit"></i></a>
-                <form action="/payment/${data}" method="POST" class="d-inline">
-                  @method('DELETE')
-                  @csrf
-                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Tipe Pembayaran ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
-                      ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
-                  </button>
-                </form>`
+				return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn btn-sm bg-gradient-primary edit-payment"><i class="fas fa-eye"></i></a>`
 			}
 		}
       ],
       columnDefs: [
           { 
             className: "text-center",
-            targets: [2,3]
+            targets: [2,3,4]
           },
         ],
-      order:[[0,'asc']]
+      order:[[2,'desc'],[3,'desc']]
     })
     $('div.dataTables_filter input', paymentType.table().container()).focus();
 
@@ -102,6 +105,11 @@
         @method('put')
       `)
       $('#form-description').attr('action',`/payment/${data.id}`)
+    })
+
+    $('#table-payment-type').on('click','.custom-control-input',function() {
+      let data = paymentType.row($(this).parents('tr')).data();
+      console.log(data)
     })
 
     $('#btn-add').on('click',function(){

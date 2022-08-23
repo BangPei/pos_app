@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Atm;
-use App\Http\Requests\StoreAtmRequest;
-use App\Http\Requests\UpdateAtmRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -40,7 +39,7 @@ class AtmController extends Controller
      * @param  \App\Http\Requests\StoreAtmRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAtmRequest $request)
+    public function store(Request $request)
     {
         $atm = $request->validate([
             'name' => 'required',
@@ -51,6 +50,7 @@ class AtmController extends Controller
         $atm['created_by_id'] = auth()->user()->id;
         $atm['edit_by_id'] = auth()->user()->id;
         Atm::Create($atm);
+        session()->flash('message', 'Berhasil Menambah ATM ' . $atm['name']);
         return Redirect::to('bank');
     }
 
@@ -83,7 +83,7 @@ class AtmController extends Controller
      * @param  \App\Models\Atm  $atm
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAtmRequest $request, Atm $atm)
+    public function update(Request $request, Atm $atm)
     {
         $atm = $request->validate([
             'name' => 'required',
@@ -96,6 +96,7 @@ class AtmController extends Controller
             'description' => $atm['description'],
             'edit_by_id' => $atm['edit_by_id'],
         ]);
+        session()->flash('message', 'Berhasil Merubah ATM ' . $atm['name']);
         return Redirect::to('bank');
     }
 
