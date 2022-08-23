@@ -32,7 +32,10 @@ Route::post('/logout', [LoginController::class, 'logout']);
 
 Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 Route::resource('user', UserController::class)->middleware('auth');
+
+Route::put('product/status', [ProductController::class, 'changeStatus'])->middleware('auth');
 Route::resource('product', ProductController::class)->middleware('auth');
+
 Route::resource('category', CategoryController::class)->middleware('auth');
 Route::resource('payment', PaymentTypeController::class)->middleware('auth');
 Route::resource('bank', AtmController::class)->middleware('auth');

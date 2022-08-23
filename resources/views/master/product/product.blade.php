@@ -73,17 +73,21 @@
           data:"is_active",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            return `<div class="custom-control custom-switch">
+                      <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                      <label class="custom-control-label" for="switch-${full.id}"></label>
+                    </div>`
           }
         },
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn bg-gradient-success edit-product"><i class="fas fa-edit"></i></a>
+						return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>
                 <form action="/product/${full.barcode}" method="POST" class="d-inline">
                   @method('DELETE')
                   @csrf
-                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Produk ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
+                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Produk ini?')" class="btn btn-sm ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
                     ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
                   </button>
                 </form>`
@@ -103,6 +107,27 @@
       order:[[1,'asc']]
     })
     $('div.dataTables_filter input', tblProduct.table().container()).focus();
+
+    $('#table-product').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      let data = tblProduct.row($(this).parents('tr')).data();
+      data.is_active = bool?1:0;
+      data.category_id = data.category.id;
+      data.uom_id = data.uom.id;
+      data["_token"]= "{{ csrf_token() }}";
+      $.ajax({
+          url:`{{URL::to('/product/status')}}`,
+          type:"PUT",
+          data:data,
+          dataType:"json",
+          success:function (item) {
+            tblProduct.clear().draw();
+          },
+          error:function(params){
+            console.log(params)
+          }
+      })
+    })
   })
 </script>
 @endsection

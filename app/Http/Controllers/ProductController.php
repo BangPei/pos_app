@@ -109,7 +109,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $product = $request->validate([
             'barcode' => 'required',
@@ -134,6 +134,25 @@ class ProductController extends Controller
         session()->flash('message', 'Berhasil merubah ' . $product['name']);
         return Redirect::to('/product' . '/' . $product['barcode'] . '/' . 'edit');
     }
+    public function changeStatus(Request $request)
+    {
+        $product = $request;
+        $product['edit_by_id'] = auth()->user()->id;
+        if ($request->ajax()) {
+            Product::where('barcode', $product['barcode'])->update([
+                'name' => $product['name'],
+                'barcode' => $product['barcode'],
+                'is_active' => $product['is_active'],
+                'price' => $product['price'],
+                'category_id' => $product['category_id'],
+                'uom_id' => $product['uom_id'],
+                'description' => $product['description'],
+                'edit_by_id' => $product['edit_by_id'],
+            ]);
+        }
+        return response()->json($product);
+        // return Redirect::to('/product' . '/' . $product['barcode'] . '/' . 'edit');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -143,18 +162,21 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product['is_active'] = $product['is_active'] == 1 ? 0 : 1;
-        Product::where('barcode', $product->barcode)->update([
-            'barcode' => $product->barcode,
-            'name' => $product->name,
-            'price' => $product->price,
-            'category_id' => $product->category_id,
-            'uom_id' => $product->uom_id,
-            'description' => $product->description,
-            'is_active' => $product->is_active,
-            'created_by_id' => $product->created_by_id,
-            'edit_by_id' => auth()->user()->id,
-        ]);
+        $product->is_active = $product->is_active == 1 ? 0 : 1;
+        // $product['is_active'] = $product['is_active'] == 1 ? 0 : 1;
+        // Product::where('barcode', $product->barcode)->update([
+        //     'barcode' => $product->barcode,
+        //     'name' => $product->name,
+        //     'price' => $product->price,
+        //     'category_id' => $product->category_id,
+        //     'uom_id' => $product->uom_id,
+        //     'description' => $product->description,
+        //     'is_active' => $product->is_active,
+        //     'created_by_id' => $product->created_by_id,
+        //     'edit_by_id' => auth()->user()->id,
+        // ]);
+        print($product);
+        die();
         return Redirect::to('product');
     }
 }

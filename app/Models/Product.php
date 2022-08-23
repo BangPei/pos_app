@@ -18,6 +18,10 @@ class Product extends Model
     ];
     protected $with = ['category', 'uom', 'created_by', 'edit_by'];
 
+    public $casts = [
+        'barcode' => 'string',
+    ];
+
     public function uom()
     {
         return $this->belongsTo(Uom::class);
