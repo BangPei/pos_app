@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
-use App\Http\Requests\StoreSupplierRequest;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class SupplierController extends Controller
 {
@@ -13,9 +15,13 @@ class SupplierController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        //
+        $supplier = Supplier::all();
+        if ($request->ajax()) {
+            return datatables()->of($supplier)->make(true);
+        }
+        return view('master/supplier/supplier', ["title" => "Supplier", "menu" => "Master",]);
     }
 
     /**
@@ -25,7 +31,10 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        //
+        return view('master/supplier/form', [
+            "title" => "Supplier Form",
+            "menu" => "Master"
+        ]);
     }
 
     /**
@@ -34,9 +43,19 @@ class SupplierController extends Controller
      * @param  \App\Http\Requests\StoreSupplierRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSupplierRequest $request)
+    public function store(Request $request)
     {
-        //
+        $supplier = $request->validate([
+            'name' => 'required',
+            'phone' => '',
+            'npwp' => '',
+            'pic' => '',
+            'mobile' => '',
+            'address' => '',
+        ]);
+        Supplier::Create($supplier);
+        session()->flash('message', $supplier['name'] . ' Berhasil disimpan.');
+        return Redirect::to('/supplier/create');
     }
 
     /**
@@ -58,7 +77,11 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        //
+        return view('master/supplier/form', [
+            "title" => "Product Form",
+            "menu" => "Master",
+            "supplier" => $supplier,
+        ]);
     }
 
     /**
@@ -68,9 +91,28 @@ class SupplierController extends Controller
      * @param  \App\Models\Supplier  $supplier
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(Request $request)
     {
-        //
+        $supplier = $request->validate([
+            'name' => 'required',
+            'phone' => '',
+            'npwp' => '',
+            'pic' => '',
+            'mobile' => '',
+            'address' => '',
+            'id' => '',
+        ]);
+
+        Supplier::where('id', $supplier['id'])->update([
+            'name' => $supplier['name'],
+            'phone' => $supplier['phone'],
+            'npwp' => $supplier['npwp'],
+            'pic' => $supplier['pic'],
+            'mobile' => $supplier['mobile'],
+            'address' => $supplier['address'],
+        ]);
+        session()->flash('message', 'Berhasil merubah ' . $supplier['name']);
+        return Redirect::to('/supplier');
     }
 
     /**

@@ -97,7 +97,7 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ (Request::is('bank*')||Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
+                        <li class="nav-item {{ (Request::is('supplier*')|| Request::is('bank*')||Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
@@ -293,6 +293,7 @@
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
         <script src="/plugins/select2/js/select2.full.min.js"></script>
+        <script src="/plugins/jquery-mask/jquery.mask.min.js"></script>
         @yield('content-script')
         <!-- AdminLTE App -->
         <script src="/js/script.js"></script>

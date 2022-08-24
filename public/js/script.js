@@ -1,6 +1,10 @@
 $(document).ready(function(){
 	$('.select2').select2()
 
+	$('.npwp').mask('99.999.999.9-999.999', {
+		placeholder: "__.___.___._-___.___"
+	});
+
 	$('.number2').on('keyup', function(event) {
 		if (event.which >= 37 && event.which <= 40) return;
 		$(this).val(function(index, value) {
