@@ -34,8 +34,8 @@
 @endsection
 
 @section('content-script')
-<script src="plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
   $(document).ready(function(){
     tblProduct = $('#table-product').DataTable({

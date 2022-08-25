@@ -9,7 +9,7 @@
     <div class="card-header">
       <h2 class="card-title">Form Penjualan</h2>
       <div class="card-tools">
-        <a class="btn btn-primary" id="btn-product" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
           <i class="fas fa-eye"></i> List Produk
         </a>
       </div>
