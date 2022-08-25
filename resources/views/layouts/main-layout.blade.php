@@ -12,12 +12,11 @@
         <!-- Ionicons -->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
-        <link rel="stylesheet" href="/dist/css/adminlte.min.css">
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
         <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
-        <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
         @yield('content-class')
+        <link rel="stylesheet" href="/dist/css/adminlte.min.css">
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
         <div class="wrapper">
@@ -289,13 +288,13 @@
         <script src="/plugins/jquery/jquery.min.js"></script>
         <!-- Tempusdominus Bootstrap 4 -->
         <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script> 
-        <script src="/dist/js/adminlte.js"></script>
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
-        <script src="/plugins/select2/js/select2.full.min.js"></script>
+        <script src="/plugins/select2/js/select2.js"></script>
         <script src="/plugins/jquery-mask/jquery.mask.min.js"></script>
+        <script src="/dist/js/adminlte.js"></script>
+        <script src="/js/script.js"></script>
         @yield('content-script')
         <!-- AdminLTE App -->
-        <script src="/js/script.js"></script>
     </body>
 </html>

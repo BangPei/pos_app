@@ -1,107 +1,107 @@
 @extends('layouts.main-layout')
 
 @section('content-style')
-<link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
 @endsection
 
 @section('content-child')
 <div class="col-md-12">
     <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Form Produk</h2>
-        
-      </div>
-      <div class="card-body ">
-        <form form-validate=true id="form-product">
-            <div class="row">
-                <div class="col-md-12">
-                    @if (session()->has('message'))
-                    <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ session('message') }}</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                                </button>
+        <div class="card-header">
+            <h2 class="card-title">Form Produk</h2>
+        </div>
+        <div class="card-body ">
+            <form form-validate=true id="form-product">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if (session()->has('message'))
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ session('message') }}</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <!-- /.card-tools -->
                             </div>
-                            <!-- /.card-tools -->
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="barcode">Barcode</label>
+                            <input {{ isset($product)? 'readonly':'' }} required value="{{ old('barcode',$product->barcode??'') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
+                            @error('barcode')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="barcode">Barcode</label>
-                        <input {{ isset($product)? 'readonly':'' }} required value="{{ old('barcode',$product->barcode??'') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
-                        @error('barcode')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="name">Nama Produk</label>
+                            <input required  type="text" value="{{ old('name',$product->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="name">Nama Produk</label>
-                        <input required  type="text" value="{{ old('name',$product->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
-                        @error('name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="category_id">Kategori</label>
-                        <div class="input-group mb-3">
-                            <select required name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
-                                <option value="" disabled selected>--pilih Kategori--</option>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="category_id">Kategori</label>
+                            <select required name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror">
+                                <option selected value="" disabled>--Pilih Kategory--</option>
+                                @foreach ($categories as $ct)
+                                    @if (old('category_id',$product->category_id??'')==$ct->id)
+                                        <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @else
+                                        <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @endif
+                                @endforeach
                             </select>
-                            <div class="input-group-append">
-                                <a data-toggle="modal" data-target="#modal-description" class="btn btn-outline-secondary bg-secondary" type="button"><i class="fas fa-plus"></i></a>
-                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-md-12 text-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#modal-convertion">
-                        <i class="fas fa-plus-circle"></i> Tambah Konversi
-                    </a>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-convertion">
+                            <i class="fas fa-plus-circle"></i> Tambah Konversi
+                        </a>
+                    </div>
+                    <div class="col-md-12 mt-3 table-responsive">
+                        <table class="table table-striped table-bordered table-sm" width="100%" id="table-convertion">
+                            <thead>
+                                <tr>
+                                    <th>Barcode</th>
+                                    <th>Nama</th>
+                                    <th>Satuan</th>
+                                    <th>qty</th>
+                                    <th>Harga</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
-                <div class="col-md-12 mt-3 table-responsive">
-                    <table class="table table-striped table-bordered table-sm" width="100%" id="table-convertion">
-                        <thead>
-                            <tr>
-                                <th>Barcode</th>
-                                <th>Nama</th>
-                                <th>Satuan</th>
-                                <th>qty</th>
-                                <th>Harga</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <button type="button" onclick="history.back()" class="btn btn-default "><i class="fas fa-arrow-left"></i> Kembali</button>
+                        <button type="submit" class="btn btn-primary "><i class="fas fa-save"></i> Simpan</button>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <button type="button" onclick="history.back()" class="btn btn-default "><i class="fas fa-arrow-left"></i> Kembali</button>
-                    <button type="submit" class="btn btn-primary "><i class="fas fa-save"></i> Simpan</button>
-                </div>
-            </div>
-          </form>
-      </div>
+            </form>
+        </div>
     </div>
-  </div>
+</div>
 
 <div class="modal fade" id="modal-convertion" tabindex="-1">
-    <div class="modal-dialog modal-md modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modal-title">Form Konversi</h5>
@@ -129,21 +129,28 @@
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label for="uom_id">Satuan</label>
-                                <select required name="uom_id" id="uom_id" class="form-control">
-                                    <option value="" disabled selected>--pilih Satuan--</option>
+                                <select required name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
+                                    <option selected value="" disabled>--Pilih Satuan--</option>
+                                    @foreach ($uoms as $ct)
+                                        @if (old('uom_id',$product->uom_id??'')==$ct->id)
+                                            <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                        @else
+                                            <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                        @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label for="qty-convertion">Qty Koversi</label>
-                                <input required type="text" class="form-control .number2" id="qty-convertion" name="qty-convertion">
+                                <input required type="text" class="form-control number2" id="qty-convertion" name="qty-convertion">
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label for="price-convertion">Harga</label>
-                                <input required type="text" class="form-control .number2" id="price-convertion" name="price-convertion">
+                                <input required type="text" class="form-control number2" id="price-convertion" name="price-convertion">
                             </div>
                         </div>
                     </div>
@@ -174,75 +181,88 @@
         name:null,
     }
     $(document).ready(function(){
-        $('#table-convertion').DataTable({
+        tblConvertion =  $('#table-convertion').DataTable({
             paging: false,
             searching: false,
             ordering:  false,
             data:product.itemConvertion,
             columns:[
                 {
-                    name:"barcode",
+                    data:"barcode",
                     defaultContent:"-"
                 },
                 {
-                    name:"name",
+                    data:"name",
                     defaultContent:"-"
                 },
                 {
-                    name:"uom.name",
+                    data:"uom.name",
                     defaultContent:"-"
                 },
                 {
-                    name:"qtyConvertion",
-                    defaultContent:"-"
+                    data:"qtyConvertion",
+                    defaultContent:"-",
+                    mRender:function(data,type,full){
+                        return `Rp. ${formatNumber(data)}`
+                    }
                 },
                 {
-                    name:"price",
-                    defaultContent:"-"
+                    data:"price",
+                    defaultContent:"-",
+                    mRender:function(data,type,full){
+                        return `Rp. ${formatNumber(data)}`
+                    }
                 },
                 {
-                    name:"is_active",
-                    defaultContent:"-"
+                    data:"is_active",
+                    defaultContent:"-",
+                    mRender:function(data,type,full){
+                        // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+                        return `<div class="custom-control custom-switch">
+                                    <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.barcode}">
+                                    <label class="custom-control-label" for="switch-${full.barcode}"></label>
+                                </div>`
+                    }
                 },
                 {
-                    name:"barcode",
-                    defaultContent:"-"
+                    data:null,
+                    defaultContent:"-",
+                    mRender: function(data, type, full) {
+						return `<a title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a>`
+					}
                 },
             ]
         })
 
-        formValid($('#form-product'),function(){
-            saveProduct();
-        })
-        formValid($('#form-convertion'),function(){
-            addConvertion();
-        })
-
-        $('#form-convertion #uom_id').on('show.bs.dropdown', function () {
-            alert('ok')
-        })
-        $('#category_id').on('click change', function () {
-            $('#category_id').append(`<option value="1">Kesehatan</option>`)
-        })
+        saveProduct();
+        addConvertion();
     })
 
     function saveProduct(){
-        alert('ok')
+        formValid($('#form-product'),function(){
+            alert('ok')
+        })
     }
 
     function addConvertion(){
-        let qty = $('#qty-convertion').val() == ""?"0":$('#qty-convertion').val()
-        let price = $('#price-convertion').val() == ""?"0":$('#price-convertion').val()
-        let itemConvertion = {
-            barcode:$('#barcode-convertion').val(),
-            name:$('#name-convertion').val(),
-            qtyConvertion:parseFloat(qty.replace(/,/g, "")),
-            price:parseFloat(price.replace(/,/g, "")),
-            uom:{
-                id:$('#uom_id').val(),
-                name:$("#uom_id option:selected" ).text(),
+        formValid($('#form-convertion'),function(){
+            let qty = $('#qty-convertion').val() == ""?"0":$('#qty-convertion').val()
+            let price = $('#price-convertion').val() == ""?"0":$('#price-convertion').val()
+            let itemConvertion = {
+                barcode:$('#barcode-convertion').val(),
+                name:$('#name-convertion').val(),
+                qtyConvertion:parseFloat(qty.replace(/,/g, "")),
+                price:parseFloat(price.replace(/,/g, "")),
+                is_active:true,
+                uom:{
+                    id:$('#uom_id').val(),
+                    name:$("#uom_id option:selected" ).text(),
+                }
             }
-        }
+            product.itemConvertion.push(itemConvertion);
+            reloadJsonDataTable(tblConvertion,product.itemConvertion);
+            $('#modal-convertion').modal('hide')
+        })
     }
 </script>
 

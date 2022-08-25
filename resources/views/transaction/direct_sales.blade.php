@@ -361,7 +361,7 @@
         let data = tblOrder.row($(this).parents('tr')).data();
         let val = $(this).val() ==""?"1":$(this).val()
         data.qty =parseInt(val.replace(/,/g, ""));
-       
+      
         getMultipleDiscount(data.product_id,data.product,
           function(json){
             if (Object.keys(json).length != 0){

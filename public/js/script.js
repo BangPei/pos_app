@@ -1,5 +1,14 @@
 $(document).ready(function(){
-	$('.select2').select2()
+	$('.select2').select2({
+		placeholder: '--Pilih Data--'
+	})
+	$('.select2').on('select2:open', function () {
+		$('input.select2-search__field')[0].focus();
+	})
+
+	// $('.select2').select2({
+    //     dropdownParent: $('.modal-body')
+    // });
 
 	$('.npwp').mask('99.999.999.9-999.999', {
 		placeholder: "__.___.___._-___.___"
@@ -15,7 +24,7 @@ $(document).ready(function(){
 	});
 
 	$('.modal').on('hidden.bs.modal', function (event) {
-		resetForm($('#form-description'))
+		resetForm($('form'))
 	  })
 
 	$('form[data-vaidate=true]').validate({
