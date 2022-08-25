@@ -16,6 +16,10 @@ class Uom extends Model
     {
         return $this->hasMany(Product::class);
     }
+    public function itemConvertions()
+    {
+        return $this->hasMany(ItemConvertion::class);
+    }
     public function created_by()
     {
         return $this->belongsTo(User::class);
