@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ItemConvertion;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Uom;
@@ -49,25 +50,28 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = $request->validate([
-            'barcode' => 'required',
-            'name' => 'required',
-            'price' => 'required',
-            'category_id' => 'required',
-            'uom_id' => 'required',
-            'description' => '',
-            'created_by_id' => '',
-            'edit_by_id' => '',
-        ]);
+        $product = new Product();
+        $product->barcode = $request->barcode;
+        $product->name = $request->name;
+        $product->category_id = $request->category['id'];
+        $product->created_by_id = auth()->user()->id;
+        $product->edit_by_id = auth()->user()->id;
+        $product->save();
 
-        // $product['slug'] = Str::lower($product['name']);
-        // $product['slug'] = str_replace(' ', '-', $product['slug']);
-        $product['price'] = floatval(str_replace(',', '', $product['price']));
-        $product['created_by_id'] = auth()->user()->id;
-        $product['edit_by_id'] = auth()->user()->id;
-        Product::Create($product);
-        session()->flash('message', $product['name'] . ' Berhasil disimpan.');
-        return Redirect::to('/product/create');
+        $itemConvertion = [];
+        for ($i = 0; $i < count($request->items_convertion); $i++) {
+            $Convertion = new ItemConvertion();
+            $Convertion->product_id =  $product['id'];
+            $Convertion->barcode =  $request->items_convertion[$i]["barcode"];
+            $Convertion->name =  $request->items_convertion[$i]["name"];
+            $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
+            $Convertion->price =  $request->items_convertion[$i]["price"];
+            $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
+            $Convertion->save();
+            array_push($itemConvertion, $Convertion);
+        }
+        $product->items_convertion = $itemConvertion;
+        return response()->json($product);
     }
 
     /**

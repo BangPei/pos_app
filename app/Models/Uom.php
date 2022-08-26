@@ -12,10 +12,6 @@ class Uom extends Model
     protected $with = ['created_by', 'edit_by'];
     protected $hidden = ['created_by_id', 'edit_by_id',];
 
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
     public function itemConvertions()
     {
         return $this->hasMany(ItemConvertion::class);

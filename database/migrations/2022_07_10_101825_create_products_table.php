@@ -17,12 +17,9 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('barcode')->unique();
             $table->string('name');
-            $table->string('description')->nullable();
-            $table->foreignId('uom_id');
             $table->foreignId('category_id');
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
-            $table->float('price');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

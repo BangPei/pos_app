@@ -15,6 +15,7 @@
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
         <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="/plugins/toastr/toastr.css">
         @yield('content-class')
         <link rel="stylesheet" href="/dist/css/adminlte.min.css">
     </head>
@@ -291,6 +292,7 @@
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
         <script src="/plugins/select2/js/select2.js"></script>
+        <script src="/plugins/toastr/toastr.min.js"></script>
         <script src="/plugins/jquery-mask/jquery.mask.min.js"></script>
         <script src="/dist/js/adminlte.js"></script>
         <script src="/js/script.js"></script>

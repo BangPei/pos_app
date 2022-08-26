@@ -10,7 +10,11 @@ class ItemConvertion extends Model
     use HasFactory;
     protected $guarded = ['id'];
     protected $with = ['uom'];
-    protected $hidden = ['uom_id',];
+    protected $hidden = ['uom_id', 'product_id'];
+
+    public $casts = [
+        'barcode' => 'string',
+    ];
 
     public function product()
     {

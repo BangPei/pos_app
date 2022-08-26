@@ -20,9 +20,7 @@
           <tr>
             <th>Barcode</th>
             <th>Nama</th>
-            <th>Satuan</th>
             <th>Kategori</th>
-            <th>Harga</th>
             <th>Status</th>
             <th>Aksi</th>
           </tr>
@@ -55,19 +53,8 @@
           defaultContent:"--"
         },
         {
-          data:"uom.name",
-          defaultContent:"--"
-        },
-        {
           data:"category.name",
           defaultContent:"--"
-        },
-        {
-          data:"price",
-          defaultContent:"0",
-          mRender:function(data,type,full){
-            return `Rp. ${formatNumber(data)}`
-          }
         },
         {
           data:"is_active",
@@ -90,11 +77,7 @@
       columnDefs: [
           { 
             className: "text-center",
-            targets: [2,3,5,6]
-          },
-          { 
-            className: "text-right",
-            targets: [4]
+            targets: [2,3,4]
           },
         ],
       order:[[1,'asc']]

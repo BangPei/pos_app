@@ -24,7 +24,7 @@ $(document).ready(function(){
 	});
 
 	$('.modal').on('hidden.bs.modal', function (event) {
-		resetForm($('form'))
+		resetForm($('.modal form'))
 	  })
 
 	$('form[data-vaidate=true]').validate({
@@ -101,22 +101,18 @@ function resetForm(form) {
 function ajax(data, url, method, callback, callbackError) {
 	$.ajax({
 		url: url,
-		data: JSON.stringify(data),
+		data: data,
 		type: method,
-		headers: {
-			"Content-Type": "application/json",
-			"Cache-Control": "no-cache",
-			"Authorization": token,
-			// "x-client-data": xclientdata
+		success: function (json,text) {
+			json = json;
+			console.log(text);
+			callback(json);
 		},
-		success: function (a, b, c) {
-			json = a;
-			textStatus = b;
-			jqXHR = c;
-			callback();
-		},
-		error: function (a, b, c) {
-			callbackError();
+		error: function (err) {
+			console.log(err)
+			callbackError == null?
+				toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+				:callbackError();
 		}
 	});
 }
