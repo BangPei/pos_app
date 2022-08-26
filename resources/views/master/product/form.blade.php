@@ -203,8 +203,9 @@
                     {
                         data:"qtyConvertion",
                         defaultContent:"-",
+                        className:"text-center",
                         mRender:function(data,type,full){
-                            return `Rp. ${formatNumber(data)}`
+                            return `${formatNumber(data)}`
                         }
                     },
                     {
