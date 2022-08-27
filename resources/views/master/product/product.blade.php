@@ -89,19 +89,9 @@
       let data = tblProduct.row($(this).parents('tr')).data();
       data.is_active = bool?1:0;
       data.category_id = data.category.id;
-      data.uom_id = data.uom.id;
-      data["_token"]= "{{ csrf_token() }}";
-      $.ajax({
-          url:`{{URL::to('/product/status')}}`,
-          type:"PUT",
-          data:data,
-          dataType:"json",
-          success:function (item) {
+      ajax(data, `{{URL::to('/product/status')}}`, "PUT",
+          function(json) {
             tblProduct.clear().draw();
-          },
-          error:function(params){
-            console.log(params)
-          }
       })
     })
   })

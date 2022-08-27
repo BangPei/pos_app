@@ -103,6 +103,9 @@ function ajax(data, url, method, callback, callbackError) {
 		url: url,
 		data: data,
 		type: method,
+		headers:{
+			'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+		},
 		success: function (json,text) {
 			json = json;
 			console.log(text);

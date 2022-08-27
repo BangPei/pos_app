@@ -67,9 +67,10 @@ class ProductController extends Controller
             $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
             $Convertion->price =  $request->items_convertion[$i]["price"];
             $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
-            $Convertion->save();
+            // $Convertion->save();
             array_push($itemConvertion, $Convertion);
         }
+        $product->itemsConvertion()->saveMany($itemConvertion);
         $product->items_convertion = $itemConvertion;
         return response()->json($product);
     }
@@ -115,43 +116,41 @@ class ProductController extends Controller
      */
     public function update(Request $request)
     {
-        $product = $request->validate([
-            'barcode' => 'required',
-            'name' => 'required',
-            'price' => 'required',
-            'category_id' => 'required',
-            'uom_id' => 'required',
-            'description' => '',
-        ]);
+        $product = $request;
 
-        $product['price'] = floatval(str_replace(',', '', $product['price']));
-        $product['edit_by_id'] = auth()->user()->id;
         Product::where('barcode', $product['barcode'])->update([
             'name' => $product['name'],
             'barcode' => $product['barcode'],
-            'price' => $product['price'],
-            'category_id' => $product['category_id'],
-            'uom_id' => $product['uom_id'],
-            'description' => $product['description'],
-            'edit_by_id' => $product['edit_by_id'],
+            'category_id' => $product['category']['id'],
+            'edit_by_id' => auth()->user()->id,
         ]);
-        session()->flash('message', 'Berhasil merubah ' . $product['name']);
-        return Redirect::to('/product' . '/' . $product['barcode'] . '/' . 'edit');
+        ItemConvertion::where('product_id', $product['id'])->delete();
+        $itemConvertion = [];
+        for ($i = 0; $i < count($request->items_convertion); $i++) {
+            $Convertion = new ItemConvertion();
+            $Convertion->product_id =  $product['id'];
+            $Convertion->barcode =  $request->items_convertion[$i]["barcode"];
+            $Convertion->name =  $request->items_convertion[$i]["name"];
+            $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
+            $Convertion->price =  $request->items_convertion[$i]["price"];
+            $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
+            $Convertion->save();
+            array_push($itemConvertion, $Convertion);
+        }
+
+        $product->items_convertion = $itemConvertion;
+        return response()->json($product);
     }
     public function changeStatus(Request $request)
     {
         $product = $request;
-        $product['edit_by_id'] = auth()->user()->id;
         if ($request->ajax()) {
             Product::where('barcode', $product['barcode'])->update([
                 'name' => $product['name'],
                 'barcode' => $product['barcode'],
                 'is_active' => $product['is_active'],
-                'price' => $product['price'],
                 'category_id' => $product['category_id'],
-                'uom_id' => $product['uom_id'],
-                'description' => $product['description'],
-                'edit_by_id' => $product['edit_by_id'],
+                'edit_by_id' => auth()->user()->id,
             ]);
         }
         return response()->json($product);

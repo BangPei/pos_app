@@ -173,9 +173,8 @@
     <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        let barcode =<?=isset($product)?$product->barcode:"null"?>;
+        let barcode ="<?=isset($product)?$product->barcode:null?>";
         let product = {
-            "_token": "{{ csrf_token() }}",
             items_convertion : [],
             category:null,
             barcode:null,
@@ -232,15 +231,6 @@
                 if ( product.items_convertion.length ==0) {
                     $('#barcode-convertion').val($('#barcode').val())
                     $('#name-convertion').val($('#name').val())
-                }else{
-                    if (product.items_convertion.some(e => e.barcode =! $('#barcode').val())){
-                        $('#barcode-convertion').val($('#barcode').val())
-                        $('#name-convertion').val($('#name').val())
-                    }else{
-                        $('#barcode-convertion').empty()
-                        $('#name-convertion').empty()
-
-                    }
                 }
             })
 
@@ -250,7 +240,7 @@
                 }
             });
 
-            barcode?getProduct():null;
+            barcode!=""?getProduct():null;
         })
 
         function getProduct(){
@@ -273,12 +263,15 @@
                 product.barcode = $('#barcode').val();
                 product.name = $('#name').val();
                 product.category ={id:$('#category_id').val()};
-                ajax(product, "{{ route('product.store') }}", "POST",
+                let method = barcode == ""?"POST":"PUT";
+                let url = barcode == ""?"{{ route('product.store') }}":"{{URL::to('product/update')}}"
+                ajax(product, url, method,
                     function(json) {
                         toastr.success('Berhasil Memproses Data')
                         resetForm($('#form-product'))
-                        product=null;
+                        product.items_convertion = [];
                         setTimeout(() => {
+                            reloadJsonDataTable(tblConvertion,product.items_convertion);
                             location.reload();
                         }, 1000);
                 })
