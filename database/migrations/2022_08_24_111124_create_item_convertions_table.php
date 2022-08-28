@@ -21,6 +21,7 @@ class CreateItemConvertionsTable extends Migration
             $table->foreignId('uom_id');
             $table->float('price');
             $table->integer('qtyConvertion');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

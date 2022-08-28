@@ -82,6 +82,7 @@
                                         <th>Satuan</th>
                                         <th>qty</th>
                                         <th>Harga</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -111,13 +112,14 @@
                 <div class="modal-body">
                     <form form-validate=true id="form-convertion">
                         <div class="row">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label for="barcode-convertion">Barcode</label>
+                                    <input class="d-none" id="id-convertion" name="id-conversion">
                                     <input required type="text" class="form-control" id="barcode-convertion" name="barcode-convertion">
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-8 col-sm-12">
                                 <div class="form-group">
                                     <label for="name-convertion">Nama</label>
                                     <input required type="text" class="form-control" id="name-convertion" name="name-convertion">
@@ -184,7 +186,6 @@
             tblConvertion =  $('#table-convertion').DataTable({
                 paging: false,
                 searching: false,
-                ordering:  false,
                 data:product.items_convertion,
                 columns:[
                     {
@@ -215,13 +216,77 @@
                         }
                     },
                     {
+                        data:"is_active",
+                        defaultContent:"--",
+                        mRender:function(data,type,full){
+                            // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+                            return `<div class="custom-control custom-switch">
+                                        <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.barcode}">
+                                        <label class="custom-control-label" for="switch-${full.barcode}"></label>
+                                    </div>`
+                        }
+                    },
+                    {
                         data:null,
                         defaultContent:"-",
                         mRender: function(data, type, full) {
-                            return `<a title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a>`
+                            return `<a title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a>
+                            <a title="Hapus Produk" onclick="return confirm('Apakah Yakin Ingin Menghapus Produk ini?)" class="btn btn-sm bg-gradient-danger delete-product">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            `
                         }
                     },
-                ]
+                ],
+                order:[[3,'asc']],
+                columnDefs: [
+                    { 
+                        className: "text-right",
+                        targets: [3,4]
+                    },
+                    { 
+                        className: "text-center",
+                        targets: [2,5]
+                    },
+                    { 
+                        width: '8%',
+                        targets: [2,3,5,6]
+                    },
+                    { 
+                        width: '12%',
+                        targets: 5
+                    },
+                    { 
+                        width: '20%',
+                        targets: 0
+                    },
+                    { 
+                        width: '10%',
+                        targets: [3,4]
+                    },
+                ],
+            })
+
+            $('#table-convertion').on('click', '.delete-product', function() {
+                let data = tblConvertion.row($(this).parents('tr')).data();
+                product.items_convertion.splice(data, 1);
+                reloadJsonDataTable(tblConvertion, product.items_convertion);
+            });
+            $('#table-convertion').on('click', '.edit-product', function() {
+                let data = tblConvertion.row($(this).parents('tr')).data();
+                $('#id-convertion').val(data.id)
+                $('#barcode-convertion').val(data.barcode)
+                $('#name-convertion').val(data.name)
+                $('#qty-convertion').val(formatNumber(data.qtyConvertion))
+                $('#price-convertion').val(formatNumber(data.price))
+                $('#uom_id').val(data.uom.id).trigger('change')
+                $('#modal-convertion').modal();
+            });
+
+            $('#table-convertion').on('click','.custom-control-input',function() {
+                let bool = $(this).prop('checked');
+                let data = tblConvertion.row($(this).parents('tr')).data();
+                data.is_active = bool;
             })
 
             saveProduct();
@@ -234,9 +299,10 @@
                 }
             })
 
-            $(window).bind('beforeunload', function(){
+            $(window).on('beforeunload', function(e){
+                e.preventDefault();
                 if (product.items_convertion.length!=0) {
-                    return "Do you want to exit this page?";
+                    return event.returnValue = "Do you want to exit this page?";
                 }
             });
 
@@ -270,8 +336,8 @@
                         toastr.success('Berhasil Memproses Data')
                         resetForm($('#form-product'))
                         product.items_convertion = [];
+                        reloadJsonDataTable(tblConvertion,product.items_convertion);
                         setTimeout(() => {
-                            reloadJsonDataTable(tblConvertion,product.items_convertion);
                             location.reload();
                         }, 1000);
                 })
@@ -280,19 +346,51 @@
 
         function addConvertion(){
             formValid($('#form-convertion'),function(){
+                let id = parseInt($('#id-convertion').val()==""?0:$('#id-convertion').val());
                 let qty = $('#qty-convertion').val() == ""?"0":$('#qty-convertion').val()
                 let price = $('#price-convertion').val() == ""?"0":$('#price-convertion').val()
-                let items_convertion = {
-                    barcode:$('#barcode-convertion').val(),
-                    name:$('#name-convertion').val(),
-                    qtyConvertion:parseFloat(qty.replace(/,/g, "")),
-                    price:parseFloat(price.replace(/,/g, "")),
-                    uom:{
-                        id:$('#uom_id').val(),
-                        name:$("#uom_id option:selected" ).text(),
+                if (id == 0) {
+                    if (product.items_convertion.some(item => item.barcode ==$('#barcode-convertion').val())) {
+                        alert('Barcode yang anda masukan sudah terdaftar')
+                        return false;
                     }
+                    if (product.items_convertion.some(item =>parseInt(item.uom.id) === parseInt($('#uom_id').val()))) {
+                        alert('Satuan yang anda masukan sudah terdaftar')
+                        return false;
+                    }
+                    let dataId =product.items_convertion.length==0?1: Math.max(...product.items_convertion.map(o => o.id))+1
+                    let items_convertion = {
+                        id:dataId,
+                        barcode:$('#barcode-convertion').val(),
+                        name:$('#name-convertion').val(),
+                        is_active:true,
+                        qtyConvertion:parseFloat(qty.replace(/,/g, "")),
+                        price:parseFloat(price.replace(/,/g, "")),
+                        uom:{
+                            id:$('#uom_id').val(),
+                            name:$("#uom_id option:selected" ).text(),
+                        }
+                    }
+                    product.items_convertion.push(items_convertion);
                 }
-                product.items_convertion.push(items_convertion);
+                else{
+                    product.items_convertion.forEach(e => {
+                        if (e.barcode==$('#barcode-convertion').val() && e.id != id) {
+                            alert('Barcode yang anda masukan sudah terdaftar')
+                            return false;
+                        }
+                    });
+                    $.each(product.items_convertion, function(i) {
+                        if (product.items_convertion[i].id == id) {
+                            product.items_convertion[i].barcode = $('#barcode-convertion').val();
+                            product.items_convertion[i].name = $('#name-convertion').val();
+                            product.items_convertion[i].qtyConvertion = parseFloat(qty.replace(/,/g, ""));
+                            product.items_convertion[i].uom.id = $('#uom_id').val();
+                            product.items_convertion[i].uom.name = $("#uom_id option:selected" ).text();
+                            product.items_convertion[i].price = parseFloat(price.replace(/,/g, ""));
+                        }
+                    });
+                }
                 reloadJsonDataTable(tblConvertion,product.items_convertion);
                 $('#modal-convertion').modal('hide')
             })

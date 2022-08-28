@@ -73,20 +73,17 @@
           data:"is_active",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            return `<div class="custom-control custom-switch">
+                      <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                      <label class="custom-control-label" for="switch-${full.id}"></label>
+                    </div>`
           }
         },
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-category"><i class="fas fa-edit"></i></a>
-                <form action="/category/${data}" method="POST" class="d-inline">
-                  @method('DELETE')
-                  @csrf
-                  <button title="${full.is_active ==1?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
-                    ${full.is_active ==1?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
-                  </button>
-                </form>`
+						return `<a data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-description" title="Edit" class="btn btn-sm bg-gradient-primary edit-category"><i class="fas fa-edit"></i></a>`
 					}
 				}
       ],

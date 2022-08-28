@@ -67,6 +67,7 @@ class ProductController extends Controller
             $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
             $Convertion->price =  $request->items_convertion[$i]["price"];
             $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
+            $Convertion->is_active =  $request->items_convertion[$i]["is_active"] ? 1 : 0;
             // $Convertion->save();
             array_push($itemConvertion, $Convertion);
         }
@@ -117,27 +118,28 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $product = $request;
-
         Product::where('barcode', $product['barcode'])->update([
             'name' => $product['name'],
             'barcode' => $product['barcode'],
             'category_id' => $product['category']['id'],
             'edit_by_id' => auth()->user()->id,
         ]);
+
         ItemConvertion::where('product_id', $product['id'])->delete();
         $itemConvertion = [];
-        for ($i = 0; $i < count($request->items_convertion); $i++) {
-            $Convertion = new ItemConvertion();
-            $Convertion->product_id =  $product['id'];
-            $Convertion->barcode =  $request->items_convertion[$i]["barcode"];
-            $Convertion->name =  $request->items_convertion[$i]["name"];
-            $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
-            $Convertion->price =  $request->items_convertion[$i]["price"];
-            $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
-            $Convertion->save();
-            array_push($itemConvertion, $Convertion);
-        }
+        for ($i = 0; $i < count($product->items_convertion); $i++) {
+            $convertion = new ItemConvertion();
+            $convertion->product_id =  $product['id'];
+            $convertion->barcode =  $product->items_convertion[$i]["barcode"];
+            $convertion->name =  $product->items_convertion[$i]["name"];
+            $convertion->qtyConvertion =  $product->items_convertion[$i]["qtyConvertion"];
+            $convertion->price =  $product->items_convertion[$i]["price"];
+            $convertion->uom_id =  $product->items_convertion[$i]["uom"]['id'];
+            $convertion->is_active =  !$product->items_convertion[$i]["is_active"] ? 0 : 1;
 
+            $convertion->save();
+            array_push($itemConvertion, $convertion);
+        }
         $product->items_convertion = $itemConvertion;
         return response()->json($product);
     }
@@ -151,6 +153,9 @@ class ProductController extends Controller
                 'is_active' => $product['is_active'],
                 'category_id' => $product['category_id'],
                 'edit_by_id' => auth()->user()->id,
+            ]);
+            ItemConvertion::where('product_id', $product['id'])->update([
+                "is_active" => $product['is_active'],
             ]);
         }
         return response()->json($product);

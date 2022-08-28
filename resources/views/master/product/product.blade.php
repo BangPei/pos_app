@@ -80,7 +80,7 @@
             targets: [2,3,4]
           },
         ],
-      order:[[1,'asc']]
+      order:[[3,'desc'],[1,'asc']]
     })
     $('div.dataTables_filter input', tblProduct.table().container()).focus();
 
