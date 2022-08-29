@@ -6,6 +6,7 @@ use App\Models\DirectSales;
 use App\Http\Requests\UpdateDirectSalesRequest;
 use App\Models\Atm;
 use App\Models\DirectSalesDetail;
+use App\Models\ItemConvertion;
 use App\Models\PaymentType;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class DirectSalesController extends Controller
      */
     public function create(UtilitiesRequest $request)
     {
-        $products = Product::all();
+        $products = ItemConvertion::all();
         if ($request->ajax()) {
             return datatables()->of($products)->make(true);
         }

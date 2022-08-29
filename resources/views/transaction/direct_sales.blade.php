@@ -167,7 +167,6 @@
                   <th>Barcode</th>
                   <th>Nama</th>
                   <th>Satuan</th>
-                  <th>Kategori</th>
                   <th>Harga</th>
                   <th>Aksi</th>
                 </tr>
@@ -296,7 +295,7 @@
         processing:true,
         serverSide:true,
         ajax:{
-          url:"{{ route('product.index') }}",
+          url:"{{URL::to('item-convertion/dataTable')}}",
           type:"GET",
         },
         columns:[
@@ -310,10 +309,6 @@
           },
           {
             data:"uom.name",
-            defaultContent:"--"
-          },
-          {
-            data:"category.name",
             defaultContent:"--"
           },
           {
@@ -333,7 +328,7 @@
         columnDefs: [
             { 
               className: "text-center",
-              targets: [2,3,5]
+              targets: [2,4]
             },
           ],
       })
