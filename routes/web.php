@@ -4,6 +4,7 @@ use App\Http\Controllers\AtmController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
+use App\Http\Controllers\ItemConvertionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
 use App\Http\Controllers\MultipleDiscountDetailController;
@@ -55,3 +56,5 @@ Route::resource('setting', SettingController::class)->middleware('auth');
 Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');
 Route::resource('multiple-discount-detail', MultipleDiscountDetailController::class)->middleware('auth');
+
+Route::get('item-convertion/dataTable', [ItemConvertionController::class, 'dataTable'])->middleware('auth');

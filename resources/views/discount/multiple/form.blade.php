@@ -82,7 +82,6 @@
                                     <th><input type="checkbox" class="checkAll"></th>
                                     <th>Nama</th>
                                     <th>Satuan</th>
-                                    <th>Kategori</th>
                                     <th>Harga</th>
                                 </tr>
                             </thead>
@@ -151,7 +150,7 @@
                 serverSide:true,
                 ordering:false,
                 ajax:{
-                    url:"{{ route('product.index') }}",
+                    url:"{{URL::to('item-convertion/dataTable')}}",
                     type:"GET",
                 },
                 columns:[
@@ -168,10 +167,6 @@
                     },
                     {
                         data:"uom.name",
-                        defaultContent:"--"
-                    },
-                    {
-                        data:"category.name",
                         defaultContent:"--"
                     },
                     {

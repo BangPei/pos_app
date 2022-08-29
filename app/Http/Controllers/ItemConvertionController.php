@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ItemConvertion;
 use App\Http\Requests\StoreItemConvertionRequest;
 use App\Http\Requests\UpdateItemConvertionRequest;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class ItemConvertionController extends Controller
 {
@@ -16,6 +17,13 @@ class ItemConvertionController extends Controller
     public function index()
     {
         //
+    }
+    public function dataTable(UtilitiesRequest $request)
+    {
+        $itemConvertion = ItemConvertion::all();
+        if ($request->ajax()) {
+            return datatables()->of($itemConvertion)->make(true);
+        }
     }
 
     /**

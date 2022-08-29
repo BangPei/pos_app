@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MultipleDiscount;
 use App\Http\Requests\UpdateMultipleDiscountRequest;
+use App\Models\ItemConvertion;
 use App\Models\MultipleDiscountDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class MultipleDiscountController extends Controller
      */
     public function create(UtilitiesRequest $request)
     {
-        $products = Product::all();
+        $products = ItemConvertion::all();
         if ($request->ajax()) {
             return datatables()->of($products)->make(true);
         }

@@ -342,10 +342,10 @@
                         reloadJsonDataTable(tblConvertion,product.items_convertion);
                         console.log(json)
                         setTimeout(() => {
-                            location.reload()
-                            // method == "POST"?
-                            // location.reload():
-                            // window.location = "{{URL::to('product')}}";
+                            // location.reload()
+                            method == "POST"?
+                            location.reload():
+                            window.location = "{{URL::to('product')}}";
                         }, 1000);
                 })
             })
