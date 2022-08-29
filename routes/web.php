@@ -36,11 +36,18 @@ Route::resource('user', UserController::class)->middleware('auth');
 Route::put('product/status', [ProductController::class, 'changeStatus'])->middleware('auth');
 Route::resource('product', ProductController::class)->middleware('auth');
 
+Route::put('category/status', [CategoryController::class, 'changeStatus'])->middleware('auth');
 Route::resource('category', CategoryController::class)->middleware('auth');
-Route::resource('payment', PaymentTypeController::class)->middleware('auth');
-Route::resource('bank', AtmController::class)->middleware('auth');
-Route::resource('supplier', SupplierController::class)->middleware('auth');
+
+Route::put('uom/status', [UomController::class, 'changeStatus'])->middleware('auth');
 Route::resource('uom', UomController::class)->middleware('auth');
+
+Route::put('bank/status', [AtmController::class, 'changeStatus'])->middleware('auth');
+Route::resource('bank', AtmController::class)->middleware('auth');
+
+Route::resource('payment', PaymentTypeController::class)->middleware('auth');
+Route::resource('supplier', SupplierController::class)->middleware('auth');
+
 Route::resource('setting', SettingController::class)->middleware('auth');
 Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');

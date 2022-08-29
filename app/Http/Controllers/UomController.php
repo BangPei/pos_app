@@ -85,19 +85,23 @@ class UomController extends Controller
      */
     public function update(Request $request, Uom $uom)
     {
-        $uom = $request->validate([
-            'name' => 'required',
-            'description' => '',
-        ]);
-        $uom['id'] = $request->input('id');
-        $uom['edit_by_id'] = auth()->user()->id;
-        Uom::where('id', $uom['id'])->update([
-            'name' => $uom['name'],
-            'description' => $uom['description'],
-            'edit_by_id' => $uom['edit_by_id'],
-        ]);
+        $uom->update($request->all());
         session()->flash('message', 'Berhasil merubah satuan ' . $uom['name']);
         return Redirect::to('uom');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $uom = $request;
+        if ($request->ajax()) {
+            Uom::where('id', $uom['id'])->update([
+                'name' => $uom['name'],
+                'description' => $uom['description'],
+                'is_active' => $uom['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($uom);
     }
 
     /**

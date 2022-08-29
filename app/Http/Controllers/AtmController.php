@@ -100,6 +100,20 @@ class AtmController extends Controller
         return Redirect::to('bank');
     }
 
+    public function changeStatus(Request $request)
+    {
+        $atm = $request;
+        if ($request->ajax()) {
+            Atm::where('id', $atm['id'])->update([
+                'name' => $atm['name'],
+                'description' => $atm['description'],
+                'is_active' => $atm['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($atm);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -276,23 +276,26 @@
                 let data = tblConvertion.row($(this).parents('tr')).data();
                 $('#id-convertion').val(data.id)
                 $('#barcode-convertion').val(data.barcode)
+                
                 $('#name-convertion').val(data.name)
                 $('#qty-convertion').val(formatNumber(data.qtyConvertion))
                 $('#price-convertion').val(formatNumber(data.price))
                 $('#uom_id').val(data.uom.id).trigger('change')
                 $('#modal-convertion').modal();
+                $('input#barcode-convertion').attr('readonly','readonly')
             });
 
             $('#table-convertion').on('click','.custom-control-input',function() {
                 let bool = $(this).prop('checked');
                 let data = tblConvertion.row($(this).parents('tr')).data();
-                data.is_active = bool;
+                data.is_active = bool?1:0;
             })
 
             saveProduct();
             addConvertion();
 
             $('#modal-convertion').on('show.bs.modal', function (e) {
+                $('input#barcode-convertion').removeAttr('readonly')
                 if ( product.items_convertion.length ==0) {
                     $('#barcode-convertion').val($('#barcode').val())
                     $('#name-convertion').val($('#name').val())
@@ -337,8 +340,12 @@
                         resetForm($('#form-product'))
                         product.items_convertion = [];
                         reloadJsonDataTable(tblConvertion,product.items_convertion);
+                        console.log(json)
                         setTimeout(() => {
-                            location.reload();
+                            location.reload()
+                            // method == "POST"?
+                            // location.reload():
+                            // window.location = "{{URL::to('product')}}";
                         }, 1000);
                 })
             })
@@ -375,19 +382,17 @@
                 }
                 else{
                     product.items_convertion.forEach(e => {
-                        if (e.barcode==$('#barcode-convertion').val() && e.id != id) {
+                        if ((e.uom.id==$('#uom_id').val()) && (e.id != id)) {
                             alert('Barcode yang anda masukan sudah terdaftar')
                             return false;
                         }
-                    });
-                    $.each(product.items_convertion, function(i) {
-                        if (product.items_convertion[i].id == id) {
-                            product.items_convertion[i].barcode = $('#barcode-convertion').val();
-                            product.items_convertion[i].name = $('#name-convertion').val();
-                            product.items_convertion[i].qtyConvertion = parseFloat(qty.replace(/,/g, ""));
-                            product.items_convertion[i].uom.id = $('#uom_id').val();
-                            product.items_convertion[i].uom.name = $("#uom_id option:selected" ).text();
-                            product.items_convertion[i].price = parseFloat(price.replace(/,/g, ""));
+                        if (e.id == id) {
+                            e.barcode = $('#barcode-convertion').val();
+                            e.name = $('#name-convertion').val();
+                            e.qtyConvertion = parseFloat(qty.replace(/,/g, ""));
+                            e.uom.id = $('#uom_id').val();
+                            e.uom.name = $("#uom_id option:selected" ).text();
+                            e.price = parseFloat(price.replace(/,/g, ""));
                         }
                     });
                 }

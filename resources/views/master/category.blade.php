@@ -113,6 +113,16 @@
         @method('post')
       `)
     })
+
+    $('#table-category').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      let data = categoryTable.row($(this).parents('tr')).data();
+      data.is_active = bool?1:0;
+      ajax(data, `{{URL::to('/category/status')}}`, "PUT",
+          function(json) {
+            categoryTable.clear().draw();
+      })
+    })
   })
 </script>
 @endsection

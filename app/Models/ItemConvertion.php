@@ -14,7 +14,6 @@ class ItemConvertion extends Model
 
     public $casts = [
         'barcode' => 'string',
-        'is_active' => 'boolean',
     ];
 
     public function product()

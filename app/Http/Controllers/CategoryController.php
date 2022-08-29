@@ -100,6 +100,20 @@ class CategoryController extends Controller
         return Redirect::to('category');
     }
 
+    public function changeStatus(Request $request)
+    {
+        $category = $request;
+        if ($request->ajax()) {
+            Category::where('id', $category['id'])->update([
+                'name' => $category['name'],
+                'description' => $category['description'],
+                'is_active' => $category['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($category);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -73,20 +73,17 @@
           data:"is_active",
           defaultContent:"--",
           mRender:function(data,type,full){
-            return `<div class="badge badge-${data?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+            return `<div class="custom-control custom-switch">
+                      <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                      <label class="custom-control-label" for="switch-${full.id}"></label>
+                    </div>`
           }
         },
         {
 			data: 'id',
 			mRender: function(data, type, full) {
-				return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn bg-gradient-success edit-atm"><i class="fas fa-edit"></i></a>
-                <form action="/bank/${data}" method="POST" class="d-inline">
-                @method('DELETE')
-                @csrf
-                <button title="${full.is_active?'Non Aktifkan':'Aktifkan'}" onclick="return confirm('Apakah Yakin Ingin ${full.is_active ==1?'Non Aktifkan':'Mengaktifkan'} Kategory ini?')" class="btn ${full.is_active ==1?'bg-gradient-danger':'bg-gradient-primary'}">
-                    ${full.is_active?'<i class="fas fa-times"></i>':'<i class="fas fa-check"></i>'}
-                </button>
-                </form>`
+				return `<a data-toggle="modal" data-target="#modal-description" title="Edit" class="btn btn-sm bg-gradient-primary edit-atm"><i class="fas fa-edit"></i></a>`
 			}
 		}
       ],
@@ -115,6 +112,16 @@
       $('#form-method').append(`
         @method('post')
       `)
+    })
+
+    $('#table-bank').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      let data = atmTable.row($(this).parents('tr')).data();
+      data.is_active = bool?1:0;
+      ajax(data, `{{URL::to('/bank/status')}}`, "PUT",
+          function(json) {
+            atmTable.clear().draw();
+      })
     })
   })
 </script>
