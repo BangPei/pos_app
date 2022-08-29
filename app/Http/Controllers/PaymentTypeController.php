@@ -84,18 +84,47 @@ class PaymentTypeController extends Controller
      */
     public function update(Request $request, PaymentType $paymentType)
     {
-        $paymentType = $request->validate([
-            'name' => 'required',
-            'description' => '',
-        ]);
-        $paymentType['id'] = $request->input('id');
-        $paymentType['edit_by_id'] = auth()->user()->id;
-        PaymentType::where('id', $paymentType['id'])->update([
-            'name' => $paymentType['name'],
-            'description' => $paymentType['description'],
-            'edit_by_id' => $paymentType['edit_by_id'],
-        ]);
+        $request['edit_by_id'] = auth()->user()->id;
+        $paymentType->update($request->all());
+        // $paymentType = $request->validate([
+        //     'name' => 'required',
+        //     'description' => '',
+        // ]);
+        // $paymentType['id'] = $request->input('id');
+        // $paymentType['edit_by_id'] = auth()->user()->id;
+        // PaymentType::where('id', $paymentType['id'])->update([
+        //     'name' => $paymentType['name'],
+        //     'description' => $paymentType['description'],
+        //     'edit_by_id' => $paymentType['edit_by_id'],
+        // ]);
         return Redirect::to('payment');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $payment = $request;
+        if ($request->ajax()) {
+            PaymentType::where('id', $payment['id'])->update([
+                'is_active' => $payment['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($payment);
+    }
+    public function changePayment(Request $request)
+    {
+        $payment = $request;
+        if ($request->ajax()) {
+            if ($payment['is_default']) {
+                PaymentType::where('id', '!=', $payment['id'])->update([
+                    'is_default' => 0,
+                ]);
+            }
+            PaymentType::where('id', $payment['id'])->update([
+                'is_default' => $payment['is_default'],
+            ]);
+        }
+        return response()->json($payment);
     }
 
     /**

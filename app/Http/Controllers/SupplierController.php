@@ -91,26 +91,9 @@ class SupplierController extends Controller
      * @param  \App\Models\Supplier  $supplier
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, Supplier $supplier)
     {
-        $supplier = $request->validate([
-            'name' => 'required',
-            'phone' => '',
-            'npwp' => '',
-            'pic' => '',
-            'mobile' => '',
-            'address' => '',
-            'id' => '',
-        ]);
-
-        Supplier::where('id', $supplier['id'])->update([
-            'name' => $supplier['name'],
-            'phone' => $supplier['phone'],
-            'npwp' => $supplier['npwp'],
-            'pic' => $supplier['pic'],
-            'mobile' => $supplier['mobile'],
-            'address' => $supplier['address'],
-        ]);
+        $supplier->update($request->all());
         session()->flash('message', 'Berhasil merubah ' . $supplier['name']);
         return Redirect::to('/supplier');
     }

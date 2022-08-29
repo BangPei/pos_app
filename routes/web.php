@@ -45,7 +45,10 @@ Route::resource('uom', UomController::class)->middleware('auth');
 Route::put('bank/status', [AtmController::class, 'changeStatus'])->middleware('auth');
 Route::resource('bank', AtmController::class)->middleware('auth');
 
+Route::put('payment/default', [PaymentTypeController::class, 'changePayment'])->middleware('auth');
+Route::put('payment/status', [PaymentTypeController::class, 'changeStatus'])->middleware('auth');
 Route::resource('payment', PaymentTypeController::class)->middleware('auth');
+
 Route::resource('supplier', SupplierController::class)->middleware('auth');
 
 Route::resource('setting', SettingController::class)->middleware('auth');

@@ -36,7 +36,7 @@
             <div class="row">
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
-                        <input value="{{ $supplier->id }}" type="text" class="form-control d-none" name="id" id="id">
+                        <input value="{{ $supplier->id??'' }}" type="text" class="form-control d-none" name="id" id="id">
                         <label for="name">Nama</label>
                         <input required value="{{ old('name',$supplier->name??'') }}" type="text" autofocus="true" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
                         @error('name')
