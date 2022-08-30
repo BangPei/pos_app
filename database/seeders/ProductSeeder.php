@@ -26,7 +26,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8993005121011",
             "name" => "Caladine cream 15 gr",
             "is_active" => true,
-            "category_id" => 1,
+            "category_id" => 4,
             "created_by_id" => 2,
             "edit_by_id" => 2,
         ]);
@@ -42,7 +42,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8999909000544",
             "name" => "Marlboro Black 20 btg",
             "is_active" => true,
-            "category_id" => 3,
+            "category_id" => 6,
             "created_by_id" => 2,
             "edit_by_id" => 2,
         ]);
@@ -50,8 +50,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992946523533",
             "name" => "Shinzui Sakura 420 ml",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 4,
             "created_by_id" => 2,
             "edit_by_id" => 2,
         ]);
@@ -59,8 +58,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8998103010809",
             "name" => "Carex Sabun Cuci Tangan Aloe Vera 2x200 ml",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 4,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -68,8 +66,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992802021166",
             "name" => "Prenagen Lactamom Stroberi 200 gr",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 2,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -77,8 +74,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8851818936812",
             "name" => "Laurier Relax Night 30cm 16pcs",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 4,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -86,8 +82,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992802108126",
             "name" => "Chil go 3+ Vanilla 700 gr",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 2,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -95,8 +90,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992802108133",
             "name" => "Chil go 3+ Madu 700 gr",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 2,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -104,8 +98,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992802108065",
             "name" => "Chil go 1+ Madu 700 gr",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 2,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
@@ -113,8 +106,7 @@ class ProductSeeder extends Seeder
             "barcode" => "8992802108096",
             "name" => "Chil go 1+ Vanilla 700 gr",
             "is_active" => true,
-
-            "category_id" => 3,
+            "category_id" => 2,
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);

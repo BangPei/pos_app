@@ -65,11 +65,11 @@ class MultipleDiscountController extends Controller
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new MultipleDiscountDetail();
             $detail->multiple_discount_id = $md["id"];
-            $detail->product_id = $request->details[$i]["product_id"];
+            $detail->item_convertion_id = $request->details[$i]["item_convertion_id"];
             $detail->is_active = true;
-            $detail->save();
             array_push($details, $detail);
         }
+        $md->details()->saveMany($details);
         $md->details = $details;
         return response()->json($md);
     }
@@ -80,9 +80,13 @@ class MultipleDiscountController extends Controller
      * @param  \App\Models\MultipleDiscount  $multipleDiscount
      * @return \Illuminate\Http\Response
      */
-    public function show(MultipleDiscount $multipleDiscount)
+    public function show(UtilitiesRequest $request)
     {
-        //
+        $multipleDiscount = new MultipleDiscount();
+        if ($request->ajax()) {
+            $multipleDiscount = MultipleDiscount::where('id', $request->id)->first();
+        }
+        return response()->json($multipleDiscount);
     }
 
     /**
@@ -91,9 +95,17 @@ class MultipleDiscountController extends Controller
      * @param  \App\Models\MultipleDiscount  $multipleDiscount
      * @return \Illuminate\Http\Response
      */
-    public function edit(MultipleDiscount $multipleDiscount)
+    public function edit(MultipleDiscount $multipleDiscount, UtilitiesRequest $request)
     {
-        //
+        $products = ItemConvertion::all();
+        if ($request->ajax()) {
+            return datatables()->of($products)->make(true);
+        }
+        return view('discount/multiple/form', [
+            "title" => "Diskon Form",
+            "menu" => "Diskon",
+            "multipleDiscount" => $multipleDiscount,
+        ]);
     }
 
     /**

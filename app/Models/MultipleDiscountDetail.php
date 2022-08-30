@@ -9,20 +9,20 @@ class MultipleDiscountDetail extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $hidden = ['product_id', 'multiple_discount_id'];
-    protected $with = ['product'];
+    protected $hidden = ['item_convertion_id', 'multiple_discount_id'];
+    protected $with = ['item_convertion'];
 
     public function multipleDiscount()
     {
         return $this->belongsTo(MultipleDiscount::class);
     }
-    public function product()
+    public function item_convertion()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(ItemConvertion::class);
     }
 
     public function getRouteKeyName()
     {
-        return 'product_id';
+        return 'item_convertion_id';
     }
 }

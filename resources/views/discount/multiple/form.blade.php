@@ -12,24 +12,24 @@
             <h2 class="card-title">Form Paket Diskon</h2>
         </div>
         <div class="card-body ">
-            <form autocomplete="off">
+            <form autocomplete="off" form-validate=true id="form-multiple-discount">
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="name">Nama Promosi</label>
-                            <input required type="text" autofocus="true" class="form-control" name="name" id="name">
+                            <input required value="{{ old('name',$multipleDiscount->name??'') }}"  type="text" autofocus="true" class="form-control" name="name" id="name">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
-                            <label for="qty">Qty</label>
-                            <input required  type="text" class="form-control number2" name="min_qty" id="min_qty">
+                            <label for="min_qty">Qty</label>
+                            <input required value="{{ old('name',$multipleDiscount->min_qty??'') }}" type="text" class="form-control number2" name="min_qty" id="min_qty">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="discount">Diskon</label>
-                            <input required  type="text" class="form-control number2" name="discount" id="discount">
+                            <input required value="{{ old('name',$multipleDiscount->discount??'') }}" type="text" class="form-control number2" name="discount" id="discount">
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,7 @@
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
 <script>
+    let dataId = "<?=isset($multipleDiscount)?$multipleDiscount->id:null?>";
     let multipleDiscount = {
         "_token": "{{ csrf_token() }}",
         name:null,
@@ -114,11 +115,11 @@
             data: multipleDiscount.details,
             columns:[
                 {
-                    data:"product.name",
+                    data:"item_convertion.name",
                     defaultContent:"--",
                 },
                 {
-                    data:"product.price",
+                    data:"item_convertion.price",
                     defaultContent:"0",
                     mRender:function(data,type,full){
                         return `Rp. ${formatNumber(data)}`
@@ -134,7 +135,7 @@
                     }
                 },
                 {
-                    data:"product.id",
+                    data:"item_convertion.id",
                     mRender:function(data,type,full){
                         return `<a title="Hapus" class="btn btn-sm bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
                     }
@@ -189,7 +190,7 @@
                     var node = api.rows().nodes()
                     for (var i = 0; i < node.length; i++) {
                         let dataId = $(node[i]).find('input').attr('data-id')
-                        let isExist = multipleDiscount.details.some(item => item.product_id == dataId)
+                        let isExist = multipleDiscount.details.some(item => item.item_convertion_id == dataId)
                         if (isExist) {
                             $(node[i]).find('input').prop('checked',true)
                         }
@@ -200,11 +201,11 @@
         })
 
         $('#table-product').on('change','td input[type="checkbox"]',function() {
-            let product = tblProduct.row($(this).parents('tr')).data();
+            let item_convertion = tblProduct.row($(this).parents('tr')).data();
             let val = $(this).prop('checked');
             let detail = {
-                product_id:product.id,
-                product:product,
+                item_convertion_id:item_convertion.id,
+                item_convertion:item_convertion,
                 is_active:true,
             }
             if (val == true) {
@@ -220,7 +221,20 @@
             multipleDiscount.details.splice(data, 1);
             reloadJsonDataTable(tblProductDiscount, multipleDiscount.details);
         })
+
+        dataId!=""?getMultipleDiscount():null;
     })
+
+    function getMultipleDiscount(){
+            let data = {
+                id:dataId,
+            }
+            ajax(data, `{{URL::to('multiple-discount/show')}}`, "GET",
+                function(json) {
+                    multipleDiscount = json;
+                    reloadJsonDataTable(tblProductDiscount,multipleDiscount.details);
+            })
+        }
 
     function saveMultipleDiscount(){
         let name = $('#name').val();
@@ -233,19 +247,22 @@
         multipleDiscount.name = name;
         multipleDiscount.min_qty = parseInt(min_qty.replace(/,/g, ""));
         multipleDiscount.discount = parseFloat(discount.replace(/,/g, ""));
-
-        $.ajax({
-            data:multipleDiscount,
-            url:"{{ route('multiple-discount.store') }}",
-            type:"POST",
-            dataType:"json",
-            success:function (params) {
-                console.log(params);
-            },
-            error:function(params){
-                console.log(params)
-            }
+        let method = dataId == ""?"POST":"PUT";
+        let url = dataId == ""?"{{ route('multiple-discount.store') }}":"{{URL::to('multiple-discount/update')}}"
+        ajax(multipleDiscount, url, method,
+            function(json) {
+                toastr.success('Berhasil Memproses Data')
+                resetForm($('#form-multiple-discount'))
+                multipleDiscount.details = [];
+                reloadJsonDataTable(tblProductDiscount,multipleDiscount.details);
+                setTimeout(() => {
+                    // location.reload()
+                    method == "POST"?
+                    location.reload():
+                    window.location = "{{URL::to('multiple-discount')}}";
+                }, 1000);
         })
+        
     }
 </script>
 @endsection

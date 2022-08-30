@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([PaymentTypeSeeder::class]);
         $this->call([CategorySeeder::class]);
         $this->call([UomSeeder::class]);
+        $this->call([ItemConvertionSeeder::class]);
 
         User::create([
             "name" => "Administrator",

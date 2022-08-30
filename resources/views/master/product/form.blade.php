@@ -340,7 +340,6 @@
                         resetForm($('#form-product'))
                         product.items_convertion = [];
                         reloadJsonDataTable(tblConvertion,product.items_convertion);
-                        console.log(json)
                         setTimeout(() => {
                             // location.reload()
                             method == "POST"?
