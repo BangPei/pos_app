@@ -9,7 +9,7 @@ class MultipleDiscountDetail extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $hidden = ['item_convertion_id', 'multiple_discount_id'];
+    protected $hidden = ['item_convertion_barcode', 'multiple_discount_id'];
     protected $with = ['item_convertion'];
 
     public function multipleDiscount()
@@ -18,11 +18,6 @@ class MultipleDiscountDetail extends Model
     }
     public function item_convertion()
     {
-        return $this->belongsTo(ItemConvertion::class);
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'item_convertion_id';
+        return $this->belongsTo(ItemConvertion::class, 'item_convertion_barcode', 'barcode');
     }
 }

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MultipleDiscount;
-use App\Http\Requests\UpdateMultipleDiscountRequest;
 use App\Models\ItemConvertion;
 use App\Models\MultipleDiscountDetail;
-use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -115,9 +114,38 @@ class MultipleDiscountController extends Controller
      * @param  \App\Models\MultipleDiscount  $multipleDiscount
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateMultipleDiscountRequest $request, MultipleDiscount $multipleDiscount)
+    public function update(Request $request)
     {
-        //
+        try {
+            $multipleDiscount = $request;
+            if ($request->ajax()) {
+
+                MultipleDiscountDetail::where('multiple_discount_id', $multipleDiscount['id'])->delete();
+                $details = [];
+                $is_active = 0;
+                for ($i = 0; $i < count($multipleDiscount->details); $i++) {
+                    $detail = new MultipleDiscountDetail();
+                    $detail->multiple_discount_id =  $multipleDiscount['id'];
+                    $detail->item_convertion_id =  $multipleDiscount->details[$i]["item_convertion"]['id'];
+                    $detail->is_active =  $multipleDiscount->details[$i]["is_active"] ? 1 : 0;
+                    $detail->save();
+                    $is_active = $detail->is_active == 1 ? +1 : +0;
+                    array_push($details, $details);
+                }
+                MultipleDiscount::where('id', $multipleDiscount['id'])->update([
+                    'name' => $multipleDiscount['name'],
+                    'min_qty' => $multipleDiscount['min_qty'],
+                    'discount' => $multipleDiscount['discount'],
+                    'edit_by_id' => auth()->user()->id,
+                    'is_active' => $is_active > 0 ? 1 : 0,
+                ]);
+
+                $multipleDiscount->details = $details;
+            }
+            return response()->json($$multipleDiscount);
+        } catch (Exception $e) {
+            print($e);
+        }
     }
 
     /**

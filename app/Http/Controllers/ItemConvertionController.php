@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ItemConvertion;
 use App\Http\Requests\StoreItemConvertionRequest;
 use App\Http\Requests\UpdateItemConvertionRequest;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class ItemConvertionController extends Controller
@@ -53,9 +55,13 @@ class ItemConvertionController extends Controller
      * @param  \App\Models\ItemConvertion  $itemConvertion
      * @return \Illuminate\Http\Response
      */
-    public function show(ItemConvertion $itemConvertion)
+    public function show(Request $request)
     {
-        //
+        $product = new ItemConvertion();
+        if ($request->ajax()) {
+            $product = ItemConvertion::where('barcode', $request->barcode)->first();
+        }
+        return response()->json($product);
     }
 
     /**

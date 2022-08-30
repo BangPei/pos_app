@@ -161,7 +161,7 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-12 table-responsive">
-            <table class="table table-striped table-bordered" width="100%" id="table-product">
+            <table class="table table-sm table-striped table-bordered" width="100%" id="table-product">
               <thead>
                 <tr>
                   <th>Barcode</th>
@@ -321,7 +321,7 @@
           {
             data: 'id',
             mRender: function(data, type, full) {
-              return `<a title="delete" class="btn bg-gradient-success add-product"><i class="fas fa-check"></i></a>`
+              return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
             }
           }
         ],
@@ -357,7 +357,7 @@
         let val = $(this).val() ==""?"1":$(this).val()
         data.qty =parseInt(val.replace(/,/g, ""));
       
-        getMultipleDiscount(data.product_id,data.product,
+        getMultipleDiscount(data.product.barcode,data.product,
           function(json){
             if (Object.keys(json).length != 0){
               let mod = 0;
@@ -425,7 +425,7 @@
         let val = $(this).val();
         if (val !="") {
           $.ajax({
-              url:`{{URL::to('product/show')}}`,
+              url:`{{URL::to('item-convention/show')}}`,
               type:"GET",
               data:{"barcode":val},
               dataType:"json",
@@ -564,7 +564,7 @@
   }
 
   function addProduct(params) {
-    getMultipleDiscount(params.id,params,
+    getMultipleDiscount(params.barcode,params,
       function(json){
         if (directSales.details.some(item => item.product.id === params.id)) {
           directSales.details.forEach(data => {
@@ -612,12 +612,12 @@
     )
   }
 
-  function getMultipleDiscount(id,product,callback,callbackError) {
+  function getMultipleDiscount(barcode,product,callback,callbackError) {
     try {
       $.ajax({
         url:`{{URL::to('multiple-discount-detail/show')}}`,
         type:"GET",
-        data:{"product_id":id},
+        data:{"item_convertion_barcode":barcode},
         dataType:"json",
         success:function (item) {
           callback(item)

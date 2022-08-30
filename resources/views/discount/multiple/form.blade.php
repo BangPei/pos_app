@@ -121,16 +121,19 @@
                 {
                     data:"item_convertion.price",
                     defaultContent:"0",
+                    className: "text-right",
                     mRender:function(data,type,full){
                         return `Rp. ${formatNumber(data)}`
                     }
                 },
                 {
                     data:"is_active",
-                    defaultContent:"-",
+                    defaultContent:"--",
                     mRender:function(data,type,full){
-                        return `<div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                        // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
+                        return `<div class="custom-control custom-switch">
+                                <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                                <label class="custom-control-label" for="switch-${full.id}"></label>
                                 </div>`
                     }
                 },
@@ -140,7 +143,16 @@
                         return `<a title="Hapus" class="btn btn-sm bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
                     }
                 }
-            ]
+            ],
+            columnDefs: [
+                { 
+                    className: "text-center",
+                    targets: [2,3]
+                },
+                { width: '10%',
+                    targets: [1,2,3]
+                },
+            ],
         })
         $('#modal-product').on('hidden.bs.modal', function (e) {
             $('#table-product').DataTable().destroy();
@@ -255,12 +267,12 @@
                 resetForm($('#form-multiple-discount'))
                 multipleDiscount.details = [];
                 reloadJsonDataTable(tblProductDiscount,multipleDiscount.details);
-                setTimeout(() => {
-                    // location.reload()
-                    method == "POST"?
-                    location.reload():
-                    window.location = "{{URL::to('multiple-discount')}}";
-                }, 1000);
+                // setTimeout(() => {
+                //     // location.reload()
+                //     method == "POST"?
+                //     location.reload():
+                //     window.location = "{{URL::to('multiple-discount')}}";
+                // }, 1000);
         })
         
     }

@@ -14,6 +14,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
+use App\Models\ItemConvertion;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,4 +60,5 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('multiple-discount-detail', MultipleDiscountDetailController::class)->middleware('auth');
 
     Route::get('item-convertion/dataTable', [ItemConvertionController::class, 'dataTable'])->middleware('auth');
+    Route::resource('item-convertion', ItemConvertionController::class)->middleware('auth');
 });

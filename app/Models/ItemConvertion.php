@@ -24,4 +24,9 @@ class ItemConvertion extends Model
     {
         return $this->belongsTo(Uom::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'barcode';
+    }
 }
