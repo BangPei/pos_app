@@ -24,7 +24,7 @@
                 </div>
                 <div class="card-body">
                     <p class="login-box-msg">Sign in to start your session</p>
-                    <form action="/login" method="post">
+                    <form autocomplete="off" action="/login" method="post">
                         @csrf
                         <div class="input-group mb-3">
                             <input type="text"  class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" name="username" placeholder="username" autofocus>
