@@ -6,9 +6,7 @@ use App\Models\DirectSales;
 use App\Http\Requests\UpdateDirectSalesRequest;
 use App\Models\Atm;
 use App\Models\DirectSalesDetail;
-use App\Models\ItemConvertion;
 use App\Models\PaymentType;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -22,14 +20,9 @@ class DirectSalesController extends Controller
     public function index(UtilitiesRequest $request)
     {
         $directSales = DirectSales::all();
-        foreach ($directSales as $ds) {
-            $dsDetails = DirectSalesDetail::where('direct_sales_id', $ds->id)->get();
-            $ds->details = $dsDetails;
-        }
         if ($request->ajax()) {
             return datatables()->of($directSales)->make(true);
         }
-        // var_dump($directSales);
         return view(
             'transaction.index',
             [
@@ -46,14 +39,8 @@ class DirectSalesController extends Controller
      */
     public function create(UtilitiesRequest $request)
     {
-        $products = ItemConvertion::all();
-        if ($request->ajax()) {
-            return datatables()->of($products)->make(true);
-        }
-        $paymentType = PaymentType::all();
-        $banks = Atm::all();
-        // print($paymentType);
-        // die();
+        $paymentType = PaymentType::where('is_active', 1)->get();
+        $banks = Atm::where('is_active', 1)->get();
         return view('transaction/direct_sales', [
             "title" => "Aplikasi Kasir",
             "menu" => "Transaksi",
@@ -134,7 +121,15 @@ class DirectSalesController extends Controller
      */
     public function edit(DirectSales $directSales)
     {
-        //
+        $paymentType = PaymentType::where('is_active', 1)->get();
+        $banks = Atm::where('is_active', 1)->get();
+        return view('transaction/direct_sales', [
+            "title" => "Aplikasi Kasir",
+            "menu" => "Transaksi",
+            "payment" => $paymentType,
+            "bank" => $banks,
+            'directSales' => $directSales,
+        ]);
     }
 
     /**

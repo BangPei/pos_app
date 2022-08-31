@@ -69,8 +69,12 @@
             <div class="col-sm-6 text-right">
               <select name="payment-type" id="payment-type" class="form-control">
                 @foreach ($payment as $pt)
-                  <option value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
-                @endforeach
+                  @if (old('paymentType',$directSales->paymentType->id??'')==$pt->id)
+                    <option selected value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
+                  @else
+                    <option value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
+                  @endif
+                  @endforeach
             </select>
             </div>
           </div>
@@ -185,6 +189,7 @@
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
+  let dsId = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
     code:null,
     customer_name:null,

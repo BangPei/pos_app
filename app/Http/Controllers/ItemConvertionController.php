@@ -59,7 +59,10 @@ class ItemConvertionController extends Controller
     {
         $product = new ItemConvertion();
         if ($request->ajax()) {
-            $product = ItemConvertion::where('barcode', $request->barcode)->first();
+            $product = ItemConvertion::where([
+                ['barcode', $request->barcode],
+                ['is_active', 1]
+            ])->first();
         }
         return response()->json($product);
     }
