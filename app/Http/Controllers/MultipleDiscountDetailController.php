@@ -50,7 +50,7 @@ class MultipleDiscountDetailController extends Controller
         $detail = new MultipleDiscountDetail();
         $multiple = new MultipleDiscount();
         if ($request->ajax()) {
-            $detail = MultipleDiscountDetail::where('item_convertion_barcode', $request->product_id)->first();
+            $detail = MultipleDiscountDetail::where('item_convertion_barcode', $request->item_convertion_barcode)->first();
             if (isset($detail)) {
                 $multiple = MultipleDiscount::where('id', $detail->multiple_discount_id)->first();
                 $detail->program = $multiple;

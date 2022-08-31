@@ -64,7 +64,7 @@ class MultipleDiscountController extends Controller
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new MultipleDiscountDetail();
             $detail->multiple_discount_id = $md["id"];
-            $detail->item_convertion_id = $request->details[$i]["item_convertion_id"];
+            $detail->item_convertion_barcode = $request->details[$i]["item_convertion"]['barcode'];
             $detail->is_active = true;
             array_push($details, $detail);
         }

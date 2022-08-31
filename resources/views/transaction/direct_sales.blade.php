@@ -123,7 +123,7 @@
           <div class="row">
             <div class="col-md-12 col-sam-12 col-xs-12 text-center">
               <a class="btn btn-danger" onclick="cancelTransaction()"><i class="fas fa-trash"></i> Batal</a>
-              <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</a>
+              <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary btn-save"><i class="fas fa-save"></i> Simpan</a>
             </div>
           </div>
         </div>
@@ -186,7 +186,6 @@
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
   let directSales= {
-    "_token": "{{ csrf_token() }}",
     code:null,
     customer_name:null,
     amount:0,
@@ -370,9 +369,6 @@
             }
             countTotality();
             reloadJsonDataTable(tblOrder, directSales.details);
-          },
-          function(error){
-            console.log(error)
           }
         )
     });
@@ -424,23 +420,16 @@
       if(e.keyCode == 13){
         let val = $(this).val();
         if (val !="") {
-          $.ajax({
-              url:`{{URL::to('item-convention/show')}}`,
-              type:"GET",
-              data:{"barcode":val},
-              dataType:"json",
-              success:function (item) {
+          ajax({"barcode":val}, `{{URL::to('/item-convertion/show')}}`, "GET",
+              function(item) {
                 if (Object.keys(item).length != 0) {
                   addProduct(item);
                   $("#barcode").val("")
                 }else{
                   $("#barcode").val(val.toLowerCase())
                 }
-              },
-              error:function(params){
-                console.log(params)
-              }
           })
+          
         }
       }
     })
@@ -524,17 +513,14 @@
     }
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
-    $.ajax({
-      data:directSales,
-      url:"{{ route('transaction.store') }}",
-      type:"POST",
-      dataType:"json",
-      success:function (params) {
-        console.log(params);
-      },
-      error:function(params){
-        console.log(params)
-      }
+    $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
+    ajax(directSales, "{{ route('transaction.store') }}", "POST",
+        function(json) {
+          toastr.success('Transaksi Berhasil Disimpan')
+          cancelTransaction();
+          $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    },function(json){
+      $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
     })
   }
 
@@ -606,33 +592,20 @@
         }
         reloadJsonDataTable(tblOrder,directSales.details);
         countTotality();
-      },function(json){
-        console.log(json)
       }
     )
   }
 
-  function getMultipleDiscount(barcode,product,callback,callbackError) {
-    try {
-      $.ajax({
-        url:`{{URL::to('multiple-discount-detail/show')}}`,
-        type:"GET",
-        data:{"item_convertion_barcode":barcode},
-        dataType:"json",
-        success:function (item) {
-          callback(item)
-        },
-        error:function(json){
-          console.log(json)
-          callbackError(json)
-        }
-      })
-    } catch (error) {
-      console.log(error)
-    }
+  function getMultipleDiscount(barcode,product,callback) {
+    ajax({"item_convertion_barcode":barcode}, `{{URL::to('multiple-discount-detail/show')}}`, "GET",
+        function(json) {
+            callback(json)
+    })
   }
 
   function cancelTransaction() {
+    $('#cash').val('');
+    $('#is-cash').prop('checked',false);
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);
     countTotality();
