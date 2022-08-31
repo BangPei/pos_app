@@ -28,6 +28,8 @@ class CreateDirectSalesTable extends Migration
             $table->foreignId('payment_type_id');
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
+            $table->foreignId('bank_id')->nullable();
+            $table->boolean('is_cash');
             $table->timestamps();
         });
     }

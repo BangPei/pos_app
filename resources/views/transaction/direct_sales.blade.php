@@ -7,7 +7,7 @@
 <div class="col-md-12">
   <div class="card">
     <div class="card-header">
-      <h2 class="card-title">Form Penjualan</h2>
+      <h2 class="card-title">Form Penjualan <em id="edit-area"></em></h2>
       <div class="card-tools">
         <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
           <i class="fas fa-eye"></i> List Produk
@@ -69,12 +69,8 @@
             <div class="col-sm-6 text-right">
               <select name="payment-type" id="payment-type" class="form-control">
                 @foreach ($payment as $pt)
-                  @if (old('paymentType',$directSales->paymentType->id??'')==$pt->id)
-                    <option selected value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
-                  @else
-                    <option value="{{$pt->id}}" data-reduce="{{ $reduce = $pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
-                  @endif
-                  @endforeach
+                  <option value="{{$pt->id}}" data-reduce="{{$pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
+                @endforeach
             </select>
             </div>
           </div>
@@ -186,10 +182,11 @@
 @endsection
 
 @section('content-script')
+<script src="/plugins/moment/moment.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-  let dsId = "<?=isset($directSales)?$directSales->code:null?>";
+  let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
     code:null,
     customer_name:null,
@@ -387,7 +384,7 @@
         $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
     });
-    $('#cash').on('change', function() {
+    $('#cash').on('keyup', function() {
         let value = $(this).val().replace(/,/g, "");
         directSales.cash = parseFloat(value===""?0:value);
         
@@ -410,6 +407,7 @@
 
     $('#is-cash').on('change',function () {
       val = $(this).prop('checked')
+      directSales.is_cash = val?1:0;
       if (val) {
         directSales.cash = directSales.amount;
         directSales.change = directSales.cash-directSales.amount;
@@ -449,6 +447,10 @@
       let showAtm = $(this).find(':selected').attr('data-atm');
       let showCash = $(this).find(':selected').attr('show-cash');
       let dataReduce = $(this).find(':selected').attr('data-reduce');
+      directSales.bank_id = null;
+      directSales.is_cash = 0;
+      $('input[name="bank"]').prop('checked',false)
+      $('#is-cash').prop('checked',false)
       if (showAtm!="") {
         $('#atm-area').removeClass('d-none')
         $('#cash-area').addClass('d-none')
@@ -488,18 +490,51 @@
       let val = $(this).val();
       let dataReduce = $('#payment-type').find(':selected').attr('data-reduce');
       if (val == "other") {
+        directSales.bank_id=null;
         directSales.reduce=parseInt(dataReduce);
         $('#reduce-persentage').html(dataReduce)
         $('#reduce-area').removeClass('d-none')
       }else{
         directSales.reduce=0;
+        directSales.bank_id=val;
         $('#reduce-area').addClass('d-none')
         $('#reduce-persentage').html("0")
       }
       countTotality()
     })
+
+    dsCode!=""?getDirectSales():null;
   })
 
+  function getDirectSales(){
+      let data = {
+          code:dsCode,
+      }
+      ajax(data, `{{URL::to('transaction/show')}}`, "GET",
+          function(json) {
+            directSales = Object.assign({}, json);
+            reloadJsonDataTable(tblOrder,json.details);
+            $('#payment-type').val(json.payment_type.id).trigger('change')
+            $('#reduce-persentage').html(formatNumber(json.reduce))
+            $('#cash').val(formatNumber(json.cash))
+            $("#change").html(formatNumber(json.change))
+            $('#subtotal').html(formatNumber(json.subtotal))
+            $('#discount-1').html(formatNumber(json.discount))
+            $('#total-qty').html(formatNumber(json.total_item))
+            $('#total').html(formatNumber(json.amount))
+            $("#customer-name").val(json.customer_name??"")
+            $('#edit-area').append(`<u>
+              - ${json.code} / ${json.created_by.name} / 
+              ${moment(json.created_at).format('DD MMMM YYYY HH:mm')}</u>
+            `).addClass('text-primary')
+            $('#is-cash').prop('checked',json.is_cash);
+            if (json.bank) {
+              $(`#bank-${json.bank.id}`).prop('checked',true)
+            }else{
+              $(`#bank-other`).prop('checked',true).trigger('change')
+            }
+      })
+  }
   function saveTransaction(){
     let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
     let dataCash = $("#payment-type").find(':selected').attr('show-cash');
@@ -611,6 +646,8 @@
   function cancelTransaction() {
     $('#cash').val('');
     $('#is-cash').prop('checked',false);
+    $('input[name="bank"]').prop('checked',false)
+    $('#customer-name').val('')
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);
     countTotality();

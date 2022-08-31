@@ -84,16 +84,19 @@ class DirectSalesController extends Controller
         $ds->edit_by_id = auth()->user()->id;
         $ds->payment_type_id = $request->payment_type_id;
         $ds->reduce = $request->reduce;
+        $ds->is_cash = $request->is_cash;
+        $ds->bank_id = $request->bank_id;
         $ds->save();
 
         $details = [];
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new DirectSalesDetail();
             $detail->direct_sales_id = $ds["id"];
-            $detail->product_id = $request->details[$i]["product_id"];
+            $detail->item_convertion_barcode = $request->details[$i]["product"]['barcode'];
             $detail->price = $request->details[$i]["price"];
             $detail->qty = $request->details[$i]["qty"];
             $detail->discount = $request->details[$i]["discount"];
+            $detail->program = $request->details[$i]["program"];
             $detail->subtotal = $request->details[$i]["subtotal"];
             $detail->save();
             array_push($details, $detail);
@@ -108,9 +111,13 @@ class DirectSalesController extends Controller
      * @param  \App\Models\DirectSales  $directSales
      * @return \Illuminate\Http\Response
      */
-    public function show(DirectSales $directSales)
+    public function show(Request $request)
     {
-        //
+        $directSales = new DirectSales();
+        if ($request->ajax()) {
+            $directSales = DirectSales::where('code', $request->code)->first();
+        }
+        return response()->json($directSales);
     }
 
     /**
@@ -119,8 +126,9 @@ class DirectSalesController extends Controller
      * @param  \App\Models\DirectSales  $directSales
      * @return \Illuminate\Http\Response
      */
-    public function edit(DirectSales $directSales)
+    public function edit($code)
     {
+        $directSales = DirectSales::where('code', $code)->first();
         $paymentType = PaymentType::where('is_active', 1)->get();
         $banks = Atm::where('is_active', 1)->get();
         return view('transaction/direct_sales', [

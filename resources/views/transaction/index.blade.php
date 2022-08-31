@@ -23,6 +23,7 @@
             <th>Pembeli</th>
             <th>Total Item</th>
             <th>Total</th>
+            <th>Pembayaran</th>
             <th>Kasir</th>
             <th>Aksi</th>
           </tr>
@@ -75,6 +76,10 @@
             }
         },
         {
+            data:"payment_type.name",
+            defaultContent:"--",
+        },
+        {
             data:"created_by.name",
             defaultContent:"--",
         },
@@ -88,7 +93,7 @@
         columnDefs: [
             { 
                 className: "text-center",
-                targets: [1,2,3,5]
+                targets: [1,2,3,6]
             },
             { 
                 className: "text-right",

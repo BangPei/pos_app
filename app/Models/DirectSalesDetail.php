@@ -10,7 +10,7 @@ class DirectSalesDetail extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $hidden = ['product_id'];
+    protected $hidden = ['item_convertion_barcode'];
     protected $with = ['product'];
 
     public function directSales()
@@ -19,6 +19,6 @@ class DirectSalesDetail extends Model
     }
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(ItemConvertion::class, 'item_convertion_barcode', 'barcode');
     }
 }

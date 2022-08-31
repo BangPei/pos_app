@@ -11,10 +11,11 @@ class DirectSales extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_by_id', 'edit_by_id', 'payment_type_id'];
-    protected $with = ['createdBy', 'editBy', 'details', 'paymentType'];
+    protected $with = ['createdBy', 'editBy', 'details', 'paymentType', 'bank'];
 
     public $casts = [
         'code' => 'string',
+        'is_cash' => 'boolean',
     ];
 
     public function createdBy()
@@ -28,6 +29,10 @@ class DirectSales extends Model
     public function paymentType()
     {
         return $this->belongsTo(PaymentType::class);
+    }
+    public function bank()
+    {
+        return $this->belongsTo(Atm::class, 'bank_id', 'id');
     }
     public function details()
     {
