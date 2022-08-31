@@ -22,7 +22,7 @@ class ItemConvertionController extends Controller
     }
     public function dataTable(UtilitiesRequest $request)
     {
-        $itemConvertion = ItemConvertion::all();
+        $itemConvertion = ItemConvertion::where('is_active', 1);
         if ($request->ajax()) {
             return datatables()->of($itemConvertion)->make(true);
         }
