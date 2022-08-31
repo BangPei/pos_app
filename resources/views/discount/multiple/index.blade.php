@@ -84,6 +84,16 @@
           }
         ],
       })
+
+      $('#table-discount').on('click','.custom-control-input',function() {
+        let bool = $(this).prop('checked');
+        let data = tableDiscount.row($(this).parents('tr')).data();
+        data.is_active = bool?1:0;
+        ajax(data, `{{URL::to('/multiple-discount/status')}}`, "PUT",
+            function(json) {
+              tableDiscount.clear().draw();
+        })
+      })
     })
   </script>
 @endsection

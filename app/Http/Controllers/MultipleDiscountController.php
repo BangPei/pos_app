@@ -54,7 +54,7 @@ class MultipleDiscountController extends Controller
         $md->name = $request['name'];
         $md->min_qty = $request['min_qty'];
         $md->discount = $request['discount'];
-        $md->is_active = true;
+        $md->is_active = $request['is_active'] ? 1 : 0;
         $md->created_by_id = auth()->user()->id;
         $md->edit_by_id = auth()->user()->id;
         $md->save();
@@ -65,7 +65,7 @@ class MultipleDiscountController extends Controller
             $detail = new MultipleDiscountDetail();
             $detail->multiple_discount_id = $md["id"];
             $detail->item_convertion_barcode = $request->details[$i]["item_convertion"]['barcode'];
-            $detail->is_active = true;
+            $detail->is_active = $request->details[$i]['is_active'] ? 1 : 0;
             array_push($details, $detail);
         }
         $md->details()->saveMany($details);
@@ -118,34 +118,48 @@ class MultipleDiscountController extends Controller
     {
         try {
             $multipleDiscount = $request;
-            if ($request->ajax()) {
-
-                MultipleDiscountDetail::where('multiple_discount_id', $multipleDiscount['id'])->delete();
-                $details = [];
-                $is_active = 0;
-                for ($i = 0; $i < count($multipleDiscount->details); $i++) {
-                    $detail = new MultipleDiscountDetail();
-                    $detail->multiple_discount_id =  $multipleDiscount['id'];
-                    $detail->item_convertion_id =  $multipleDiscount->details[$i]["item_convertion"]['id'];
-                    $detail->is_active =  $multipleDiscount->details[$i]["is_active"] ? 1 : 0;
-                    $detail->save();
-                    $is_active = $detail->is_active == 1 ? +1 : +0;
-                    array_push($details, $details);
-                }
-                MultipleDiscount::where('id', $multipleDiscount['id'])->update([
-                    'name' => $multipleDiscount['name'],
-                    'min_qty' => $multipleDiscount['min_qty'],
-                    'discount' => $multipleDiscount['discount'],
-                    'edit_by_id' => auth()->user()->id,
-                    'is_active' => $is_active > 0 ? 1 : 0,
-                ]);
-
-                $multipleDiscount->details = $details;
+            MultipleDiscountDetail::where('multiple_discount_id', $multipleDiscount['id'])->delete();
+            $details = [];
+            for ($i = 0; $i < count($multipleDiscount->details); $i++) {
+                $detail = new MultipleDiscountDetail();
+                $detail->multiple_discount_id =  $multipleDiscount['id'];
+                $detail->item_convertion_barcode =  $multipleDiscount->details[$i]["item_convertion"]['barcode'];
+                $detail->is_active =  $multipleDiscount->details[$i]["is_active"] ? 1 : 0;
+                $detail->save();
+                array_push($details, $details);
             }
-            return response()->json($$multipleDiscount);
+
+            MultipleDiscount::where('id', $multipleDiscount['id'])->update([
+                'name' => $multipleDiscount['name'],
+                'min_qty' => $multipleDiscount['min_qty'],
+                'discount' => $multipleDiscount['discount'],
+                'edit_by_id' => auth()->user()->id,
+                'is_active' => $multipleDiscount['is_active'] ? 1 : 0,
+            ]);
+
+            $multipleDiscount->details = $details;
+            return response()->json($multipleDiscount);
         } catch (Exception $e) {
             print($e);
         }
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $md = $request;
+        if ($request->ajax()) {
+            MultipleDiscount::where('id', $md['id'])->update([
+                'name' => $md['name'],
+                'min_qty' => $md['min_qty'],
+                'discount' => $md['discount'],
+                'edit_by_id' => auth()->user()->id,
+                'is_active' => $md['is_active'] ? 1 : 0,
+            ]);
+            MultipleDiscountDetail::where('multiple_discount_id', $md['id'])->update([
+                "is_active" => $md['is_active'] ? 1 : 0,
+            ]);
+        }
+        return response()->json($md);
     }
 
     /**

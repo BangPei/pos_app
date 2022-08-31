@@ -56,6 +56,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::resource('setting', SettingController::class)->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
+
+    Route::put('multiple-discount/status', [MultipleDiscountController::class, 'changeStatus'])->middleware('auth');
     Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');
     Route::resource('multiple-discount-detail', MultipleDiscountDetailController::class)->middleware('auth');
 

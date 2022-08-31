@@ -101,7 +101,6 @@
 <script>
     let dataId = "<?=isset($multipleDiscount)?$multipleDiscount->id:null?>";
     let multipleDiscount = {
-        "_token": "{{ csrf_token() }}",
         name:null,
         min_qty:0,
         discount:0,
@@ -132,8 +131,8 @@
                     mRender:function(data,type,full){
                         // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
                         return `<div class="custom-control custom-switch">
-                                <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
-                                <label class="custom-control-label" for="switch-${full.id}"></label>
+                                <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.item_convertion.barcode}">
+                                <label class="custom-control-label" for="switch-${full.item_convertion.barcode}"></label>
                                 </div>`
                     }
                 },
@@ -207,9 +206,8 @@
                             $(node[i]).find('input').prop('checked',true)
                         }
                     }
-                }
+                },
             })
-            $('div.dataTables_filter input', tblProduct.table().container()).focus();
         })
 
         $('#table-product').on('change','td input[type="checkbox"]',function() {
@@ -232,6 +230,11 @@
             let data = tblProductDiscount.row($(this).parents('tr')).index();
             multipleDiscount.details.splice(data, 1);
             reloadJsonDataTable(tblProductDiscount, multipleDiscount.details);
+        })
+        $('#table-product-discount').on('change','.custom-control-input',function(){
+            let bool = $(this).prop('checked');
+            let data = tblProductDiscount.row($(this).parents('tr')).data();
+            data.is_active = bool?1:0;
         })
 
         dataId!=""?getMultipleDiscount():null;
@@ -261,18 +264,22 @@
         multipleDiscount.discount = parseFloat(discount.replace(/,/g, ""));
         let method = dataId == ""?"POST":"PUT";
         let url = dataId == ""?"{{ route('multiple-discount.store') }}":"{{URL::to('multiple-discount/update')}}"
+        let isActive = 0;
+        multipleDiscount.details.forEach(val=>{
+            val.is_active==0?(isActive+0):(isActive++)
+        })
+        multipleDiscount.is_active = isActive>0?1:0;
         ajax(multipleDiscount, url, method,
             function(json) {
                 toastr.success('Berhasil Memproses Data')
                 resetForm($('#form-multiple-discount'))
                 multipleDiscount.details = [];
                 reloadJsonDataTable(tblProductDiscount,multipleDiscount.details);
-                // setTimeout(() => {
-                //     // location.reload()
-                //     method == "POST"?
-                //     location.reload():
-                //     window.location = "{{URL::to('multiple-discount')}}";
-                // }, 1000);
+                setTimeout(() => {
+                    method == "POST"?
+                    location.reload():
+                    window.location = "{{URL::to('multiple-discount')}}";
+                }, 1000);
         })
         
     }

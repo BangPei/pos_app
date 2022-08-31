@@ -124,7 +124,6 @@ class ProductController extends Controller
 
                 ItemConvertion::where('product_id', $product['id'])->delete();
                 $itemConvertion = [];
-                $is_active = 0;
                 for ($i = 0; $i < count($product->items_convertion); $i++) {
                     $convertion = new ItemConvertion();
                     $convertion->product_id =  $product['id'];
@@ -135,7 +134,6 @@ class ProductController extends Controller
                     $convertion->uom_id =  $product->items_convertion[$i]["uom"]['id'];
                     $convertion->is_active =  $product->items_convertion[$i]["is_active"] ? 1 : 0;
                     $convertion->save();
-                    $is_active = $convertion->is_active == 1 ? +1 : +0;
                     array_push($itemConvertion, $convertion);
                 }
                 Product::where('barcode', $product['barcode'])->update([
@@ -143,7 +141,7 @@ class ProductController extends Controller
                     'barcode' => $product['barcode'],
                     'category_id' => $product['category']['id'],
                     'edit_by_id' => auth()->user()->id,
-                    'is_active' => $is_active > 0 ? 1 : 0,
+                    'is_active' => $product['is_active'] ? 1 : 0,
                 ]);
 
                 $product->items_convertion = $itemConvertion;
@@ -160,12 +158,12 @@ class ProductController extends Controller
             Product::where('barcode', $product['barcode'])->update([
                 'name' => $product['name'],
                 'barcode' => $product['barcode'],
-                'is_active' => $product['is_active'],
+                'is_active' => $product['is_active'] ? 1 : 0,
                 'category_id' => $product['category_id'],
                 'edit_by_id' => auth()->user()->id,
             ]);
             ItemConvertion::where('product_id', $product['id'])->update([
-                "is_active" => $product['is_active'],
+                "is_active" => $product['is_active'] ? 1 : 0,
             ]);
         }
         return response()->json($product);

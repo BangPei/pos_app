@@ -334,6 +334,11 @@
                 product.category ={id:$('#category_id').val()};
                 let method = barcode == ""?"POST":"PUT";
                 let url = barcode == ""?"{{ route('product.store') }}":"{{URL::to('product/update')}}"
+                let isActive = 0;
+                product.items_convertion.forEach(val=>{
+                    val.is_active==0?(isActive+0):(isActive++)
+                })
+                product.is_active = isActive>0?1:0;
                 ajax(product, url, method,
                     function(json) {
                         toastr.success('Berhasil Memproses Data')
@@ -341,7 +346,6 @@
                         product.items_convertion = [];
                         reloadJsonDataTable(tblConvertion,product.items_convertion);
                         setTimeout(() => {
-                            // location.reload()
                             method == "POST"?
                             location.reload():
                             window.location = "{{URL::to('product')}}";
