@@ -10,6 +10,7 @@ use App\Http\Controllers\MultipleDiscountController;
 use App\Http\Controllers\MultipleDiscountDetailController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
@@ -56,6 +57,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::resource('setting', SettingController::class)->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
+    Route::resource('purchase-order', PurchaseController::class)->middleware('auth');
 
     Route::put('multiple-discount/status', [MultipleDiscountController::class, 'changeStatus'])->middleware('auth');
     Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');

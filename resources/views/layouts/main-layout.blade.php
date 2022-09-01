@@ -168,7 +168,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item {{ (Request::is('order*'))?'menu-open':'' }}">
+                        <li class="nav-item {{ (Request::is('purchase-order*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon far fa-money-bill-alt"></i>
                                 <p>
@@ -178,13 +178,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/order/create" class="nav-link {{Request::is('order/create')?'active':''}}">
+                                    <a href="/purchase-order/create" class="nav-link {{Request::is('purchase-order/create')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Pembelian</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/order" class="nav-link {{Request::is('order')?'active':''}}">
+                                    <a href="/purchase-order" class="nav-link {{Request::is('purchase-order')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Detail Pembelian</p>
                                     </a>

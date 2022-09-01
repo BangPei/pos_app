@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Purchase;
 use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class PurchaseController extends Controller
 {
@@ -13,9 +14,19 @@ class PurchaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        //
+        $po = Purchase::all();
+        if ($request->ajax()) {
+            return datatables()->of($po)->make(true);
+        }
+        return view(
+            'purchase.index',
+            [
+                "title" => "Detail Transaksi Keluar",
+                "menu" => "Transaksi",
+            ]
+        );
     }
 
     /**
