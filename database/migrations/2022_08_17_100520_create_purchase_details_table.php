@@ -17,7 +17,8 @@ class CreatePurchaseDetailsTable extends Migration
             $table->id();
             $table->foreignId('purchase_id');
             $table->foreignId('product_id');
-            $table->float('price')->default(0);
+            $table->float('invoice_price')->default(0);
+            $table->float('pcs_price')->default(0);
             $table->integer('qty')->default(0);
             $table->float('tax_paid')->default(0);
             $table->float('subtotal')->default(0);
