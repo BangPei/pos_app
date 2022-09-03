@@ -56,7 +56,7 @@
                         </a>
                     </div>
                     <div class="col-md-12 mt-3 table-responsive">
-                        <table class="table table-striped table-bordered table-sm" width="100%" id="table-convertion">
+                        <table class="table table-striped table-bordered table-sm" width="100%" id="table-purchase">
                             <thead>
                                 <tr>
                                     <th>Nama</th>
@@ -86,4 +86,13 @@
 @section('content-script')
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function(){
+        tblPurchase = $('#table-purchase').DataTable({
+            paging: false,
+            searching: false,
+            ordering:  false,
+        })
+    })
+</script>
 @endsection
