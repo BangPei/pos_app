@@ -26,13 +26,13 @@ class CreatePurchasesTable extends Migration
             $table->float('subtotal');
             $table->float('discount');
             $table->float('dpp');
+            $table->float('tax_paid');
             $table->integer('total_item');
             $table->integer('tax');
-            $table->boolean('is_tax')->default(true);
             $table->timestamp('date_time');
             $table->timestamp('due_date')->nullable();
             $table->enum('payment_type', ['lunas', 'tempo']);
-            $table->binary('photo')->nullable();
+            $table->binary('picture')->nullable();
             $table->timestamps();
         });
     }
