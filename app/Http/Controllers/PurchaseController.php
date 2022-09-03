@@ -36,7 +36,13 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        //
+        return view(
+            'purchase.form',
+            [
+                "title" => "Form Pembelian",
+                "menu" => "Aplikasi Pembelian",
+            ]
+        );
     }
 
     /**

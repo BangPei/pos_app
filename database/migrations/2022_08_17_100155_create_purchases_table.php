@@ -18,7 +18,6 @@ class CreatePurchasesTable extends Migration
             $table->string('code')->unique();
             $table->string('invoice_no')->nullable();
             $table->string('pic')->nullable();
-            $table->string('driver')->nullable();
             $table->foreignId('created_by_id');
             $table->foreignId('edit_by_id');
             $table->foreignId('supplier_id');
