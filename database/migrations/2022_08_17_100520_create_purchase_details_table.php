@@ -21,7 +21,7 @@ class CreatePurchaseDetailsTable extends Migration
             $table->float('pcs_price')->default(0);
             $table->integer('qty')->default(0);
             $table->float('tax_paid')->default(0);
-            $table->float('subtotal')->default(0);
+            $table->float('total')->default(0);
             $table->timestamps();
         });
     }
