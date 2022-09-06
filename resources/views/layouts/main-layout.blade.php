@@ -288,7 +288,6 @@
 
         <!-- jQuery -->
         <script src="/plugins/jquery/jquery.min.js"></script>
-        <!-- Tempusdominus Bootstrap 4 -->
         <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script> 
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>

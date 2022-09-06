@@ -1,6 +1,8 @@
 @extends('layouts.main-layout')
 
 @section('content-style')
+    {{-- <link rel="stylesheet" href="/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css"> --}}
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
 @endsection
 
 @section('content-child')
@@ -33,18 +35,29 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
+                        <label for="date-time">Tgl Datang Barang</label>
                         <div class="form-group">
-                            <label for="date-time">Tgl Datang Barang</label>
-                            <input required  type="text" class="form-control" name="date-time" id="date-time">
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                <input type="text" id="date-time" data-toggle="datetimepicker" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="payment-type">Tipe Pembayaran</label>
                             <select required name="payment-type" id="payment-type" class="form-control select2">
-                                <option value="lunas">Lunas</option>
                                 <option value="tempo">Tempo</option>
+                                <option value="lunas">Lunas</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 due-date">
+                        <div class="form-group">
+                            <label for="due-date">Tgl Jatuh Tempo</label>
+                            <input required  type="text" class="form-control" name="due-date" id="due-date">
                         </div>
                     </div>
                 </div>
@@ -86,12 +99,44 @@
 @section('content-script')
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+{{-- <script src="/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> --}}
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js"></script>
 <script>
+    let purchase = {
+        invoice_no:null,
+        pic:null,
+        supplier:null,
+        amount:0,
+        subtotal:0,
+        discount:0,
+        dpp:0,
+        tax_paid:0,
+        total_item:0,
+        tax:0,
+        date_time:null,
+        due_date:null,
+        payment_type:null,
+        picture:null,
+        delails:[],
+    }
     $(document).ready(function(){
         tblPurchase = $('#table-purchase').DataTable({
             paging: false,
             searching: false,
             ordering:  false,
+            bInfo : false,
+        })
+
+        $('#payment-type').on('change',function(){
+            let val = $(this).val();
+            if (val == "tempo") {
+                $('.due-date').removeClass('d-none')
+                $('#due-date').attr('required','required')
+            } else {
+                $('.due-date').addClass('d-none')
+                $('#due-date').removeAttr('required')
+            }
         })
     })
 </script>

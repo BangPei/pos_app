@@ -6,6 +6,10 @@ $(document).ready(function(){
 		$('input.select2-search__field')[0].focus();
 	})
 
+	$('#datetimepicker1').datetimepicker({
+		format:"D MMMM yyyy"
+	});
+
 	// $('.select2').select2({
     //     dropdownParent: $('.modal-body')
     // });
