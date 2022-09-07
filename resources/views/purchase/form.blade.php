@@ -1,8 +1,7 @@
 @extends('layouts.main-layout')
 
 @section('content-style')
-    {{-- <link rel="stylesheet" href="/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css"> --}}
-    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 @endsection
 
 @section('content-child')
@@ -35,15 +34,8 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
-                        <label for="date-time">Tgl Datang Barang</label>
-                        <div class="form-group">
-                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                                <input type="text" id="date-time" data-toggle="datetimepicker" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
-                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
+                        <label for="due-date">Tgl Datang Barang</label>
+                        <input readonly required name="date-time" type="text" id="date-time" class="form-control datepicker"/>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
@@ -57,7 +49,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 due-date">
                         <div class="form-group">
                             <label for="due-date">Tgl Jatuh Tempo</label>
-                            <input required  type="text" class="form-control" name="due-date" id="due-date">
+                            <input readonly required type="text" name="due-date" id="due-date" class="form-control datepicker"/>
                         </div>
                     </div>
                 </div>
@@ -99,9 +91,6 @@
 @section('content-script')
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-{{-- <script src="/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> --}}
-<script src="/plugins/moment/moment.min.js"></script>
-<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js"></script>
 <script>
     let purchase = {
         invoice_no:null,

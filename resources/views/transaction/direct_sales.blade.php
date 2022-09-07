@@ -25,48 +25,48 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Subtotal</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-2 font-weight-bold">Rp.</div>
-            <div class="col-sm-4 font-weight-bold text-right" id="subtotal">0</div>
+            <div class="col-4 font-weight-bold">Subtotal</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-2 font-weight-bold">Rp.</div>
+            <div class="col-4 font-weight-bold text-right" id="subtotal">0</div>
           </div>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Diskon 1</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-2 font-weight-bold">Rp.</div>
-            <div class="col-sm-4 font-weight-bold text-right" id="discount-1">0</div>
+            <div class="col-4 font-weight-bold">Diskon 1</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-2 font-weight-bold">Rp.</div>
+            <div class="col-4 font-weight-bold text-right" id="discount-1">0</div>
           </div>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Diskon 2</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-6 text-right">
+            <div class="col-4 font-weight-bold">Diskon 2</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-6 text-right">
               <input type="text" placeholder="0" id="discount-2" class="text-right font-weight-bold number2" style="width: 100%">
             </div>
           </div>
           <div id="reduce-area" class="d-none">
             <div class="row">
-              <div class="col-sm-4 font-weight-bold">Biaya Kartu (<span id="reduce-persentage">0</span>%)</div>
-              <div class="col-sm-2 font-weight-bold">:</div>
-              <div class="col-sm-6 font-weight-bold text-right" id="reduce">0</div>
+              <div class="col-4 font-weight-bold">Biaya Kartu (<span id="reduce-persentage">0</span>%)</div>
+              <div class="col-2 font-weight-bold">:</div>
+              <div class="col-6 font-weight-bold text-right" id="reduce">0</div>
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Total Qty</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-6 font-weight-bold text-right" id="total-qty">0</div>
+            <div class="col-4 font-weight-bold">Total Qty</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-6 font-weight-bold text-right" id="total-qty">0</div>
           </div>
           <hr>
           <div class="row">
-            <div class="col-sm-4 font-weight-bolder"><h4>Total</h4></div>
-            <div class="col-sm-2 font-weight-bolder"><h4>:</h4></div>
-            <div class="col-sm-2 font-weight-bolder"><h4>Rp.</h4></div>
-            <div class="col-sm-4 font-weight-bolder text-right"><h4 id="total">0</h4></div>
+            <div class="col-4 font-weight-bolder"><h4>Total</h4></div>
+            <div class="col-2 font-weight-bolder"><h4>:</h4></div>
+            <div class="col-2 font-weight-bolder"><h4>Rp.</h4></div>
+            <div class="col-4 font-weight-bolder text-right"><h4 id="total">0</h4></div>
           </div>
           <hr>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Tipe Pembayaran</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-6 text-right">
+            <div class="col-4 font-weight-bold">Tipe Pembayaran</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-6 text-right">
               <select name="payment-type" id="payment-type" class="form-control">
                 @foreach ($payment as $pt)
                   <option value="{{$pt->id}}" data-reduce="{{$pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
@@ -88,13 +88,13 @@
           </div>
           <div id="cash-area">
             <div class="row">
-              <div class="col-sm-4 font-weight-bold">Uang Tunai</div>
-              <div class="col-sm-2 font-weight-bold">:</div>
-              <div class="col-sm-6 text-right">
+              <div class="col-4 font-weight-bold">Uang Tunai</div>
+              <div class="col-2 font-weight-bold">:</div>
+              <div class="col-6 text-right">
                 <div class="row">
                   <div class="col-5">
                     <label for="is-cash">
-                      <i style="font-size: 10px !important">Uang Pas</i>
+                      <i style="font-size: 9px !important">Uang Pas</i>
                     </label>
                     <input type="checkbox" id="is-cash">
                   </div>
@@ -105,22 +105,22 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-sm-4 font-weight-bold">Kembalian</div>
-              <div class="col-sm-2 font-weight-bold">:</div>
-              <div class="col-sm-2 font-weight-bold">Rp.</div>
-              <div class="col-sm-4 font-weight-bold text-right" id="change">0</div>
+              <div class="col-4 font-weight-bold">Kembalian</div>
+              <div class="col-2 font-weight-bold">:</div>
+              <div class="col-2 font-weight-bold">Rp.</div>
+              <div class="col-4 font-weight-bold text-right" id="change">0</div>
             </div>
           </div>
           <br>
           <div class="row">
-            <div class="col-sm-4 font-weight-bold">Nama Pembeli</div>
-            <div class="col-sm-2 font-weight-bold">:</div>
-            <div class="col-sm-6 text-right">
+            <div class="col-4 font-weight-bold">Nama Pembeli</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-6 text-right">
               <input type="text" placeholder="Nama Pembeli" id="customer-name" class="font-weight-bold" style="width: 100%">
             </div>
           </div>
           <hr>
-          <div class="row">
+          <div class="row width-screen">
             <div class="col-md-12 col-sam-12 col-xs-12 text-center">
               <a class="btn btn-danger" onclick="cancelTransaction()"><i class="fas fa-trash"></i> Batal</a>
               <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary btn-save"><i class="fas fa-save"></i> Simpan</a>

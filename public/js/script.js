@@ -6,10 +6,14 @@ $(document).ready(function(){
 		$('input.select2-search__field')[0].focus();
 	})
 
-	$('#datetimepicker1').datetimepicker({
-		format:"D MMMM yyyy"
+	$('.datepicker').datepicker({
+		uiLibrary: 'bootstrap4',
+		format:"dd mmmm yyyy",
 	});
-
+	$('.datepicker').datepicker({
+		uiLibrary: 'bootstrap4',
+		format:"dd mmmm yyyy",
+	});
 	// $('.select2').select2({
     //     dropdownParent: $('.modal-body')
     // });
