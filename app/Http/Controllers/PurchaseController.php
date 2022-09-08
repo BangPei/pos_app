@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Purchase;
 use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
+use App\Models\Product;
+use App\Models\Supplier;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class PurchaseController extends Controller
@@ -36,11 +38,13 @@ class PurchaseController extends Controller
      */
     public function create()
     {
+        $supplier = Supplier::all();
         return view(
             'purchase.form',
             [
                 "title" => "Form Pembelian",
                 "menu" => "Aplikasi Pembelian",
+                'supplier' => $supplier,
             ]
         );
     }

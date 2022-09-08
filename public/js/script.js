@@ -5,15 +5,6 @@ $(document).ready(function(){
 	$('.select2').on('select2:open', function () {
 		$('input.select2-search__field')[0].focus();
 	})
-
-	$('.datepicker').datepicker({
-		uiLibrary: 'bootstrap4',
-		format:"dd mmmm yyyy",
-	});
-	$('.datepicker').datepicker({
-		uiLibrary: 'bootstrap4',
-		format:"dd mmmm yyyy",
-	});
 	// $('.select2').select2({
     //     dropdownParent: $('.modal-body')
     // });

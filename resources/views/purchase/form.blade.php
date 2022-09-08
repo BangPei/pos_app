@@ -24,6 +24,9 @@
                             <label for="supplier">Supplier</label>
                             <select required name="supplier" id="supplier" class="form-control select2">
                                 <option selected value="" disabled>--Pilih Supplier--</option>
+                                @foreach ($supplier as $s)
+                                    <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -34,8 +37,8 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
-                        <label for="due-date">Tgl Datang Barang</label>
-                        <input readonly required name="date-time" type="text" id="date-time" class="form-control datepicker"/>
+                        <label for="date-time">Tgl Datang Barang</label>
+                        <input readonly required name="date-time" type="text" id="date-time" class="form-control"/>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
@@ -56,7 +59,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <a class="btn btn-primary" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-convertion">
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
                             <i class="fas fa-plus-circle"></i> Tambah Produk
                         </a>
                     </div>
@@ -86,6 +89,38 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modal-product" tabindex="-1">
+<div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modal-title">List Product</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12 table-responsive">
+          <table class="table table-sm table-striped table-bordered" width="100%" id="table-product">
+            <thead>
+              <tr>
+                <th>Barcode</th>
+                <th>Nama</th>
+                <th>Satuan</th>
+                <th>Harga</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+div>
+  
 @endsection
 
 @section('content-script')
@@ -116,6 +151,66 @@
             ordering:  false,
             bInfo : false,
         })
+
+        $('#modal-product').on('show.bs.modal', function (e) {
+      tblProduct = $('#table-product').DataTable({
+        processing:true,
+        serverSide:true,
+        ajax:{
+          url:"{{URL::to('item-convertion/dataTable')}}",
+          type:"GET",
+        },
+        columns:[
+          {
+            data:"barcode",
+            defaultContent:"--"
+          },
+          {
+            data:"name",
+            defaultContent:"--"
+          },
+          {
+            data:"uom.name",
+            defaultContent:"--"
+          },
+          {
+            data:"price",
+            defaultContent:"0",
+            mRender:function(data,type,full){
+              return `Rp. ${formatNumber(data)}`
+            }
+          },
+          {
+            data: 'id',
+            mRender: function(data, type, full) {
+              return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
+            }
+          }
+        ],
+        columnDefs: [
+            { 
+              className: "text-center",
+              targets: [2,4]
+            },
+          ],
+      })
+      $('div.dataTables_filter input', tblProduct.table().container()).focus();
+    })
+
+    $('#modal-product').on('hidden.bs.modal', function (e) {
+      $('#barcode').focus()
+      $('#table-product').DataTable().destroy();
+    })
+
+        $('#date-time').datepicker({
+            uiLibrary: 'bootstrap4',
+            format:"dd mmmm yyyy",
+        });
+
+        $('#due-date').datepicker({
+            uiLibrary: 'bootstrap4',
+            format:"dd mmmm yyyy",
+        });
 
         $('#payment-type').on('change',function(){
             let val = $(this).val();
