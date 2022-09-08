@@ -15,8 +15,10 @@ class CreatePurchaseDetailsTable extends Migration
     {
         Schema::create('purchase_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_id');
-            $table->foreignId('product_id');
+            $table->unsignedInteger('purchase_id');
+            $table->foreignId('purchase_id')->references('id')->on('purchases');
+            $table->unsignedInteger('product_id');
+            $table->foreignId('product_id')->references('id')->on('products');
             $table->float('invoice_price')->default(0);
             $table->float('pcs_price')->default(0);
             $table->integer('qty')->default(0);

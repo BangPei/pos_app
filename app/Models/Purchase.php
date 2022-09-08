@@ -27,7 +27,7 @@ class Purchase extends Model
     }
     public function details()
     {
-        return $this->hasMany(PurchaseDetail::class);
+        return $this->belongsToMany(Product::class)->withPivot(['qty', 'tax_paid', 'total', 'invoice_price', 'pcs_price']);
     }
 
     public function getRouteKeyName()
