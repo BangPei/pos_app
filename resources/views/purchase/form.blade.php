@@ -92,34 +92,34 @@
 
 
 <div class="modal fade" id="modal-product" tabindex="-1">
-<div class="modal-dialog modal-xl modal-dialog-scrollable">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="modal-title">List Product</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-12 table-responsive">
-          <table class="table table-sm table-striped table-bordered" width="100%" id="table-product">
-            <thead>
-              <tr>
-                <th>Barcode</th>
-                <th>Nama</th>
-                <th>Satuan</th>
-                <th>Harga</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-          </table>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">List Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 table-responsive">
+            <table class="table table-sm table-striped table-bordered" width="100%" id="table-product">
+              <thead>
+                <tr>
+                  <th>Barcode</th>
+                  <th>Nama</th>
+                  <th>Satuan</th>
+                  <th>Harga</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-div>
   
 @endsection
 
