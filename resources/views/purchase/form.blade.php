@@ -1,7 +1,7 @@
 @extends('layouts.main-layout')
 
 @section('content-style')
-    <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 @endsection
 
 @section('content-child')
@@ -69,10 +69,10 @@
                                 <tr>
                                     <th>Nama</th>
                                     <th>Qty</th>
-                                    <th>Harga Satuan</th>
-                                    <th>Pajak</th>
-                                    <th>Harga Modal</th>
                                     <th>Subtotal</th>
+                                    <th>Pajak</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Harga Modal</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -124,6 +124,7 @@
 @endsection
 
 @section('content-script')
+<script src="/plugins/moment/moment.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
@@ -153,64 +154,80 @@
         })
 
         $('#modal-product').on('show.bs.modal', function (e) {
-      tblProduct = $('#table-product').DataTable({
-        processing:true,
-        serverSide:true,
-        ajax:{
-          url:"{{URL::to('item-convertion/dataTable')}}",
-          type:"GET",
-        },
-        columns:[
-          {
-            data:"barcode",
-            defaultContent:"--"
-          },
-          {
-            data:"name",
-            defaultContent:"--"
-          },
-          {
-            data:"uom.name",
-            defaultContent:"--"
-          },
-          {
-            data:"price",
-            defaultContent:"0",
-            mRender:function(data,type,full){
-              return `Rp. ${formatNumber(data)}`
-            }
-          },
-          {
-            data: 'id',
-            mRender: function(data, type, full) {
-              return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
-            }
-          }
-        ],
-        columnDefs: [
-            { 
-              className: "text-center",
-              targets: [2,4]
-            },
-          ],
-      })
-      $('div.dataTables_filter input', tblProduct.table().container()).focus();
-    })
+            tblProduct = $('#table-product').DataTable({
+              processing:true,
+              serverSide:true,
+              ajax:{
+                url:"{{URL::to('item-convertion/dataTable')}}",
+                type:"GET",
+              },
+              columns:[
+                {
+                  data:"barcode",
+                  defaultContent:"--"
+                },
+                {
+                  data:"name",
+                  defaultContent:"--"
+                },
+                {
+                  data:"uom.name",
+                  defaultContent:"--"
+                },
+                {
+                  data:"price",
+                  defaultContent:"0",
+                  mRender:function(data,type,full){
+                    return `Rp. ${formatNumber(data)}`
+                  }
+                },
+                {
+                  data: 'id',
+                  mRender: function(data, type, full) {
+                    return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
+                  }
+                }
+              ],
+              columnDefs: [
+                  { 
+                    className: "text-center",
+                    targets: [2,4]
+                  },
+                ],
+            })
+        })
 
-    $('#modal-product').on('hidden.bs.modal', function (e) {
-      $('#barcode').focus()
-      $('#table-product').DataTable().destroy();
-    })
+        $('#modal-product').on('hidden.bs.modal', function (e) {
+          $('#table-product').DataTable().destroy();
+        })
 
         $('#date-time').datepicker({
             uiLibrary: 'bootstrap4',
             format:"dd mmmm yyyy",
+            change:function(){
+              $('#due-date').val('')
+              $('#due-date').datepicker({
+                  uiLibrary: 'bootstrap4',
+                  format:"dd mmmm yyyy",
+              })
+              // let value =moment($('#date-time').val(),'DD MMMM YYYY').format();
+              // dueDate =  $('#due-date').datepicker();
+              // dueDate.destroy();
+              // $('#due-date').datepicker({
+              //     uiLibrary: 'bootstrap4',
+              //     format:"dd mmmm yyyy",
+              //     disableDates:function(date){
+              //       let isBefore = moment(moment(date).format()).isBefore(value)
+              //       if (isBefore) {
+              //         return false
+              //       }else{
+              //         return true
+              //       }
+              //     }
+              // })
+            }
         });
 
-        $('#due-date').datepicker({
-            uiLibrary: 'bootstrap4',
-            format:"dd mmmm yyyy",
-        });
 
         $('#payment-type').on('change',function(){
             let val = $(this).val();
