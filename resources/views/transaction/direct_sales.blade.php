@@ -315,6 +315,7 @@
           {
             data:"price",
             defaultContent:"0",
+            className:"text-right",
             mRender:function(data,type,full){
               return `Rp. ${formatNumber(data)}`
             }
@@ -330,6 +331,14 @@
             { 
               className: "text-center",
               targets: [2,4]
+            },
+            {
+              width: '12%',
+              targets: 0,
+            },
+            {
+              width: '10%',
+              targets: [2,3,4],
             },
           ],
       })
