@@ -52,21 +52,15 @@
 	    	    }
 	    	}
         ],
-        columnDefs: [
-            { 
-                className: "text-center",
-                targets: [0,1]
-            },
-        ],
-        order:[[0,'asc']]
+        order:[[1,'asc']]
     })
 
-    ajax(null, `http://192.168.0.104:8000/api/expedition`, "GET",
-        function(json) {
-           console.log(json);
-    },function(err){
-        console.log(err)
-    })
+    // ajax({name:"ID Express"}, `http://127.0.0.1:8000/api/expedition`, "POST",
+    //     function(json) {
+    //       console.log(json);
+    // },function(err){
+    //     console.log(err)
+    // })
   })
 </script>
 @endsection

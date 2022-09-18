@@ -7,14 +7,19 @@ use App\Models\Expedition;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
-class ExpeditionController extends Controller
+class ExpeditionApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UtilitiesRequest $request)
+    public function index()
+    {
+        return Expedition::all();
+    }
+
+    public function dataTable(UtilitiesRequest $request)
     {
         $expedition = Expedition::all();
         if ($request->ajax()) {
@@ -30,7 +35,10 @@ class ExpeditionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $expedition = $request->validate([
+            'name' => 'required',
+        ]);;
+        return response()->json(Expedition::Create($expedition));
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\ExpeditionController;
+use App\Http\Controllers\API\ExpeditionApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,19 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api', 'middleware' => ['auth:api']], function () {
-    // Permissions
-    Route::resource('api/expedition', ExpeditionController::class)->middleware('auth');
-
-    // // Roles
-    // Route::apiResource('roles', 'RolesApiController');
-
-    // // Users
-    // Route::apiResource('users', 'UsersApiController');
-
-    // // Products
-    // Route::apiResource('products', 'ProductsApiController');
-
-    // // Orders
-    // Route::apiResource('orders', 'OrdersApiController');
-});
+Route::get('expedition/dataTable', [ExpeditionApiController::class, 'dataTable']);
+Route::resource('expedition', ExpeditionApiController::class);
