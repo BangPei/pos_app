@@ -4,6 +4,7 @@ use App\Http\Controllers\AtmController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
+use App\Http\Controllers\ExpeditionController;
 use App\Http\Controllers\ItemConvertionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
@@ -65,4 +66,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::get('item-convertion/dataTable', [ItemConvertionController::class, 'dataTable'])->middleware('auth');
     Route::resource('item-convertion', ItemConvertionController::class)->middleware('auth');
+
+    Route::resource('expedition', ExpeditionController::class)->middleware('auth');
 });

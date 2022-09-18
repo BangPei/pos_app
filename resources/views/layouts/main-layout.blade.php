@@ -215,26 +215,24 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-header">User</li>
+                        <li class="nav-header">Setting</li>
                         <li class="nav-item">
                             <a href="/user" class="nav-link">
                                 <i class="nav-icon far fa-user"></i>
                                 <p>User</p>
                             </a>
                         </li>
-                        
-                        <li class="nav-header">Setting</li>
                         <li class="nav-item">
                             <a href="/setting" class="nav-link {{Request::is('setting')?'active':''}}">
                                 <i class="nav-icon fa fa-cogs"></i>
                                 <p>Pengaturan</p>
                             </a>
                         </li>
-                        <li class="nav-header">EXAMPLES</li>
+                        <li class="nav-header">Online Shop</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon far fa-calendar-alt"></i>
-                                <p>Calendar</p>
+                            <a href="/expedition" class="nav-link">
+                                <i class="nav-icon fa fa-truck"></i>
+                                <p>Master Expedisi</p>
                             </a>
                         </li>
                     </ul>
