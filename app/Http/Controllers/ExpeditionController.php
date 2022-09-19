@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expedition;
-use App\Http\Requests\StoreExpeditionRequest;
 use App\Http\Requests\UpdateExpeditionRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class ExpeditionController extends Controller
@@ -39,9 +40,14 @@ class ExpeditionController extends Controller
      * @param  \App\Http\Requests\StoreExpeditionRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreExpeditionRequest $request)
+    public function store(Request $request)
     {
-        //
+        $expedition = $request->validate([
+            'name' => 'required',
+        ]);
+        Expedition::Create($expedition);
+        session()->flash('message', 'Berhasil Menambah Expedisi ' . $expedition['name']);
+        return Redirect::to('bank');
     }
 
     /**
