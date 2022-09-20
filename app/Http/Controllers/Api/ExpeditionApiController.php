@@ -61,7 +61,11 @@ class ExpeditionApiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $expedition = $request;
+        Expedition::where('id', $id)->update([
+            'name' => $expedition['name']
+        ]);
+        return response()->json($expedition);
     }
 
     /**

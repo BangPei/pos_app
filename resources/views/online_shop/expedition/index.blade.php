@@ -63,6 +63,7 @@
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
+  let expeditionId;
   $(document).ready(function(){
     tblExpedition = $('#table-expedition').DataTable({
         processing:true,
@@ -79,25 +80,39 @@
             {
 	    	    data: 'id',
 	    	    mRender: function(data, type, full) {
-	    	        return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>`
+	    	        return `<a data-toggle="modal" data-target="#modal-expedition" data-backdrop="static" data-keyboard="false" title="Edit" class="btn btn-sm bg-gradient-primary edit-expedition"><i class="fas fa-edit"></i></a>`
 	    	    }
 	    	}
         ],
         order:[[1,'asc']]
     })
+    $('#table-expedition').on('click','.edit-expedition',function() {
+      let data = tblExpedition.row($(this).parents('tr')).data();
+      expeditionId = data.id;
+      $('#expedition').val(data.name??'--');
+      console.log(data);
+
+    })
+
     saveExpedition();
   })
 
   function saveExpedition() {
       formValid($('#form-expedition'),function(){
-        ajax({name:$('#expedition').val()}, `${baseApi}/expedition`, "POST",
+        let method = expeditionId?"PUT":"POST"
+        let expedition = {
+          id:expeditionId,
+          name:$('#expedition').val()
+        }
+        let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
+        ajax(expedition, url, method,
           function(json) {
-            toastr.success('Berhasil Menambah Expedisi')
+            toastr.success('Data Berhasil Diprosess')
             setTimeout(() => {
                 location.reload()
             }, 1000);
+          })
       })
-  })
   }
 </script>
 @endsection

@@ -1,4 +1,4 @@
 <script>
-    let baseApi = "<?=config('constants.data.BASE_API')?>";
-    let baseUrl = "<?=config('constants.data.BASE_URL')?>";
+    let baseApi = "<?= url('/api')?>";
+    let baseUrl = "<?= url('/')?>";
 </script>
