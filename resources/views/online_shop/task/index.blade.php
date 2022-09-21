@@ -71,7 +71,7 @@
         {
           data: 'is_done',
           mRender: function(data, type, full) {
-            return `<a href="" title="Edit" class="btn btn-sm bg-gradient-primary edit-daily-task"><i class="fas fa-edit"></i></a></form>`
+            return data?'Selesai':"On Progress"
             }
         },
         {
