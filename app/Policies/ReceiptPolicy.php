@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\DailyTaskDetail;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\Receipt;
+use App\Models\User;
 
-class DailyTaskDetailPolicy
+class ReceiptPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class DailyTaskDetailPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DailyTaskDetail  $dailyTaskDetail
+     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, DailyTaskDetail $dailyTaskDetail)
+    public function view(User $user, Receipt $receipt)
     {
         //
     }
@@ -48,10 +48,10 @@ class DailyTaskDetailPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DailyTaskDetail  $dailyTaskDetail
+     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, DailyTaskDetail $dailyTaskDetail)
+    public function update(User $user, Receipt $receipt)
     {
         //
     }
@@ -60,10 +60,10 @@ class DailyTaskDetailPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DailyTaskDetail  $dailyTaskDetail
+     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, DailyTaskDetail $dailyTaskDetail)
+    public function delete(User $user, Receipt $receipt)
     {
         //
     }
@@ -72,10 +72,10 @@ class DailyTaskDetailPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DailyTaskDetail  $dailyTaskDetail
+     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, DailyTaskDetail $dailyTaskDetail)
+    public function restore(User $user, Receipt $receipt)
     {
         //
     }
@@ -84,10 +84,10 @@ class DailyTaskDetailPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DailyTaskDetail  $dailyTaskDetail
+     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, DailyTaskDetail $dailyTaskDetail)
+    public function forceDelete(User $user, Receipt $receipt)
     {
         //
     }

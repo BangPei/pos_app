@@ -15,9 +15,11 @@ class CreateDailyTasksTable extends Migration
     {
         Schema::create('daily_tasks', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedBigInteger('expedition_id');
+            $table->foreign('expedition_id')->references('id')->on('expeditions');
+            $table->integer('total_package')->default(0);
+            $table->boolean('status')->default(false);
             $table->timestamp('date');
-            $table->boolean('is_done')->default(false);
-            $table->integer('total');
             $table->timestamps();
         });
     }

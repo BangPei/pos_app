@@ -10,9 +10,16 @@ class DailyTask extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $with = ['expedition'];
+    protected $hidden = ['expedition_id',];
 
-    public function expeditions()
+    public function expedition()
     {
-        return $this->belongsToMany(Expedition::class)->withPivot(['total', 'scanned', 'cancel']);
+        return $this->belongsTo(Expedition::class);
+    }
+
+    public function receipts()
+    {
+        return $this->belongsToMany(Receipt::class);
     }
 }

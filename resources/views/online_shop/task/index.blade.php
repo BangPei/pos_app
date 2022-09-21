@@ -54,22 +54,18 @@
             }
         },
         {
-            data:"expeditions",
+            data:"expedition.name",
             defaultContent:"--",
-            mRender:function(data,type,full){
-                let ul = `<ul class="data-li"></ul>`;
-                    full.expeditions.forEach(e => {
-                        $(`ul.data-li`).append(`<li>${e.name} (${e.pivot.total})</li>`);
-                    });
-                return ul;
-            }
         },
         {
-          data: 'total',
+          data: 'id',
           defaultContent:"0",
+          mRender:function(data,type,full){
+            return full.receipts.length;
+          }
         },
         {
-          data: 'is_done',
+          data: 'status',
           mRender: function(data, type, full) {
             return data?'Selesai':"On Progress"
             }
@@ -82,7 +78,6 @@
         }
         ],
     })
-    $('div.dataTables_filter input', tblDailyTask.table().container()).focus();
   })
 </script>
 @endsection
