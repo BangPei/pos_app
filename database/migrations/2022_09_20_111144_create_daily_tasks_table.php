@@ -14,7 +14,7 @@ class CreateDailyTasksTable extends Migration
     public function up()
     {
         Schema::create('daily_tasks', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->timestamp('date');
             $table->boolean('is_done')->default(false);
             $table->integer('total');

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\DailyTask;
 use App\Http\Requests\StoreDailyTaskRequest;
 use App\Http\Requests\UpdateDailyTaskRequest;
+use App\Models\Expedition;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DailyTaskController extends Controller
 {
@@ -13,9 +15,13 @@ class DailyTaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        //
+        $dailyTask = DailyTask::with('expeditions')->get();
+        if ($request->ajax()) {
+            return datatables()->of($dailyTask)->make(true);
+        }
+        return view('online_shop/task/index', ["title" => "Tugas Harian", "menu" => "Online Shope"]);
     }
 
     /**
@@ -25,7 +31,12 @@ class DailyTaskController extends Controller
      */
     public function create()
     {
-        //
+        $expedition = Expedition::all();
+        return view('online_shop/task/form', [
+            "title" => "Tugas Harian",
+            "menu" => "Online Shop",
+            "expedition" => $expedition,
+        ]);
     }
 
     /**

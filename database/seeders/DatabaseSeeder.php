@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([CategorySeeder::class]);
         $this->call([UomSeeder::class]);
         $this->call([ItemConvertionSeeder::class]);
+        $this->call([ExpeditionSeeder::class]);
 
         User::create([
             "name" => "Administrator",

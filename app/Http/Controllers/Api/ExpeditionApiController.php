@@ -37,6 +37,7 @@ class ExpeditionApiController extends Controller
     {
         $expedition = $request->validate([
             'name' => 'required',
+            'description' => 'required',
         ]);;
         return response()->json(Expedition::Create($expedition));
     }
@@ -63,7 +64,8 @@ class ExpeditionApiController extends Controller
     {
         $expedition = $request;
         Expedition::where('id', $id)->update([
-            'name' => $expedition['name']
+            'name' => $expedition['name'],
+            'description' => $expedition['description']
         ]);
         return response()->json($expedition);
     }

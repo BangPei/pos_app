@@ -19,6 +19,7 @@
         <thead>
           <tr>
             <th>Expedisi</th>
+            <th>Sumber</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -43,6 +44,10 @@
               <div class="form-group">
                 <label for="expedition">Nama Expedisi</label>
                 <input required type="text" class="form-control" id="expedition" name="expedition" placeholder="Nama Expedisi">
+              </div>
+              <div class="form-group">
+                <label for="description" class="col-form-label">Sumber Platform</label>
+                <textarea placeholder="Online Shop" class="form-control" name="description" id="description"></textarea>
               </div>
             </div>
           </div>
@@ -78,6 +83,10 @@
                 defaultContent:"--"
             },
             {
+                data:"description",
+                defaultContent:"--"
+            },
+            {
 	    	    data: 'id',
 	    	    mRender: function(data, type, full) {
 	    	        return `<a data-toggle="modal" data-target="#modal-expedition" data-backdrop="static" data-keyboard="false" title="Edit" class="btn btn-sm bg-gradient-primary edit-expedition"><i class="fas fa-edit"></i></a>`
@@ -90,6 +99,7 @@
       let data = tblExpedition.row($(this).parents('tr')).data();
       expeditionId = data.id;
       $('#expedition').val(data.name??'--');
+      $('#description').val(data.description??'--');
       console.log(data);
 
     })
@@ -102,7 +112,8 @@
         let method = expeditionId?"PUT":"POST"
         let expedition = {
           id:expeditionId,
-          name:$('#expedition').val()
+          name:$('#expedition').val(),
+          description:$('#description').val()
         }
         let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
         ajax(expedition, url, method,

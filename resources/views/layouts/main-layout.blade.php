@@ -235,6 +235,29 @@
                                 <p>Master Expedisi</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ (Request::is('daily-task*')) || (Request::is('expedition*'))?'menu-open':'' }}">
+                            <a href="#" class="nav-link {{Request::is('expedition')?'active':''}}">
+                                <i class="nav-icon fa fa-barcode"></i>
+                                <p>
+                                    Tugas Harian
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/daily-task/create" class="nav-link {{Request::is('daily-task/create')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Buat Tugas Harian</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/daily-task" class="nav-link {{Request::is('daily-task')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Detail Tugas Harian</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

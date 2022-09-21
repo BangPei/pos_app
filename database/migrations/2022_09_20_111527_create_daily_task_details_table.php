@@ -13,14 +13,15 @@ class CreateDailyTaskDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('daily_task_details', function (Blueprint $table) {
+        Schema::create('daily_task_expedition', function (Blueprint $table) {
             $table->id();
-            // $table->unsignedInteger('daily_tasks_id');
-            $table->foreignId('daily_tasks_id')->references('id')->on('daily_tasks');
-            // $table->unsignedInteger('expedition_id');
-            $table->foreignId('expedition_id')->references('id')->on('expeditions');
+            $table->unsignedInteger('daily_task_id');
+            $table->foreign('daily_task_id')->references('id')->on('daily_tasks');
+            $table->unsignedInteger('expedition_id');
+            $table->foreign('expedition_id')->references('id')->on('expeditions');
             $table->integer('total');
-            $table->string('data')->nullable();
+            $table->integer('scanned');
+            $table->string('cancel')->nullable();
             $table->timestamps();
         });
     }

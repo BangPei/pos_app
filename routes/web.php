@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AtmController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\ExpeditionController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
+use App\Models\DailyTask;
 use App\Models\ItemConvertion;
 use Illuminate\Support\Facades\Route;
 
@@ -68,4 +70,5 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('item-convertion', ItemConvertionController::class)->middleware('auth');
 
     Route::resource('expedition', ExpeditionController::class)->middleware('auth');
+    Route::resource('daily-task', DailyTaskController::class)->middleware('auth');
 });
