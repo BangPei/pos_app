@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDailyTaskRequest;
 use App\Http\Requests\UpdateDailyTaskRequest;
 use App\Models\Expedition;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DailyTaskController extends Controller
@@ -49,7 +50,7 @@ class DailyTaskController extends Controller
      * @param  \App\Http\Requests\StoreDailyTaskRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreDailyTaskRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -73,7 +74,14 @@ class DailyTaskController extends Controller
      */
     public function edit(DailyTask $dailyTask)
     {
-        //
+        return view(
+            'online_shop/task/form',
+            [
+                "title" => "Tugas Harian",
+                "menu" => "Online Shop",
+                "dailyTask" => $dailyTask
+            ]
+        );
     }
 
     /**
@@ -83,9 +91,16 @@ class DailyTaskController extends Controller
      * @param  \App\Models\DailyTask  $dailyTask
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateDailyTaskRequest $request, DailyTask $dailyTask)
+    public function update(Request $request, DailyTask $dailyTask)
     {
-        //
+        $dailyTask->update($request->all());
+
+        $dailyTask->receipts()->detach();
+        for ($rc = 0; $rc < count($dailyTask['receipts']); $rc++) {
+            $dailyTask->receipts()->attach($dailyTask['receipts'][$rc]);
+        }
+
+        return response()->json($dailyTask);
     }
 
     /**

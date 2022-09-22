@@ -15,32 +15,37 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
+                            <label for="expedition">Expedisi</label>
+                            <input  value="{{ $dailyTask->id }}" readonly type="text" class="form-control d-none" name="id" id="id">
+                            <input data-id="{{ $dailyTask->expedition->id }}" value="{{ $dailyTask->expedition->name }}" required readonly type="text" class="form-control" name="expedition" id="expedition">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
                             <label for="date">Tanggal</label>
-                            <input required  type="text" autofocus="true" class="form-control" name="date" id="date">
+                            <input value="{{ $dailyTask->date }}" required readonly disabled type="text" autofocus="true" class="form-control" name="date" id="date">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="total">Total Paket</label>
-                            <input placeholder="0" type="text" class="form-control" name="total" id="total">
+                            <input value="{{ $dailyTask->total_package }}" readonly placeholder="0" type="text" class="form-control text-right" name="total" id="total">
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="col-12 text-right">
-                        <a class="btn btn-primary" id="btn-add-task">
-                            <i class="fa fa-plus"></i> Tugas Harian
-                        </a>
+                    <div class="col-12">
+                        <div class="form-group" style="width: 40% !important">
+                            <input type="text" name="scanner" id="scanner" class="form-control" >
+                        </div>
                     </div>
                     <div class="col-md-12">
                         <table class="table table-striped table-bordered table-sm" id="table-daily-task">
                             <thead>
                                 <tr>
-                                    <th>Expedisi</th>
-                                    <th>Total Paket</th>
-                                    <th>Total Scan</th>
-                                    <th>Pesanan Batal</th>
+                                    <th>No</th>
+                                    <th>No Resi</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -60,6 +65,7 @@
 @endsection
 
 @section('content-script')
+<script src="/plugins/moment/moment.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
@@ -70,7 +76,59 @@
             bInfo:false,
             paginate:false,
             searching:false,
+            data:[],
+            columns:[
+                {
+                    data:null,
+                },
+                {
+                    data:"number",
+                },
+                {
+                    data:null,
+                    mRender:function(data,type,full){
+                        return `<a class="btn btn-danger"><i class="fa fa-trash"></i></a>`
+                    }
+                },
+            ],
+            columnDefs:[
+                {
+                    width:"10%",
+                    className:"text-center",
+                    targets:[0,2]
+                }
+            ]
         });
+
+        $('#date').datepicker({
+            uiLibrary:'bootstrap',
+            value:moment("{{ $dailyTask->date }}").format('DD MMMM YYYY')
+        })
+
+        $('#scanner').on('keypress',function(e){
+            if(e.keyCode == 13){
+                let dailyTask ={
+                    id : $('#id').val(),
+                    date:moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
+                    total_package:$('#total_package').val(),
+                    expedition:{
+                        id:$('#expedition').attr('data-id')
+                    },
+                    receipts:[
+                        {
+                            number:$('#scanner').val()
+                        }
+                    ]
+                };
+                
+                ajax(dailyTask, `{{URL::to('daily-task/update')}}`, "PUT",
+                    function(item) {
+                        console.log(item);
+                },function(json){
+                    console.log(json)
+                })
+            }
+        })
     })
 </script>
 @endsection

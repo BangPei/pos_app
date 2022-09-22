@@ -1,7 +1,5 @@
 $(document).ready(function(){
-	$('.select2').select2({
-		placeholder: '--Pilih Data--'
-	})
+	$('.select2').select2({})
 	$('.select2').on('select2:open', function () {
 		$('input.select2-search__field')[0].focus();
 	})
