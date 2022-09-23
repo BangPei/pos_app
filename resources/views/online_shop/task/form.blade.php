@@ -81,7 +81,7 @@
         tblReceipt = $('#table-daily-task').DataTable({
             bInfo:false,
             paginate:false,
-            searching:false,
+            // searching:false,
             data:dailyTask.receipts,
             columns:[
                 {
