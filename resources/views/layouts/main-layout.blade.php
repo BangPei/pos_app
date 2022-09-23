@@ -251,7 +251,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/daily-task" class="nav-link {{Request::is('daily-task')?'active':''}}">
+                                    <a href="/daily-task" class="nav-link {{Request::is('daily-task*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Detail Tugas Harian</p>
                                     </a>

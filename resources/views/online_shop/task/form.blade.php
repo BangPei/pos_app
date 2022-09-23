@@ -54,14 +54,14 @@
                 </div>
                 <div class="row">
                     <div class="col md-12 text-center">
-                        <button type="button" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
+@include('component.base')
 @endsection
 
 @section('content-script')
@@ -71,15 +71,23 @@
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
 
 <script>
+    let dailyTask ={
+        id : null,
+        date:null,
+        total_package:0,
+        expedition:null,
+        receipts:[]
+    };
     $(document).ready(function(){
-        tblTask = $('#table-daily-task').dataTable({
+        tblReceipt = $('#table-daily-task').DataTable({
             bInfo:false,
             paginate:false,
             searching:false,
-            data:[],
+            data:dailyTask.receipts,
             columns:[
                 {
-                    data:null,
+                    data:'id',
+                    defaultContent:"-"
                 },
                 {
                     data:"number",
@@ -87,7 +95,7 @@
                 {
                     data:null,
                     mRender:function(data,type,full){
-                        return `<a class="btn btn-danger"><i class="fa fa-trash"></i></a>`
+                        return `<a class="btn btn-danger delete-receipt"><i class="fa fa-trash"></i></a>`
                     }
                 },
             ],
@@ -105,31 +113,67 @@
             value:moment("{{ $dailyTask->date }}").format('DD MMMM YYYY')
         })
 
+        $('#table-daily-task').on('click', '.delete-receipt', function() {
+            let data = tblReceipt.row($(this).parents('tr')).data();
+            dailyTask.receipts.splice(data, 1);
+            reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+        });
+
         $('#scanner').on('keypress',function(e){
             if(e.keyCode == 13){
-                let dailyTask ={
-                    id : $('#id').val(),
-                    date:moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
-                    total_package:$('#total_package').val(),
-                    expedition:{
-                        id:$('#expedition').attr('data-id')
-                    },
-                    receipts:[
-                        {
-                            number:$('#scanner').val()
-                        }
-                    ]
-                };
-                
-                ajax(dailyTask, `{{URL::to('daily-task/update')}}`, "PUT",
-                    function(item) {
-                        console.log(item);
-                },function(json){
-                    console.log(json)
-                })
+                if ($('#scanner').val()!="") {
+                    if (dailyTask.receipts.some(val => val.number === $('#scanner').val())){
+                        toastr.error('Nomor Resi Sudah Diinput')
+                        return false;
+                    }
+                    let idx = 0;
+                    let receipt = {
+                        id:dailyTask.receipts.length ==0?1:Math.max(...dailyTask.receipts.map(o => o.id+1)),
+                        number:$('#scanner').val()
+                    }
+                    dailyTask.receipts.push(receipt);
+                    reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+                    $('#scanner').val('')
+                }
             }
         })
+
+        saveDailyTaskReceipt()
+        getDailyTask();
     })
+
+    function getDailyTask(){
+        ajax(null, `${baseApi}/daily-task/${$('#id').val()}`, "GET",
+            function(item) {
+                dailyTask = item;
+                reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+            },function(json){
+            console.log(json)
+            },
+        )
+    }
+
+    function saveDailyTaskReceipt(){
+        formValid($('#form-daily-task'),function(){
+            
+            dailyTask.id = $('#id').val(),
+            dailyTask.date=moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
+            dailyTask.total_package=parseInt($('#total').val()),
+            dailyTask.status=0,
+            dailyTask.expedition={
+                id:$('#expedition').attr('data-id')
+            }
+
+            ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
+                function(item) {
+                    console.log(item);
+                },function(json){
+                console.log(json)
+                },
+            )
+            
+        })
+    }
 </script>
 @endsection
 

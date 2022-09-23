@@ -19,7 +19,7 @@ class DailyTaskController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $dailyTask = DailyTask::with('receipts')->get();
+        $dailyTask = DailyTask::all();
         $expeditions = Expedition::all();
         if ($request->ajax()) {
             return datatables()->of($dailyTask)->make(true);
@@ -91,16 +91,9 @@ class DailyTaskController extends Controller
      * @param  \App\Models\DailyTask  $dailyTask
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DailyTask $dailyTask)
+    public function update(Request $request)
     {
-        $dailyTask->update($request->all());
-
-        $dailyTask->receipts()->detach();
-        for ($rc = 0; $rc < count($dailyTask['receipts']); $rc++) {
-            $dailyTask->receipts()->attach($dailyTask['receipts'][$rc]);
-        }
-
-        return response()->json($dailyTask);
+        //
     }
 
     /**

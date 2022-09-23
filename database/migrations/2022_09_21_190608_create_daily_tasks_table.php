@@ -14,7 +14,7 @@ class CreateDailyTasksTable extends Migration
     public function up()
     {
         Schema::create('daily_tasks', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedBigInteger('expedition_id');
             $table->foreign('expedition_id')->references('id')->on('expeditions');
             $table->integer('total_package')->default(0);

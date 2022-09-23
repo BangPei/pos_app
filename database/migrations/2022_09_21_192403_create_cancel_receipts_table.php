@@ -14,7 +14,9 @@ class CreateCancelReceiptsTable extends Migration
     public function up()
     {
         Schema::create('cancel_receipts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
+            $table->unsignedBigInteger('daily_task_id');
+            $table->foreign('daily_task_id')->references('id')->on('daily_tasks');
             $table->string('order_number');
             $table->timestamps();
         });

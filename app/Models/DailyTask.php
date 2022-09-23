@@ -10,7 +10,7 @@ class DailyTask extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $with = ['expedition'];
+    protected $with = ['expedition', 'receipts'];
     protected $hidden = ['expedition_id',];
 
     public function expedition()
@@ -20,6 +20,6 @@ class DailyTask extends Model
 
     public function receipts()
     {
-        return $this->belongsToMany(Receipt::class);
+        return $this->hasMany(Receipt::class);
     }
 }
