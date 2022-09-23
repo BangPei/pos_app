@@ -124,13 +124,14 @@ function reloadJsonDataTable(dtable, json) {
 
 function tableNumber(table) {
 	table.on('order.dt search.dt', function () {
-		table.column(0, {
-			search: 'applied',
+        let i = 1;
+        table.cells(null, 0, { 
+			search: 'applied', 
 			order: 'applied'
-		}).nodes().each(function (cell, i) {
-			cell.innerHTML = i + 1;
-		});
-	}).draw();
+		}).every(function (cell) {
+            this.data(i++);
+        });
+    }).draw();
 }
 
 function keyupTableNumber(table) {

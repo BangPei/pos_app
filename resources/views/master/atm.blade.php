@@ -96,6 +96,7 @@
       order:[[0,'asc']]
     })
     $('div.dataTables_filter input', atmTable.table().container()).focus();
+    
     $('#table-bank').on('click','.edit-atm',function() {
       let data = atmTable.row($(this).parents('tr')).data();
       $('#id').val(data.id??'--');

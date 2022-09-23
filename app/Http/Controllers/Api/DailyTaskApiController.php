@@ -27,16 +27,19 @@ class DailyTaskApiController extends Controller
      */
     public function store(Request $request)
     {
-
-        $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->first();
-        if ($dailyTask) {
-            return 'error';
-        } else {
-            $dailyTask->date = $request->date;
-            $dailyTask->expedition_id = $request->expedition['id'];
-            $dailyTask->total_package = $request->total_package;
-            $dailyTask->save();
-            return response()->json($dailyTask->save());
+        try {
+            $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->first();
+            if ($dailyTask) {
+                return response()->json(['message' => 'Tugas Harian Untuk Expedisi Tersebut Sudah Dibuat !'], 400);
+            } else {
+                $dailyTask = new DailyTask();
+                $dailyTask->expedition_id = $request->expedition['id'];
+                $dailyTask->date = $request->date;
+                $dailyTask->total_package = $request->total_package;
+                return response()->json($dailyTask->save());
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 
@@ -75,7 +78,17 @@ class DailyTaskApiController extends Controller
             $dailyTask->receipts = $receipts;
             return response()->json($dailyTask);
         } catch (\Throwable $th) {
-            return $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function total(Request $request, $id)
+    {
+        try {
+            return response()->json(DailyTask::where('id', $id)->update([
+                "total_package" => $request['total_package']
+            ]));
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 

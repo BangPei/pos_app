@@ -90,6 +90,7 @@
 
 @section('content-script')
 <script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/jquery-blockUI/js/jquery.blockUI.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 {{-- <script src="/plugins/gijgo/gijgo.js"></script> --}}
@@ -152,6 +153,21 @@
           targets:[2]
         }
       ]
+    })
+
+    $('#table-daily-task').on('change','.total_package',function() {
+      let data = tblDailyTask.row($(this).parents('tr')).data();
+      let val = $(this).val()==""?0:parseInt($(this).val())
+      $.blockUI({ message: "Silahkan Tunggu !!" });
+      ajax({total_package:val}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
+        function(json) {
+          toastr.success('Berhasil')
+          $.unblockUI()
+        },
+        function(err){
+          toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+          $.unblockUI()
+        })
     })
 
     $('#date').datepicker({

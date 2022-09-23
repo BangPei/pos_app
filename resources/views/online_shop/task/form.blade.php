@@ -11,53 +11,52 @@
             <h2 class="card-title">Form Tugas Harian</h2>
         </div>
         <div class="card-body ">
-            <form autocomplete="off" form-validate=true id="form-daily-task">
-                <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="form-group">
-                            <label for="expedition">Expedisi</label>
-                            <input  value="{{ $dailyTask->id }}" readonly type="text" class="form-control d-none" name="id" id="id">
-                            <input data-id="{{ $dailyTask->expedition->id }}" value="{{ $dailyTask->expedition->name }}" required readonly type="text" class="form-control" name="expedition" id="expedition">
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="form-group">
-                            <label for="date">Tanggal</label>
-                            <input value="{{ $dailyTask->date }}" required readonly disabled type="text" autofocus="true" class="form-control" name="date" id="date">
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="form-group">
-                            <label for="total">Total Paket</label>
-                            <input value="{{ $dailyTask->total_package }}" readonly placeholder="0" type="text" class="form-control text-right" name="total" id="total">
-                        </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="expedition">Expedisi</label>
+                        <input  value="{{ $dailyTask->id }}" readonly type="text" class="form-control d-none" name="id" id="id">
+                        <input data-id="{{ $dailyTask->expedition->id }}" value="{{ $dailyTask->expedition->name }}" required readonly type="text" class="form-control" name="expedition" id="expedition">
                     </div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group" style="width: 40% !important">
-                            <input type="text" name="scanner" id="scanner" class="form-control" >
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <table class="table table-striped table-bordered table-sm" id="table-daily-task">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>No Resi</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                        </table>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="date">Tanggal</label>
+                        <input value="{{ $dailyTask->date }}" required readonly disabled type="text" class="form-control" name="date" id="date">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col md-12 text-center">
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="total">Total Paket</label>
+                        <input value="{{ $dailyTask->total_package }}" readonly placeholder="0" type="text" class="form-control text-right" name="total" id="total">
                     </div>
                 </div>
-            </form>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="" id="total-scann"></label>
+                        <input autofocus="true" type="text" name="scanner" id="scanner" class="form-control" >
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <table class="table table-striped table-bordered table-sm" id="table-daily-task">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No Resi</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col md-12 text-center">
+                    <button type="button" onclick="saveDailyTaskReceipt()" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -101,6 +100,11 @@
             ],
             columnDefs:[
                 {
+                    searchable: false,
+                    orderable: false,
+                    targets: 0,
+                },
+                {
                     width:"10%",
                     className:"text-center",
                     targets:[0,2]
@@ -108,15 +112,23 @@
             ]
         });
 
+        tableNumber(tblReceipt)
+
         $('#date').datepicker({
             uiLibrary:'bootstrap',
             value:moment("{{ $dailyTask->date }}").format('DD MMMM YYYY')
         })
 
         $('#table-daily-task').on('click', '.delete-receipt', function() {
-            let data = tblReceipt.row($(this).parents('tr')).data();
-            dailyTask.receipts.splice(data, 1);
-            reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+            let rc = tblReceipt.row($(this).parents('tr')).data();
+            let data = tblReceipt.row($(this).parents('tr')).index();
+            var result = confirm(`Yakin ingin menghapus No Resi ${rc.number} ?`);
+            if (result) {
+                dailyTask.receipts.splice(data, 1);
+                receiptHandler()
+                reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+                $('#scanner').focus();
+            }
         });
 
         $('#scanner').on('keypress',function(e){
@@ -131,14 +143,20 @@
                         id:dailyTask.receipts.length ==0?1:Math.max(...dailyTask.receipts.map(o => o.id+1)),
                         number:$('#scanner').val()
                     }
+                    dailyTask.id = $('#id').val(),
+                    dailyTask.date=moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
+                    dailyTask.total_package=parseInt($('#total').val()),
+                    dailyTask.status=0,
+                    dailyTask.expedition={
+                        id:$('#expedition').attr('data-id')
+                    }
                     dailyTask.receipts.push(receipt);
+                    receiptHandler();
                     reloadJsonDataTable(tblReceipt,dailyTask.receipts)
                     $('#scanner').val('')
                 }
             }
         })
-
-        saveDailyTaskReceipt()
         getDailyTask();
     })
 
@@ -146,33 +164,49 @@
         ajax(null, `${baseApi}/daily-task/${$('#id').val()}`, "GET",
             function(item) {
                 dailyTask = item;
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
                 reloadJsonDataTable(tblReceipt,dailyTask.receipts)
-            },function(json){
-            console.log(json)
             },
         )
     }
 
-    function saveDailyTaskReceipt(){
-        formValid($('#form-daily-task'),function(){
-            
-            dailyTask.id = $('#id').val(),
-            dailyTask.date=moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
-            dailyTask.total_package=parseInt($('#total').val()),
-            dailyTask.status=0,
-            dailyTask.expedition={
-                id:$('#expedition').attr('data-id')
+    function receiptHandler() {
+        ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
+            function(json){
+                console.log('ok')
+                $('#scanner').val('')
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+            },
+            function(err){
+                dailyTask.receipts.splice(receipt, 1);
+                toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+                $('#scanner').val('')
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
             }
+        )
+    }
 
-            ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
-                function(item) {
-                    console.log(item);
-                },function(json){
-                console.log(json)
-                },
-            )
-            
-        })
+    function saveDailyTaskReceipt(){
+        dailyTask.id = $('#id').val(),
+        dailyTask.date=moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
+        dailyTask.total_package=parseInt($('#total').val()),
+        dailyTask.status=0,
+        dailyTask.expedition={
+            id:$('#expedition').attr('data-id')
+        }
+
+        if (dailyTask.receipts.length ==0) {
+            toastr.error('Silahkan masukan nomor Resi');
+            return false;
+        }
+        ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
+            function(json){
+                toastr.success('Data Berhasil Tersimpan')
+            setTimeout(() => {
+                location.reload()
+            }, 500);
+            }
+        )
     }
 </script>
 @endsection
