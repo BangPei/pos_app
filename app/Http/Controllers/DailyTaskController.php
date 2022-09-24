@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyTask;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreDailyTaskRequest;
-use App\Http\Requests\UpdateDailyTaskRequest;
 use App\Models\Expedition;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;

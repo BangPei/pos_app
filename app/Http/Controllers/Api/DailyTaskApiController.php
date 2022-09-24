@@ -43,12 +43,63 @@ class DailyTaskApiController extends Controller
         }
     }
 
+    public function dailyTaskReceipt(Request $request)
+    {
+        try {
+            $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->first();
+            if ($dailyTask) {
+                return response()->json(['message' => 'Tugas Harian Untuk Expedisi Tersebut Sudah Dibuat !'], 400);
+            } else {
+                $dailyTask = new DailyTask();
+                $dailyTask->expedition_id = $request->expedition['id'];
+                $dailyTask->date = $request->date;
+                $dailyTask->total_package = $request->total_package;
+                $dailyTask->save();
+
+                $receipts = [];
+                for ($i = 0; $i < count($dailyTask->receipts); $i++) {
+                    $receipt = new Receipt();
+                    $receipt->daily_task_id =  $dailyTask['id'];
+                    $receipt->number =  $dailyTask->receipts[$i]["number"];
+                    $receipt->save();
+                    array_push($receipts, $receipt);
+                }
+                $dailyTask->receipts = $receipts;
+                return response()->json($dailyTask);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function receipt(Request $request, $id)
+    {
+        $receipt = Receipt::where('number', $request['number'])->first();
+        if ($receipt) {
+            return response()->json(['message' => 'Nomor Resi Sudah Diinput'], 400);
+        } else {
+            $receipt = Receipt::created([
+                "daily_task_id" => $id,
+                "number" => $receipt['number']
+            ]);
+        }
+        return response()->json($receipt);
+    }
+
+    public function deleteReceipt(Request $request)
+    {
+        Receipt::where('number', $request['number'])->delete();
+
+        return response()->json();
+    }
+
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function show($id)
     {
         $dailyTask = DailyTask::where('id', $id)->first();

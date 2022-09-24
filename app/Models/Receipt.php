@@ -11,4 +11,9 @@ class Receipt extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['daily_task_id',];
+
+    public function getRouteKeyName()
+    {
+        return 'barcode';
+    }
 }
