@@ -78,10 +78,10 @@ class DailyTaskApiController extends Controller
         if ($receipt) {
             return response()->json(['message' => 'Nomor Resi Sudah Diinput'], 400);
         } else {
-            $receipt = Receipt::created([
-                "daily_task_id" => $id,
-                "number" => $receipt['number']
-            ]);
+            $receipt = new Receipt();
+            $receipt->daily_task_id = $id;
+            $receipt->number = $request->number;
+            $receipt->save();
         }
         return response()->json($receipt);
     }

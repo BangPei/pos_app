@@ -17,7 +17,7 @@ class DailyTaskController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $dailyTask = DailyTask::all();
+        $dailyTask = DailyTask::where('date', date("Y-m-d"));
         $expeditions = Expedition::all();
         if ($request->ajax()) {
             return datatables()->of($dailyTask)->make(true);

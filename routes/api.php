@@ -29,3 +29,5 @@ Route::post('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receipt'
 Route::delete('daily-task/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
 Route::patch('daily-task/total/{id}', [DailyTaskApiController::class, 'total']);
 Route::resource('daily-task', DailyTaskApiController::class);
+
+Route::resource('receipt', ReceiptApiController::class);

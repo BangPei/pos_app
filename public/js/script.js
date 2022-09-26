@@ -105,14 +105,12 @@ function ajax(data, url, method, callback, callbackError) {
 		},
 		success: function (json,text) {
 			json = json;
-			console.log(text);
 			callback(json);
 		},
 		error: function (err) {
-			console.log(err)
 			callbackError == null?
 				toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
-				:callbackError();
+				:callbackError(err);
 		}
 	});
 }

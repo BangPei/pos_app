@@ -46,17 +46,18 @@
                             <tr>
                                 <th>No</th>
                                 <th>No Resi</th>
+                                <th>Jam Scan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                     </table>
                 </div>
             </div>
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col md-12 text-center">
                     <button type="button" onclick="saveDailyTaskReceipt()" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
@@ -92,6 +93,12 @@
                     data:"number",
                 },
                 {
+                    data:"created_at",
+                    mRender:function(data,type,full){
+                        return moment(data).format('DD-MM-YYYY HH:mm:ss')
+                    }
+                },
+                {
                     data:null,
                     mRender:function(data,type,full){
                         return `<a class="btn btn-danger delete-receipt"><i class="fa fa-trash"></i></a>`
@@ -107,8 +114,13 @@
                 {
                     width:"10%",
                     className:"text-center",
-                    targets:[0,2]
-                }
+                    targets:[0,3]
+                },
+                {
+                    width:"20%",
+                    className:"text-right",
+                    targets:[2]
+                },
             ]
         });
 
@@ -124,9 +136,7 @@
             let data = tblReceipt.row($(this).parents('tr')).index();
             var result = confirm(`Yakin ingin menghapus No Resi ${rc.number} ?`);
             if (result) {
-                dailyTask.receipts.splice(data, 1);
-                receiptHandler()
-                reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+                deleteReceipt(rc.number)
                 $('#scanner').focus();
             }
         });
@@ -134,25 +144,11 @@
         $('#scanner').on('keypress',function(e){
             if(e.keyCode == 13){
                 if ($('#scanner').val()!="") {
-                    if (dailyTask.receipts.some(val => val.number === $('#scanner').val())){
-                        toastr.error('Nomor Resi Sudah Diinput')
-                        return false;
-                    }
-                    let idx = 0;
                     let receipt = {
-                        id:dailyTask.receipts.length ==0?1:Math.max(...dailyTask.receipts.map(o => o.id+1)),
+                        daily_task_id: $('#id').val(),
                         number:$('#scanner').val()
                     }
-                    dailyTask.id = $('#id').val(),
-                    dailyTask.date=moment($('#date').val(),'DD MMMM YYYY').format('YYYY-MM-DD'),
-                    dailyTask.total_package=parseInt($('#total').val()),
-                    dailyTask.status=0,
-                    dailyTask.expedition={
-                        id:$('#expedition').attr('data-id')
-                    }
-                    dailyTask.receipts.push(receipt);
-                    receiptHandler();
-                    reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+                    postReceipt(receipt);
                     $('#scanner').val('')
                 }
             }
@@ -181,6 +177,37 @@
                 dailyTask.receipts.splice(receipt, 1);
                 toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
                 $('#scanner').val('')
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+            }
+        )
+    }
+
+    function postReceipt(receipt) {
+        ajax(receipt, `${baseApi}/daily-task/receipt/${dailyTask.id}`, "POST",
+            function(json){
+                getDailyTask()
+                $('#scanner').val('')
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+            },
+            function(err){
+                toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+                $('#scanner').val('')
+                getDailyTask()
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+            }
+        )
+    }
+    function deleteReceipt(number) {
+        ajax(null, `${baseApi}/daily-task/receipt/${number}`, "DELETE",
+            function(json){
+                getDailyTask()
+                $('#scanner').val('')
+                $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+            },
+            function(err){
+                toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+                $('#scanner').val('')
+                getDailyTask()
                 $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
             }
         )
