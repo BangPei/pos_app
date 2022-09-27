@@ -158,8 +158,9 @@
     $('#table-daily-task').on('change','.total_package',function() {
       let data = tblDailyTask.row($(this).parents('tr')).data();
       let val = $(this).val()==""?0:parseInt($(this).val())
+      let date = moment(data.date).format('YYYY-MM-DD')
       $.blockUI({ message: "Silahkan Tunggu !!" });
-      ajax({total_package:val}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
+      ajax({total_package:val,date:date}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
           $.unblockUI()

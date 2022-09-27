@@ -136,7 +136,8 @@ class DailyTaskApiController extends Controller
     {
         try {
             return response()->json(DailyTask::where('id', $id)->update([
-                "total_package" => $request['total_package']
+                "total_package" => $request['total_package'],
+                "date" => $request['date']
             ]));
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
