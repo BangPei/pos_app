@@ -139,7 +139,7 @@
         {
           data: 'id',
           mRender: function(data, type, full) {
-            return `<a href="/daily-task/${data}/edit" title="Lihat Detail" class="btn btn-sm bg-gradient-primary edit-daily-task"><i class="fas fa-eye"></i></a>`
+            return `<a href="/daily-task/${data}/edit?platform=${full.expedition.alias}" title="Lihat Detail" class="btn btn-sm bg-gradient-primary edit-daily-task"><i class="fas fa-eye"></i></a>`
             }
         }
       ],

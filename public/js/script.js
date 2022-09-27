@@ -142,3 +142,13 @@ function keyupTableNumber(table) {
 		});
 	});
 }
+
+function getQueryString() {
+	location.queryString = {};
+	location.search.substring(1).split("&").forEach(function (pair) {
+		if (pair === "") return;
+		var parts = pair.split("=");
+		location.queryString[parts[0]] = parts[1] && decodeURIComponent(parts[1].replace(/\+/g, " "));
+	});
+	return location.queryString;
+}

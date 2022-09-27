@@ -95,7 +95,7 @@
                 {
                     data:"created_at",
                     mRender:function(data,type,full){
-                        return moment(data).format('DD-MM-YYYY HH:mm:ss')
+                        return moment(data).format('DD MMM YYYY HH:mm:ss')
                     }
                 },
                 {
@@ -161,6 +161,7 @@
             function(item) {
                 dailyTask = item;
                 $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
+                $('#scanner').focus();
                 reloadJsonDataTable(tblReceipt,dailyTask.receipts)
             },
         )

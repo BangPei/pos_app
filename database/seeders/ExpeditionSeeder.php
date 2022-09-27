@@ -16,43 +16,53 @@ class ExpeditionSeeder extends Seeder
     {
         Expedition::create([
             "name" => "LEX",
-            "description" => "Lazada"
+            "description" => "Lazada",
+            "alias" => "LEX"
         ]);
         Expedition::create([
             "name" => "Shopee Express",
-            "description" => "Shopee"
+            "description" => "Shopee",
+            "alias" => "SHOPEE"
         ]);
         Expedition::create([
             "name" => "JNE Reguler",
-            "description" => "Shopee, Tokopedia"
+            "description" => "Shopee, Tokopedia",
+            "alias" => "JNE"
         ]);
         Expedition::create([
             "name" => "JNE Coorporation",
-            "description" => "Blibli, Lazada"
+            "description" => "Blibli, Lazada",
+            "alias" => "COOR"
         ]);
         Expedition::create([
             "name" => "Ninja Express",
-            "description" => "Blibli, Lazada, Tokopedia"
+            "description" => "Blibli, Lazada, Tokopedia",
+            "alias" => "NINJA"
         ]);
         Expedition::create([
             "name" => "AntarAja",
-            "description" => "Blibli, Tokopedia, Shopee"
+            "description" => "Blibli, Tokopedia, Shopee",
+            "alias" => "ANTARAJA"
         ]);
         Expedition::create([
             "name" => "JX",
-            "description" => "JD ID"
+            "description" => "JD ID",
+            "alias" => "JX"
         ]);
         Expedition::create([
             "name" => "SameDay",
-            "description" => "Lazada, Shopee, Tokopedia, Blibli, JD ID"
+            "description" => "Lazada, Shopee, Tokopedia, Blibli, JD ID",
+            "alias" => "SAMEDAY"
         ]);
         Expedition::create([
             "name" => "Instant",
-            "description" => "Lazada, Shopee, Tokopedia, Blibli, JD ID"
+            "description" => "Lazada, Shopee, Tokopedia, Blibli, JD ID",
+            "alias" => "INSTANT"
         ]);
         Expedition::create([
             "name" => "Shopee Instant",
-            "description" => "Shopee"
+            "description" => "Shopee",
+            "alias" => "SH_INSTANT"
         ]);
     }
 }

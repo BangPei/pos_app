@@ -45,6 +45,7 @@ class ExpeditionController extends Controller
         $expedition = $request->validate([
             'name' => 'required',
             'description' => 'required',
+            'alias' => 'required',
         ]);
         Expedition::Create($expedition);
         session()->flash('message', 'Berhasil Menambah Expedisi ' . $expedition['name']);

@@ -19,6 +19,7 @@
         <thead>
           <tr>
             <th>Expedisi</th>
+            <th>Alias</th>
             <th>Sumber</th>
             <th>Aksi</th>
           </tr>
@@ -41,13 +42,27 @@
         <form id="form-expedition" form-validate=true>
           <div class="row">
             <div class="col-12">
-              <div class="form-group">
-                <label for="expedition">Nama Expedisi</label>
-                <input required type="text" class="form-control" id="expedition" name="expedition" placeholder="Nama Expedisi">
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="expedition">Nama Expedisi</label>
+                    <input required type="text" class="form-control" id="expedition" name="expedition" placeholder="Nama Expedisi">
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="alias">Alias</label>
+                    <input required type="text" class="form-control" id="alias" name="alias" placeholder="Nama Expedisi">
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="description" class="col-form-label">Sumber Platform</label>
-                <textarea placeholder="Online Shop" class="form-control" name="description" id="description"></textarea>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label for="description" class="col-form-label">Sumber Platform</label>
+                    <textarea placeholder="Online Shop" class="form-control" name="description" id="description"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -83,6 +98,10 @@
                 defaultContent:"--"
             },
             {
+                data:"alias",
+                defaultContent:"--"
+            },
+            {
                 data:"description",
                 defaultContent:"--"
             },
@@ -93,13 +112,14 @@
 	    	    }
 	    	}
         ],
-        order:[[1,'asc']]
+        order:[[0,'asc']]
     })
     $('#table-expedition').on('click','.edit-expedition',function() {
       let data = tblExpedition.row($(this).parents('tr')).data();
       expeditionId = data.id;
       $('#expedition').val(data.name??'--');
       $('#description').val(data.description??'--');
+      $('#alias').val(data.alias??'--');
       console.log(data);
 
     })
@@ -113,7 +133,8 @@
         let expedition = {
           id:expeditionId,
           name:$('#expedition').val(),
-          description:$('#description').val()
+          description:$('#description').val(),
+          alias:$('#alias').val(),
         }
         let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
         ajax(expedition, url, method,
