@@ -14,7 +14,7 @@ const Platform = {
 function validLEX(str) {
     if (str.length < 15) {
         return false;
-    }else if ((!(str.includes("LXAD")))|| (!(str.includes("JNAP")))||(!(str.includes("NLIDAP")))) {
+    }else if ((str.includes("LXAD")) || (str.includes("JNAP")) || (str.includes("NLIDAP"))) {
         return true;
     }else{
         return false;
@@ -40,7 +40,7 @@ function validSH_INSTANT(str) {
 function validReceipt(str) {
     let query = getQueryString();
     let bool = true;
-    switch (query) {
+    switch (query.platform) {
         case Platform.LEX:
             bool = validLEX(str)
             break;

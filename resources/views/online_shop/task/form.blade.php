@@ -69,6 +69,7 @@
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
+<script src="/js/constant.js"></script>
 
 <script>
     let dailyTask ={
@@ -137,18 +138,22 @@
             var result = confirm(`Yakin ingin menghapus No Resi ${rc.number} ?`);
             if (result) {
                 deleteReceipt(rc.number)
-                $('#scanner').focus();
             }
         });
 
         $('#scanner').on('keypress',function(e){
             if(e.keyCode == 13){
                 if ($('#scanner').val()!="") {
-                    let receipt = {
-                        daily_task_id: $('#id').val(),
-                        number:$('#scanner').val()
+                    let isValidated=validReceipt($('#scanner').val())
+                    if (isValidated) {     
+                        let receipt = {
+                            daily_task_id: $('#id').val(),
+                            number:$('#scanner').val()
+                        }
+                        postReceipt(receipt);
+                    }else{
+                        toastr.error("Resi Tidak Valid")
                     }
-                    postReceipt(receipt);
                     $('#scanner').val('')
                 }
             }
@@ -161,8 +166,8 @@
             function(item) {
                 dailyTask = item;
                 $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
-                $('#scanner').focus();
                 reloadJsonDataTable(tblReceipt,dailyTask.receipts)
+                $('#scanner').focus();
             },
         )
     }
