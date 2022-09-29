@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\DailyTask;
 use App\Models\Receipt;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 use Illuminate\Http\Request;
 
 class DailyTaskApiController extends Controller
@@ -16,7 +17,22 @@ class DailyTaskApiController extends Controller
      */
     public function index()
     {
-        //
+        $dailyTask = DailyTask::all();
+        return response()->json($dailyTask);
+    }
+
+    public function dataTable(UtilitiesRequest $request)
+    {
+        $dailyTask = DailyTask::all();
+        if ($request->ajax()) {
+            return datatables()->of($dailyTask)->make(true);
+        }
+    }
+
+    public function getCurrentTask()
+    {
+        $dailyTask = DailyTask::where('date', date("Y-m-d 00:00:00"));
+        return response()->json($dailyTask);
     }
 
     /**
@@ -37,35 +53,6 @@ class DailyTaskApiController extends Controller
                 $dailyTask->date = $request->date;
                 $dailyTask->total_package = $request->total_package;
                 return response()->json($dailyTask->save());
-            }
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
-    }
-
-    public function dailyTaskReceipt(Request $request)
-    {
-        try {
-            $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->first();
-            if ($dailyTask) {
-                return response()->json(['message' => 'Tugas Harian Untuk Expedisi Tersebut Sudah Dibuat !'], 400);
-            } else {
-                $dailyTask = new DailyTask();
-                $dailyTask->expedition_id = $request->expedition['id'];
-                $dailyTask->date = $request->date;
-                $dailyTask->total_package = $request->total_package;
-                $dailyTask->save();
-
-                $receipts = [];
-                for ($i = 0; $i < count($dailyTask->receipts); $i++) {
-                    $receipt = new Receipt();
-                    $receipt->daily_task_id =  $dailyTask['id'];
-                    $receipt->number =  $dailyTask->receipts[$i]["number"];
-                    $receipt->save();
-                    array_push($receipts, $receipt);
-                }
-                $dailyTask->receipts = $receipts;
-                return response()->json($dailyTask);
             }
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);

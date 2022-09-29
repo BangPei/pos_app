@@ -24,10 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('expedition/dataTable', [ExpeditionApiController::class, 'dataTable']);
 Route::resource('expedition', ExpeditionApiController::class);
 
-Route::post('daily-task/full', [DailyTaskApiController::class, 'dailyTaskReceipt']);
 Route::post('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receipt']);
 Route::delete('daily-task/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
 Route::patch('daily-task/total/{id}', [DailyTaskApiController::class, 'total']);
+Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
+Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
 Route::resource('daily-task', DailyTaskApiController::class);
 
 Route::resource('receipt', ReceiptApiController::class);
