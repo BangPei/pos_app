@@ -13,6 +13,10 @@ class DailyTask extends Model
     protected $with = ['expedition', 'receipts'];
     protected $hidden = ['expedition_id',];
 
+    public $casts = [
+        'status' => 'boolean',
+    ];
+
     public function expedition()
     {
         return $this->belongsTo(Expedition::class);

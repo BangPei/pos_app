@@ -31,7 +31,7 @@ class DailyTaskApiController extends Controller
 
     public function getCurrentTask()
     {
-        $dailyTask = DailyTask::where('date', date("Y-m-d 00:00:00"));
+        $dailyTask = DailyTask::where('date', date("Y-m-d 00:00:00"))->get();
         return response()->json($dailyTask);
     }
 
