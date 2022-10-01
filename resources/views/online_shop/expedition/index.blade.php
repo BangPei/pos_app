@@ -39,7 +39,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="form-expedition" form-validate=true>
+        <form id="form-expedition" name="form-expedition" form-validate=true enctype="multipart/form-data">
           <div class="row">
             <div class="col-12">
               <div class="row">
@@ -61,6 +61,14 @@
                   <div class="form-group">
                     <label for="description" class="col-form-label">Sumber Platform</label>
                     <textarea placeholder="Online Shop" class="form-control" name="description" id="description"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="image form-group">
+                    <label>Logo Expedisi</label>
+                    <input type="file" class="form-control" name="image">
                   </div>
                 </div>
               </div>
@@ -136,14 +144,17 @@
           description:$('#description').val(),
           alias:$('#alias').val(),
         }
+        var myFormData = new FormData();
+        myFormData.append('image', document.forms['form-expedition']['image'].files[0]);
+        console.log(myFormData);
         let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
-        ajax(expedition, url, method,
-          function(json) {
-            toastr.success('Data Berhasil Diprosess')
-            setTimeout(() => {
-                location.reload()
-            }, 1000);
-          })
+        // ajax(expedition, url, method,
+        //   function(json) {
+        //     toastr.success('Data Berhasil Diprosess')
+        //     setTimeout(() => {
+        //         location.reload()
+        //     }, 1000);
+        //   })
       })
   }
 </script>

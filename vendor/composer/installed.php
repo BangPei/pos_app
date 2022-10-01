@@ -3,13 +3,22 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '99cdded5ab8df12e372998622a1306598eadf1ed',
+        'reference' => '7b87b96a1603890d0ec93617e5bcc5aa12ff6e56',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'appolous/lazada-php-sdk' => array(
+            'pretty_version' => '1.3',
+            'version' => '1.3.0.0',
+            'reference' => '0972ed84e610e8add8f03c31524cd81c5e85662e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../appolous/lazada-php-sdk',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'asm89/stack-cors' => array(
             'pretty_version' => 'v2.1.1',
             'version' => '2.1.1.0',
@@ -424,7 +433,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '99cdded5ab8df12e372998622a1306598eadf1ed',
+            'reference' => '7b87b96a1603890d0ec93617e5bcc5aa12ff6e56',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

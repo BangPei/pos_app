@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\DailyTaskApiController;
+use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::resource('dashboard', DashboardApiController::class);
 
 Route::get('expedition/dataTable', [ExpeditionApiController::class, 'dataTable']);
 Route::resource('expedition', ExpeditionApiController::class);

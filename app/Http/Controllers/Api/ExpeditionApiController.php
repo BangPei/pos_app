@@ -37,9 +37,14 @@ class ExpeditionApiController extends Controller
     {
         $expedition = $request->validate([
             'name' => 'required',
-            'description' => 'required',
+            'description' => '',
             'alias' => 'required',
-        ]);;
+            'image' => '',
+        ]);
+        $file = $request->file('image');
+        $filename = date('YmdHi') . $file->getClientOriginalName();
+        $file->move(public_path('public/Image'), $filename);
+        $expedition['image'] = $filename;
         return response()->json(Expedition::Create($expedition));
     }
 
@@ -64,10 +69,14 @@ class ExpeditionApiController extends Controller
     public function update(Request $request, $id)
     {
         $expedition = $request;
+        $file = $request->file('image');
+        $filename = rand() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('public/Image'), $filename);
         Expedition::where('id', $id)->update([
             'name' => $expedition['name'],
             'description' => $expedition['description'],
-            'alias' => $expedition['alias']
+            'alias' => $expedition['alias'],
+            'image' => $filename
         ]);
         return response()->json($expedition);
     }

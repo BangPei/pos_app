@@ -143,6 +143,7 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
             'League\\Flysystem\\' => 17,
             'League\\Config\\' => 14,
             'League\\CommonMark\\' => 18,
+            'Lazada\\' => 7,
             'Laravel\\Tinker\\' => 15,
             'Laravel\\SerializableClosure\\' => 28,
             'Laravel\\Sanctum\\' => 16,
@@ -458,6 +459,10 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'League\\CommonMark\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/commonmark/src',
+        ),
+        'Lazada\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src',
         ),
         'Laravel\\Tinker\\' => 
         array (
@@ -3183,6 +3188,11 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'Laravel\\Tinker\\Console\\TinkerCommand' => __DIR__ . '/..' . '/laravel/tinker/src/Console/TinkerCommand.php',
         'Laravel\\Tinker\\TinkerCaster' => __DIR__ . '/..' . '/laravel/tinker/src/TinkerCaster.php',
         'Laravel\\Tinker\\TinkerServiceProvider' => __DIR__ . '/..' . '/laravel/tinker/src/TinkerServiceProvider.php',
+        'Lazada\\Constants' => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src/Constants.php',
+        'Lazada\\LazopClient' => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src/LazopClient.php',
+        'Lazada\\LazopLogger' => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src/LazopLogger.php',
+        'Lazada\\LazopRequest' => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src/LazopRequest.php',
+        'Lazada\\UrlConstants' => __DIR__ . '/..' . '/appolous/lazada-php-sdk/src/UrlConstants.php',
         'League\\CommonMark\\CommonMarkConverter' => __DIR__ . '/..' . '/league/commonmark/src/CommonMarkConverter.php',
         'League\\CommonMark\\ConverterInterface' => __DIR__ . '/..' . '/league/commonmark/src/ConverterInterface.php',
         'League\\CommonMark\\Delimiter\\Delimiter' => __DIR__ . '/..' . '/league/commonmark/src/Delimiter/Delimiter.php',
