@@ -144,17 +144,14 @@
           description:$('#description').val(),
           alias:$('#alias').val(),
         }
-        var myFormData = new FormData();
-        myFormData.append('image', document.forms['form-expedition']['image'].files[0]);
-        console.log(myFormData);
         let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
-        // ajax(expedition, url, method,
-        //   function(json) {
-        //     toastr.success('Data Berhasil Diprosess')
-        //     setTimeout(() => {
-        //         location.reload()
-        //     }, 1000);
-        //   })
+        ajax(expedition, url, method,
+          function(json) {
+            toastr.success('Data Berhasil Diprosess')
+            setTimeout(() => {
+                location.reload()
+            }, 1000);
+          })
       })
   }
 </script>

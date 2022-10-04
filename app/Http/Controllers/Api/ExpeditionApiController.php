@@ -39,12 +39,12 @@ class ExpeditionApiController extends Controller
             'name' => 'required',
             'description' => '',
             'alias' => 'required',
-            'image' => '',
+            // 'image' => '',
         ]);
-        $file = $request->file('image');
-        $filename = date('YmdHi') . $file->getClientOriginalName();
-        $file->move(public_path('public/Image'), $filename);
-        $expedition['image'] = $filename;
+        // $file = $request->file('image');
+        // $filename = date('YmdHi') . $file->getClientOriginalName();
+        // $file->move(public_path('public/Image'), $filename);
+        // $expedition['image'] = $filename;
         return response()->json(Expedition::Create($expedition));
     }
 
