@@ -26,6 +26,7 @@ Route::resource('dashboard', DashboardApiController::class);
 Route::get('expedition/dataTable', [ExpeditionApiController::class, 'dataTable']);
 Route::resource('expedition', ExpeditionApiController::class);
 
+Route::get('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receiptByDailyTaskId']);
 Route::post('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receipt']);
 Route::delete('daily-task/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
 Route::patch('daily-task/total/{id}', [DailyTaskApiController::class, 'total']);

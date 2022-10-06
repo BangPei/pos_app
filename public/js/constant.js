@@ -76,7 +76,7 @@ function validReceipt(str) {
             break;
     
         default:
-            bool = false;
+            bool = true;
             break;
     }
     return bool;

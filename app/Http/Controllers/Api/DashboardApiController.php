@@ -20,10 +20,21 @@ class DashboardApiController extends Controller
         $apiKey = "112922";
         $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
 
-        $lazOp = new LazopClient($lazadaUrl, $apiKey, $apiSecret);
-        $lazRequest = new LazopRequest('/orders/get', 'GET');
-        $response = $lazOp->execute($lazRequest, "50000701413ciXiuemuBRRkAD16a98672Bv6rvTCjFtiVfVTFE4nTxDKoMmuySb8");
-        return response()->json($response);
+        $c = new LazopClient("https://auth.lazada.com/rest", $apiKey, $apiSecret);
+        // $request = new LazopRequest('/datamoat/login');
+        // $request->addApiParam('time', time());
+        // $request->addApiParam('appName', 'SSmart10');
+        // $request->addApiParam('userId', 'ssmart10');
+        // $request->addApiParam('tid', 'tkssmart10@gmail.com');
+        // $request->addApiParam('userIp', '180.243.11.214');
+        // $request->addApiParam('ati', '202cb962ac59075b964b07152d234b70');
+        // $request->addApiParam('loginResult', 'fail');
+        // $request->addApiParam('loginMessage', 'password is not corret');
+        // var_dump($c->execute($request));
+        $request = new LazopRequest('/auth/token/create');
+        $request->addApiParam('code', '0_100132_2DL4DV3jcU1UOT7WGI1A4rY91');
+        // $request->addApiParam('uuid', 'This field is currently invalid,  do not use this field please');
+        var_dump($c->execute($request));
     }
 
     /**

@@ -73,6 +73,12 @@ class DailyTaskApiController extends Controller
         return response()->json($receipt);
     }
 
+    public function receiptByDailyTaskId($id)
+    {
+        $receipt = Receipt::where('daily_task_id', $id)->get();
+        return response()->json($receipt);
+    }
+
     public function deleteReceipt(Request $request)
     {
         Receipt::where('number', $request['number'])->delete();
