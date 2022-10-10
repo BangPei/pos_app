@@ -31,7 +31,7 @@ class DailyTaskApiController extends Controller
 
     public function getCurrentTask()
     {
-        $dailyTask = DailyTask::where('date', date("Y-m-d 00:00:00"))->get();
+        $dailyTask = DailyTask::where('status', 0)->get();
         return response()->json($dailyTask);
     }
 
@@ -44,7 +44,7 @@ class DailyTaskApiController extends Controller
     public function store(Request $request)
     {
         try {
-            $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->first();
+            $dailyTask = DailyTask::where('expedition_id', $request->expedition['id'])->where('date', $request->date)->where('status', 0)->first();
             if ($dailyTask) {
                 return response()->json(['message' => 'Tugas Harian Untuk Expedisi Tersebut Sudah Dibuat !'], 400);
             } else {
@@ -125,11 +125,38 @@ class DailyTaskApiController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function total(Request $request, $id)
     {
         try {
             return response()->json(DailyTask::where('id', $id)->update([
                 "total_package" => $request['total_package'],
+                "left" => $request['total_package'] - $request['picked'],
+                "date" => $request['date']
+            ]));
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function picked(Request $request, $id)
+    {
+        try {
+            return response()->json(DailyTask::where('id', $id)->update([
+                "picked" => $request['picked'],
+                "left" => $request['total_package'] - $request['picked'],
+                "date" => $request['date']
+            ]));
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function finish(Request $request, $id)
+    {
+        try {
+            return response()->json(DailyTask::where('id', $id)->update([
+                "status" => 1,
                 "date" => $request['date']
             ]));
         } catch (\Throwable $th) {

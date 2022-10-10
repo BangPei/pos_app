@@ -30,6 +30,8 @@ Route::get('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receiptBy
 Route::post('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receipt']);
 Route::delete('daily-task/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
 Route::patch('daily-task/total/{id}', [DailyTaskApiController::class, 'total']);
+Route::patch('daily-task/picked/{id}', [DailyTaskApiController::class, 'picked']);
+Route::patch('daily-task/finish/{id}', [DailyTaskApiController::class, 'finish']);
 Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
 Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
 Route::resource('daily-task', DailyTaskApiController::class);

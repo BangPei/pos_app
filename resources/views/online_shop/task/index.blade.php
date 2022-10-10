@@ -28,6 +28,8 @@
             <th>Expedisi</th>
             <th>Total Paket</th>
             <th>Total Scan</th>
+            <th>Dibawa</th>
+            <th>Pending</th>
             <th>Status</th>
             <th>Aksi</th>
           </tr>
@@ -131,6 +133,17 @@
           }
         },
         {
+          data: 'picked',
+          defaultContent:"0",
+          mRender:function(data,type,full){
+            return `<input !important;" class="form-control picked number2 text-right" value="${data}">`
+          }
+        },
+        {
+          data: 'left',
+          defaultContent:"0",
+        },
+        {
           data: 'status',
           mRender: function(data, type, full) {
             return `<span class="badge badge-${data?"success":"primary"}">${data?'Selesai':"Sedang Berjalan"}</span>`
@@ -139,18 +152,20 @@
         {
           data: 'id',
           mRender: function(data, type, full) {
-            return `<a href="/daily-task/${data}/edit?platform=${full.expedition.alias}" title="Lihat Detail" class="btn btn-sm bg-gradient-primary edit-daily-task"><i class="fas fa-eye"></i></a>`
+            return `
+            <a title="Finish" class="btn btn-sm bg-gradient-success finish-daily-task"><i class="fas fa-check"></i></a>
+            <a href="/daily-task/${data}/edit?platform=${full.expedition.alias}" title="Lihat Detail" class="btn btn-sm bg-gradient-primary edit-daily-task"><i class="fas fa-eye"></i></a>`
             }
         }
       ],
       columnDefs:[
         {
           className:"text-center",
-          targets:[0,2,3,4,5]
+          targets:[0,2,3,5,7]
         },
         {
-          width:"15%",
-          targets:[2]
+          width:"10%",
+          targets:[2,4,6]
         }
       ]
     })
@@ -159,11 +174,43 @@
       let data = tblDailyTask.row($(this).parents('tr')).data();
       let val = $(this).val()==""?0:parseInt($(this).val())
       let date = moment(data.date).format('YYYY-MM-DD')
+      let picked = data.picked;
       $.blockUI({ message: "Silahkan Tunggu !!" });
-      ajax({total_package:val,date:date}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
+      ajax({total_package:val,date:date,picked:picked}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
           $.unblockUI()
+        },
+        function(err){
+          toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+          $.unblockUI()
+        })
+    })
+    $('#table-daily-task').on('change','.picked',function() {
+      let data = tblDailyTask.row($(this).parents('tr')).data();
+      let val = $(this).val()==""?0:parseInt($(this).val())
+      let date = moment(data.date).format('YYYY-MM-DD')
+      let total_package = data.total_package
+      $.blockUI({ message: "Silahkan Tunggu !!" });
+      ajax({picked:val,date:date,total_package:total_package}, `${baseApi}/daily-task/picked/${data.id}`, "PATCH",  
+        function(json) {
+          toastr.success('Berhasil')
+          location.reload();
+        },
+        function(err){
+          toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
+          $.unblockUI()
+        })
+    })
+
+    $('#table-daily-task').on('click','.finish-daily-task',function() {
+      let data = tblDailyTask.row($(this).parents('tr')).data();
+      let date = moment(data.date).format('YYYY-MM-DD')
+      $.blockUI({ message: "Silahkan Tunggu !!" });
+      ajax({date:date}, `${baseApi}/daily-task/finish/${data.id}`, "PATCH",  
+        function(json) {
+          toastr.success('Berhasil')
+          location.reload();
         },
         function(err){
           toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
