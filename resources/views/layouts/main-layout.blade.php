@@ -241,6 +241,12 @@
                                 <p>Tugas Harian</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/search-task" class="nav-link {{Request::is('search-task*')?'active':''}}">
+                                <i class="fa fa-search nav-icon"></i>
+                                <p>Pencarian</p>
+                            </a>
+                        </li>
                         {{-- <li class="nav-item {{ (Request::is('daily-task*')) || (Request::is('expedition*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link {{Request::is('expedition')?'active':''}}">
                                 <i class="nav-icon fa fa-barcode"></i>
