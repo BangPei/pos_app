@@ -26,7 +26,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="date">Tanggal</label>
-                        <input type="text" class="form-control" id="date" name="date">
+                        <input readonly type="text" class="form-control" id="date" name="date">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -51,7 +51,7 @@
         $('#date').datepicker({
             uiLibrary: 'bootstrap',
             format:"dd mmmm yyyy",
-            value:moment().format("DD MMMM YYYY")
+            // value:moment().format("DD MMMM YYYY")
         })
     })
 </script>

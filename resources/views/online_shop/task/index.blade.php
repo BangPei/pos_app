@@ -179,7 +179,7 @@
       ajax({total_package:val,date:date,picked:picked}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
-          $.unblockUI()
+          location.reload();
         },
         function(err){
           toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
