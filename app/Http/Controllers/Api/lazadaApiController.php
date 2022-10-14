@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Lazada\LazopClient;
 use Lazada\LazopRequest;
 
-class DashboardApiController extends Controller
+class lazadaApiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,6 @@ class DashboardApiController extends Controller
      */
     public function index()
     {
-        // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
         $lazadaUrl = "https://api.lazada.co.id/rest";
         $apiKey = "112922";
         $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
@@ -34,7 +33,7 @@ class DashboardApiController extends Controller
         // $orderUrl->addApiParam('sort_by', 'updated_at');
         // $orderUrl->addApiParam('created_before', '2018-02-10T16:00:00+08:00');
         $orderUrl->addApiParam('created_after', '2022-10-10T00:00:00+00:00');
-        $orderUrl->addApiParam('status', 'pending');
+        $orderUrl->addApiParam('status', 'packed');
         $orders =  $c->execute($orderUrl, $accessToken);
         $jsonObject = json_decode($orders);
         foreach ($jsonObject->data->orders as $od) {
@@ -51,7 +50,7 @@ class DashboardApiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) //request pickup order
     {
         //
     }
@@ -62,7 +61,7 @@ class DashboardApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) // show order
     {
         //
     }

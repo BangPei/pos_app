@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\DailyTaskApiController;
 use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
+use App\Http\Controllers\API\lazadaApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,5 +36,6 @@ Route::patch('daily-task/finish/{id}', [DailyTaskApiController::class, 'finish']
 Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
 Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
 Route::resource('daily-task', DailyTaskApiController::class);
+Route::resource('lazada-order', lazadaApiController::class);
 
 Route::resource('receipt', ReceiptApiController::class);
