@@ -36,6 +36,7 @@ Route::patch('daily-task/finish/{id}', [DailyTaskApiController::class, 'finish']
 Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
 Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
 Route::resource('daily-task', DailyTaskApiController::class);
+Route::post('lazada-order/rts', [lazadaApiController::class, 'readyToShipp']);
 Route::resource('lazada-order', lazadaApiController::class);
 
 Route::resource('receipt', ReceiptApiController::class);

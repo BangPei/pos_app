@@ -29,7 +29,7 @@ class lazadaApiController extends Controller
         // $orderUrl->addApiParam('update_before', '2018-02-10T16:00:00+08:00');
         $orderUrl->addApiParam('sort_direction', 'ASC');
         // $orderUrl->addApiParam('offset', '0');
-        $orderUrl->addApiParam('limit', '100');
+        $orderUrl->addApiParam('limit', '10');
         // $orderUrl->addApiParam('update_after', '2022-10-14T09:00:00+08:00');
         // $orderUrl->addApiParam('sort_by', 'updated_at');
         // $orderUrl->addApiParam('created_before', '2018-02-10T16:00:00+08:00');
@@ -43,9 +43,13 @@ class lazadaApiController extends Controller
             $itemDecode = json_decode($items);
             $od->items = $itemDecode->data;
             $od->tracking_number =  $itemDecode->data[0]->tracking_code;
+            $od->shipping_provider_type =  $itemDecode->data[0]->shipping_provider_type;
+            $od->shipment_provider =  $itemDecode->data[0]->shipment_provider;
         }
         return $jsonObject;
         // return $orders;
+        // $request = new LazopRequest('/shipment/providers/get', 'GET');
+        // return $c->execute($request, $this->accessToken);
     }
 
     /**
@@ -57,6 +61,17 @@ class lazadaApiController extends Controller
     public function store(Request $request) //request pickup order
     {
         //
+    }
+    public function readyToShipp(Request $request) //request pickup order
+    {
+        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/order/rts');
+        $request->addApiParam('delivery_type', 'dropship');
+        $request->addApiParam('order_item_ids', $request->orderItemIds);
+        $request->addApiParam('shipment_provider', $request->shipmentProvider);
+        $request->addApiParam('tracking_number', $request->trackingNumber);
+        $orders =  $c->execute($request, $this->accessToken);
+        return $orders;
     }
 
     /**
