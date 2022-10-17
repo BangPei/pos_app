@@ -23,18 +23,47 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
+        $orders = $this->getOrders("packed", '100');
+        $rts = $this->getOrders("ready_to_ship", '1');
+        $pending = $this->getOrders("pending", '1');
+        $orders->totalPacked = $orders->countTotal;
+        $orders->totalRts = $rts->countTotal;
+        $orders->totalPending = $pending->countTotal;
+        $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
+        return $orders;
+    }
+    public function pending()
+    {
+        $orders = $this->getOrders("packed", '1');
+        $rts = $this->getOrders("ready_to_ship", '1');
+        $pending = $this->getOrders("pending", '100');
+        $pending->totalPacked = $orders->countTotal;
+        $pending->totalRts = $rts->countTotal;
+        $pending->totalPending = $pending->countTotal;
+        $pending->allTotal = $pending->totalRts + $pending->totalPending + $pending->totalPacked;
+        return $orders;
+    }
+    public function rts()
+    {
+        $orders = $this->getOrders("packed", '1');
+        $rts = $this->getOrders("ready_to_ship", '100');
+        $pending = $this->getOrders("pending", '1');
+        $rts->totalPacked = $orders->countTotal;
+        $rts->totalRts = $rts->countTotal;
+        $rts->totalPending = $pending->countTotal;
+        $rts->allTotal = $rts->totalRts + $rts->totalPending + $rts->totalPacked;
+        return $orders;
+    }
+
+    private function getOrders($status, $limit = 100)
+    {
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $orderUrl = new LazopRequest('/orders/get', 'GET');
         $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-        // $orderUrl->addApiParam('update_before', '2018-02-10T16:00:00+08:00');
-        $orderUrl->addApiParam('sort_direction', 'ASC');
-        // $orderUrl->addApiParam('offset', '0');
-        $orderUrl->addApiParam('limit', '10');
-        // $orderUrl->addApiParam('update_after', '2022-10-14T09:00:00+08:00');
-        // $orderUrl->addApiParam('sort_by', 'updated_at');
-        // $orderUrl->addApiParam('created_before', '2018-02-10T16:00:00+08:00');
+        $orderUrl->addApiParam('sort_direction', 'DESC');
+        $orderUrl->addApiParam('limit', $limit);
         $orderUrl->addApiParam('created_after', Carbon::now()->subDays(4)->format('c'));
-        $orderUrl->addApiParam('status', 'packed');
+        $orderUrl->addApiParam('status', $status);
         $orders =  $c->execute($orderUrl, $this->accessToken);
         $jsonObject = json_decode($orders)->data;
         foreach ($jsonObject->orders as $od) {
@@ -47,9 +76,6 @@ class lazadaApiController extends Controller
             $od->shipment_provider =  $itemDecode->data[0]->shipment_provider;
         }
         return $jsonObject;
-        // return $orders;
-        // $request = new LazopRequest('/shipment/providers/get', 'GET');
-        // return $c->execute($request, $this->accessToken);
     }
 
     /**
@@ -62,14 +88,14 @@ class lazadaApiController extends Controller
     {
         //
     }
-    public function readyToShipp(Request $request) //request pickup order
+    public function readyToShipp($tracking_number, $shipment_provider, $order_item_ids) //request pickup order
     {
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $request = new LazopRequest('/order/rts');
         $request->addApiParam('delivery_type', 'dropship');
-        $request->addApiParam('order_item_ids', $request->orderItemIds);
-        $request->addApiParam('shipment_provider', $request->shipmentProvider);
-        $request->addApiParam('tracking_number', $request->trackingNumber);
+        $request->addApiParam('shipment_provider',  $shipment_provider);
+        $request->addApiParam('order_item_ids', $order_item_ids);
+        $request->addApiParam('tracking_number', $tracking_number);
         $orders =  $c->execute($request, $this->accessToken);
         return $orders;
     }
