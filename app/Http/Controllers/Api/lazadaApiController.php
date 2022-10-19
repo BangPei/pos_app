@@ -23,9 +23,21 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        $orders = $this->getOrders("packed", '100');
-        $rts = $this->getOrders("ready_to_ship", '1');
-        $pending = $this->getOrders("pending", '1');
+        $orders = $this->orderCenter("packed", '100');
+        $rts = $this->orderCenter("ready_to_ship", '1');
+        $pending = $this->orderCenter("pending", '1');
+        $orders->totalPacked = $orders->countTotal;
+        $orders->totalRts = $rts->countTotal;
+        $orders->totalPending = $pending->countTotal;
+        $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
+        return $orders;
+    }
+
+    public function packed()
+    {
+        $orders = $this->orderCenter("packed", '100');
+        $rts = $this->orderCenter("ready_to_ship", '1');
+        $pending = $this->orderCenter("pending", '1');
         $orders->totalPacked = $orders->countTotal;
         $orders->totalRts = $rts->countTotal;
         $orders->totalPending = $pending->countTotal;
@@ -34,33 +46,33 @@ class lazadaApiController extends Controller
     }
     public function pending()
     {
-        $orders = $this->getOrders("packed", '1');
-        $rts = $this->getOrders("ready_to_ship", '1');
-        $pending = $this->getOrders("pending", '100');
+        $orders = $this->orderCenter("packed", '1');
+        $rts = $this->orderCenter("ready_to_ship", '1');
+        $pending = $this->orderCenter("pending", '100');
         $pending->totalPacked = $orders->countTotal;
         $pending->totalRts = $rts->countTotal;
         $pending->totalPending = $pending->countTotal;
         $pending->allTotal = $pending->totalRts + $pending->totalPending + $pending->totalPacked;
-        return $orders;
+        return $pending;
     }
     public function rts()
     {
-        $orders = $this->getOrders("packed", '1');
-        $rts = $this->getOrders("ready_to_ship", '100');
-        $pending = $this->getOrders("pending", '1');
+        $orders = $this->orderCenter("packed", '1');
+        $rts = $this->orderCenter("ready_to_ship", '100');
+        $pending = $this->orderCenter("pending", '1');
         $rts->totalPacked = $orders->countTotal;
         $rts->totalRts = $rts->countTotal;
         $rts->totalPending = $pending->countTotal;
         $rts->allTotal = $rts->totalRts + $rts->totalPending + $rts->totalPacked;
-        return $orders;
+        return $rts;
     }
 
-    private function getOrders($status, $limit = 100)
+    private function orderCenter($status, $limit = 100, $sort = "ASC")
     {
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $orderUrl = new LazopRequest('/orders/get', 'GET');
         $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-        $orderUrl->addApiParam('sort_direction', 'DESC');
+        $orderUrl->addApiParam('sort_direction',  $sort);
         $orderUrl->addApiParam('limit', $limit);
         $orderUrl->addApiParam('created_after', Carbon::now()->subDays(4)->format('c'));
         $orderUrl->addApiParam('status', $status);
@@ -88,6 +100,7 @@ class lazadaApiController extends Controller
     {
         //
     }
+
     public function readyToShipp($tracking_number, $shipment_provider, $order_item_ids) //request pickup order
     {
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
