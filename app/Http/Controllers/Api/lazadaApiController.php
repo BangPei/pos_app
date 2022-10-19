@@ -33,9 +33,9 @@ class lazadaApiController extends Controller
         return $orders;
     }
 
-    public function packed()
+    public function packed($sorting)
     {
-        $orders = $this->orderCenter("packed", '100');
+        $orders = $this->orderCenter("packed", '100', $sorting);
         $rts = $this->orderCenter("ready_to_ship", '1');
         $pending = $this->orderCenter("pending", '1');
         $orders->totalPacked = $orders->countTotal;
@@ -44,21 +44,21 @@ class lazadaApiController extends Controller
         $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
         return $orders;
     }
-    public function pending()
+    public function pending($sorting)
     {
         $orders = $this->orderCenter("packed", '1');
         $rts = $this->orderCenter("ready_to_ship", '1');
-        $pending = $this->orderCenter("pending", '100');
+        $pending = $this->orderCenter("pending", '100', $sorting);
         $pending->totalPacked = $orders->countTotal;
         $pending->totalRts = $rts->countTotal;
         $pending->totalPending = $pending->countTotal;
         $pending->allTotal = $pending->totalRts + $pending->totalPending + $pending->totalPacked;
         return $pending;
     }
-    public function rts()
+    public function rts($sorting)
     {
         $orders = $this->orderCenter("packed", '1');
-        $rts = $this->orderCenter("ready_to_ship", '100');
+        $rts = $this->orderCenter("ready_to_ship", '100', $sorting);
         $pending = $this->orderCenter("pending", '1');
         $rts->totalPacked = $orders->countTotal;
         $rts->totalRts = $rts->countTotal;
