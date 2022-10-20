@@ -31,6 +31,13 @@ class lazadaApiController extends Controller
         $orders->totalPending = $pending->countTotal;
         $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
         return $orders;
+        // $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        // $request = new LazopRequest('/order/rts');
+        // $request->addApiParam('delivery_type', 'dropship');
+        // $request->addApiParam('order_item_ids', '[978954156452348]');
+        // $request->addApiParam('shipment_provider', 'LEX ID');
+        // $request->addApiParam('tracking_number', 'LXAD-2712419478');
+        // return $c->execute($request, $this->accessToken);
     }
 
     public function packed($sorting)
@@ -77,17 +84,21 @@ class lazadaApiController extends Controller
         $orderUrl->addApiParam('created_after', Carbon::now()->subDays(4)->format('c'));
         $orderUrl->addApiParam('status', $status);
         $orders =  $c->execute($orderUrl, $this->accessToken);
-        $jsonObject = json_decode($orders)->data;
-        foreach ($jsonObject->orders as $od) {
-            $itemsUrl->addApiParam('order_id', $od->order_id);
-            $items = $c->execute($itemsUrl, $this->accessToken);
-            $itemDecode = json_decode($items);
-            $od->items = $itemDecode->data;
-            $od->tracking_number =  $itemDecode->data[0]->tracking_code;
-            $od->shipping_provider_type =  $itemDecode->data[0]->shipping_provider_type;
-            $od->shipment_provider =  $itemDecode->data[0]->shipment_provider;
+        if (json_decode($orders)->code == "0") {
+            $jsonObject = json_decode($orders)->data;
+            foreach ($jsonObject->orders as $od) {
+                $itemsUrl->addApiParam('order_id', $od->order_id);
+                $items = $c->execute($itemsUrl, $this->accessToken);
+                $itemDecode = json_decode($items);
+                $od->items = $itemDecode->data;
+                $od->tracking_number =  $itemDecode->data[0]->tracking_code;
+                $od->shipping_provider_type =  $itemDecode->data[0]->shipping_provider_type;
+                $od->shipment_provider =  $itemDecode->data[0]->shipment_provider;
+            }
+            return $jsonObject;
+        } else {
+            return response()->json(['message' => json_decode($orders)->message . ' on status ' . $status], 500);
         }
-        return $jsonObject;
     }
 
     /**
