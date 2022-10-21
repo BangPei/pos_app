@@ -31,13 +31,6 @@ class lazadaApiController extends Controller
         $orders->totalPending = $pending->countTotal;
         $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
         return $orders;
-        // $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
-        // $request = new LazopRequest('/order/rts');
-        // $request->addApiParam('delivery_type', 'dropship');
-        // $request->addApiParam('order_item_ids', '[978954156452348]');
-        // $request->addApiParam('shipment_provider', 'LEX ID');
-        // $request->addApiParam('tracking_number', 'LXAD-2712419478');
-        // return $c->execute($request, $this->accessToken);
     }
 
     public function packed($sorting)
