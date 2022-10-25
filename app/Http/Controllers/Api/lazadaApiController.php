@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use item;
 use Lazada\LazopClient;
 use Lazada\LazopRequest;
 
@@ -44,6 +45,7 @@ class lazadaApiController extends Controller
         $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
         return $orders;
     }
+
     public function pending($sorting)
     {
         $orders = $this->orderCenter("packed", '1');
@@ -83,10 +85,20 @@ class lazadaApiController extends Controller
                 $itemsUrl->addApiParam('order_id', $od->order_id);
                 $items = $c->execute($itemsUrl, $this->accessToken);
                 $itemDecode = json_decode($items);
-                $od->items = $itemDecode->data;
-                $od->tracking_number =  $itemDecode->data[0]->tracking_code;
-                $od->shipping_provider_type =  $itemDecode->data[0]->shipping_provider_type;
-                $od->shipment_provider =  $itemDecode->data[0]->shipment_provider;
+                $validItems = [];
+                if ($od->statuses[0] == "pending") {
+                    $validItems = $itemDecode->data;
+                } else {
+                    foreach ($itemDecode->data as $item) {
+                        if ($item->tracking_code !== "") {
+                            array_push($validItems, $item);
+                            $od->tracking_number = $item->tracking_code;
+                            $od->shipping_provider_type = $item->shipping_provider_type;
+                            $od->shipment_provider = $item->shipment_provider;
+                        }
+                    }
+                }
+                $od->items = $validItems;
             }
             return $jsonObject;
         } else {
