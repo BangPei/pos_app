@@ -24,14 +24,16 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        $orders = $this->orderCenter("packed", '100');
-        $rts = $this->orderCenter("ready_to_ship", '1');
-        $pending = $this->orderCenter("pending", '1');
-        $orders->totalPacked = $orders->countTotal;
-        $orders->totalRts = $rts->countTotal;
-        $orders->totalPending = $pending->countTotal;
-        $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
-        return $orders;
+        $timestamp = time();
+        $partner_id = 1012628;
+        // $shop_id = 67600;
+        $host = "https://partner.test-stable.shopeemobile.com";
+        $secret_key = "6551425147424558526d515848526c5454494a61516a4a6a44474c5a50414b65";
+        $path = "/api/v2/shop/auth_partner";
+
+        $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $secret_key);
+        $url = $host . $path . "?timestamp=" . $timestamp . "&partner_id=" . $partner_id . "&sign=" . $sign . "&redirect=https://www.google.com";
+        return $url;
     }
 
     public function packed($sorting)
