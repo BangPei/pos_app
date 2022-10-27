@@ -4,6 +4,7 @@ use App\Http\Controllers\API\DailyTaskApiController;
 use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
 use App\Http\Controllers\API\lazadaApiController;
+use App\Http\Controllers\API\ShopeeApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,10 +37,14 @@ Route::patch('daily-task/finish/{id}', [DailyTaskApiController::class, 'finish']
 Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
 Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
 Route::resource('daily-task', DailyTaskApiController::class);
+
 Route::post('lazada-order/rts/{tracking_number}/{shipment_provider}/{order_item_ids}', [lazadaApiController::class, 'readyToShipp']);
 Route::get('lazada-order/pending/{sorting}', [lazadaApiController::class, 'pending']);
 Route::get('lazada-order/rts/{sorting}', [lazadaApiController::class, 'rts']);
 Route::get('lazada-order/packed/{sorting}', [lazadaApiController::class, 'packed']);
 Route::resource('lazada-order', lazadaApiController::class);
+
+Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
+Route::resource('shopee-order', ShopeeApiController::class);
 
 Route::resource('receipt', ReceiptApiController::class);
