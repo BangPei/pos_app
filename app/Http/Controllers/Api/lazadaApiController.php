@@ -23,54 +23,7 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-
-        // $accessToken = "7768646e6e7a55727479535144594670";
-        // $refreshToken = "5a63685568424b646a5872706f587773";
-        // // $timestamp = time();
-        // // $partner_id = 2005013;
-        // // $host = "https://partner.shopeemobile.com";
-        // // $partner_key = "4b69516851696d63516958464c745877696d7770697348666870474355745774";
-        // // $path = "/api/v2/shop/auth_partner";
-
-        // // $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key, false);
-        // // $url = $host . $path . "?timestamp=" . $timestamp . "&partner_id=" . $partner_id . "&sign=" . $sign . "&redirect=https://www.google.com";
-        // // return $url;
-        // $timestamp = time();
-        // $partner_id = 2005013;
-        // $host = "https://partner.shopeemobile.com";
-        // // $path = "/api/v2/auth/token/get";
-        // $path = "/api/v2/auth/access_token/get";
-        // $code = "6b4d734d48464f45525441656e654451";
-        // $partner_key = "4b69516851696d63516958464c745877696d7770697348666870474355745774";
-        // $shop_id = 285374341;
-        // $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key);
-
-        // $curl = curl_init();
-
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_URL => $host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $partner_id . '&sign=' . $sign,
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_ENCODING => '',
-        //     CURLOPT_MAXREDIRS => 10,
-        //     CURLOPT_TIMEOUT => 0,
-        //     CURLOPT_FOLLOWLOCATION => true,
-        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //     CURLOPT_CUSTOMREQUEST => 'POST',
-        //     CURLOPT_HTTPHEADER => array(
-        //         'Content-Type: application/json',
-        //     ),
-        //     CURLOPT_POSTFIELDS => json_encode(array(
-        //         'partner_id' => $partner_id,
-        //         // 'code' => $code,
-        //         "refresh_token" => $refreshToken,
-        //         'shop_id' => $shop_id,
-        //     )),
-        // ));
-
-        // $response = curl_exec($curl);
-
-        // curl_close($curl);
-        // return $response;
+        //
     }
 
     public function packed($sorting)
