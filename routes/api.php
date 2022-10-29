@@ -44,6 +44,7 @@ Route::get('lazada-order/rts/{sorting}', [lazadaApiController::class, 'rts']);
 Route::get('lazada-order/packed/{sorting}', [lazadaApiController::class, 'packed']);
 Route::resource('lazada-order', lazadaApiController::class);
 
+Route::get('shopee-order/order/{orderSn}', [ShopeeApiController::class, 'getOrderByNo']);
 Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::resource('shopee-order', ShopeeApiController::class);
 

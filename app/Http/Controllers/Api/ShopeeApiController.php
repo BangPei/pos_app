@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccessToken;
+use App\Models\ShopeAccessToken;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ShopeeApiController extends Controller
 {
 
-    public $secondAccessToken = "6c576c7a5a4248566357666b6e4d6745";
-    public $secondRefreshToken = "4f454c42734e4859646e42676d744279";
+    public $secondAccessToken = "49696d546148587055426f5a59685064";
+    public $secondRefreshToken = "506442575276547379797678726a794b";
     public $partner_id = 2005013;
     public $host = "https://partner.shopeemobile.com";
     public $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
@@ -20,12 +22,14 @@ class ShopeeApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         // return $this->getLink();
         // return $this->getAccessToken();
         // return $this->getRefreshToken();
-        return $this->getOrders("READY_TO_SHIP");
+        // return $this->getOrders("PROCESSED");
+        return $this->getOrderByNo("221028KATP82EM");
     }
 
     public function getLink()
@@ -63,7 +67,7 @@ class ShopeeApiController extends Controller
     }
     public function getRefreshToken()
     {
-        $refreshToken = "684b48595844784c446d4262614a7164";
+        $accessAuth = ShopeAccessToken::all()->first();
         $host = "https://partner.shopeemobile.com";
         $path = "/api/v2/auth/access_token/get";
         $timestamp = time();
@@ -72,62 +76,126 @@ class ShopeeApiController extends Controller
         $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
         $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key, false);
         $url = $host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $partner_id . '&sign=' . $sign;
-        return $this->curlRequest(
+        $response =  $this->curlRequest(
             $url,
             "POST",
             array(
                 'partner_id' => $partner_id,
-                "refresh_token" => $refreshToken,
+                "refresh_token" => $accessAuth->refresh_token,
                 'shop_id' => $shop_id,
             ),
         );
+        $auth = json_decode($response);
+        if ($auth->error == "") {
+            ShopeAccessToken::where('id', $accessAuth->id)->update([
+                "access_token" => $auth->access_token,
+                "refresh_token" => $auth->refresh_token,
+                "expire_in" => $auth->expire_in,
+                "shop_id" => $auth->shop_id,
+            ]);
+            return ShopeAccessToken::all()->first();
+        } else {
+            return $response;
+        }
+    }
+
+    public function getToken()
+    {
+        try {
+            $auth = ShopeAccessToken::all()->first;
+            return $auth->access_token->access_token;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 
     public function getOrders($status = "PROCESSED")
     {
+
+        $accessToken = $this->getToken();
         // status == "PROCESSED" -> telah di proses pada web seller shopee
         // status == "READY_TO_SHIP" ->belum di print pada web seller shopee atau belum ada resi / kecuali instant atau sameday
-
-        $time_from = (int)(time() - (60 * 60 * 24 * 3));
-        $timestamp = time();
-        $path = "/api/v2/order/get_order_list";
-        $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $this->secondAccessToken . $this->shop_id), $this->partner_key);
-        $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $this->secondAccessToken . '&shop_id=' . $this->shop_id . '&page_size=100&time_from=' . $time_from . '&time_to=' . (int)time() . '&time_range_field=update_time&order_status=' . $status;
-        $response =  $this->curlRequest($url, "GET");
-        $res =  json_decode($response)->response;
-        $order_list = [];
-        foreach ($res->order_list as $order) {
-            array_push($order_list, $order->order_sn);
+        try {
+            $nextCursor = 0;
+            $order_list = [];
+            $time_from = (int)(time() - (60 * 60 * 24 * 3));
+            $timestamp = time();
+            $path = "/api/v2/order/get_order_list";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $this->secondAccessToken . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $this->secondAccessToken . '&shop_id=' . $this->shop_id . '&page_size=5&time_from=' . $time_from . '&time_to=' . (int)time() . '&time_range_field=update_time&order_status=' . $status . '&cursor=' . $nextCursor;
+            $response =  $this->curlRequest($url, "GET");
+            $res =  json_decode($response)->response;
+            foreach ($res->order_list as $order) {
+                array_push($order_list, $order->order_sn);
+            }
+            // if ($res->more) {
+            //     $nextCursor = 
+            // }
+            // $details = $this->getOrderDetails($order_list);
+            // $orders =  json_decode($details)->response->order_list;
+            // foreach ($orders as $order) {
+            //     $logist = $this->getTrackingNumber($order->order_sn);
+            //     $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
+            //     $order->tracking_number = $trackingNumber;
+            //     // $order->logistic = json_decode($logist)->response;
+            // }
+            return $res;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
         }
-        $details = $this->getOrderDetails($order_list);
-        $orders =  json_decode($details)->response->order_list;
-        foreach ($orders as $order) {
-            $logist = $this->getTrackingNumber($order->order_sn);
-            $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
-            $order->tracking_number = $trackingNumber;
-            // $order->logistic = json_decode($logist)->response;
-        }
-        return $orders;
     }
 
     public function getOrderDetails($orderList)
     {
+        $accessToken = $this->getToken();
         $timestamp = time();
         $path = "/api/v2/order/get_order_detail";
-        $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $this->secondAccessToken . $this->shop_id), $this->partner_key);
-        $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $this->secondAccessToken . '&shop_id=' . $this->shop_id . '&order_sn_list=' . join(',', $orderList) . '&response_optional_fields=item_list,shipping_carrier,total_amount,prescription_images,package_list';
+        $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $accessToken . $this->shop_id), $this->partner_key);
+        $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $accessToken . '&shop_id=' . $this->shop_id . '&order_sn_list=' . join(',', $orderList) . '&response_optional_fields=item_list,shipping_carrier,total_amount,prescription_images,package_list';
         $response =  $this->curlRequest($url, "GET");
         return $response;
     }
 
-    public function getTrackingNumber($order_sn)
+    public function getOrderByNo($orderSn)
     {
-        $timestamp = time();
-        $path = "/api/v2/logistics/get_tracking_number";
-        $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $this->secondAccessToken . $this->shop_id), $this->partner_key);
-        $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $this->secondAccessToken . '&shop_id=' . $this->shop_id . '&order_sn=' . $order_sn;
-        $response =  $this->curlRequest($url, "GET");
-        return $response;
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/order/get_order_detail";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&order_sn_list=' . $orderSn . '&response_optional_fields=item_list,shipping_carrier,total_amount,prescription_images';
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            $logist = $this->getTrackingNumber($orderSn, $auth->access_token);
+            $orderList = json_decode($response)->response->order_list;
+            foreach ($orderList as $order) {
+                $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
+                $order->trackingNumber = $trackingNumber;
+            }
+            return $orderList;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function getTrackingNumber($order_sn, $AccessToken)
+    {
+
+        try {
+            $timestamp = time();
+            $path = "/api/v2/logistics/get_tracking_number";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $AccessToken . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $AccessToken . '&shop_id=' . $this->shop_id . '&order_sn=' . $order_sn;
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            return $response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -177,7 +245,6 @@ class ShopeeApiController extends Controller
 
     public function curlRequest($url, $method, $fieldRequest = null)
     {
-
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
@@ -195,7 +262,9 @@ class ShopeeApiController extends Controller
         ));
 
         $response = curl_exec($curl);
-
+        // if (json_decode($response)->error == "error_auth") {
+        //     $access =  $this->getRefreshToken();
+        // }
         curl_close($curl);
         return $response;
     }
