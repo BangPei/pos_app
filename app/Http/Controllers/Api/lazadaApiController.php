@@ -23,7 +23,14 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        //
+        $orders = $this->orderCenter("packed", '100', "DESC");
+        $rts = $this->orderCenter("ready_to_ship", '1');
+        $pending = $this->orderCenter("pending", '1');
+        $orders->totalPacked = $orders->countTotal;
+        $orders->totalRts = $rts->countTotal;
+        $orders->totalPending = $pending->countTotal;
+        $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
+        return $orders;
     }
 
     public function packed($sorting)

@@ -29,7 +29,7 @@ class ShopeeApiController extends Controller
         // return $this->getAccessToken();
         // return $this->getRefreshToken();
         // return $this->getOrders("PROCESSED");
-        return $this->getOrderByNo("221028KATP82EM");
+        return $this->getOrderByNo("221031T8F2JXXA");
     }
 
     public function getLink()
