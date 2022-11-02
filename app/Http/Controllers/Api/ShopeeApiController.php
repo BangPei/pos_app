@@ -98,7 +98,6 @@ class ShopeeApiController extends Controller
     public function getFullOrder($status = "PROCESSED")
     {
         $auth = $this->getRefreshToken();
-        $order_list = [];
         $fullOrder = [];
         $nextCursor = "";
         $isMore = true;
@@ -107,22 +106,10 @@ class ShopeeApiController extends Controller
             $nextCursor = $res->next_cursor;
             $isMore = $res->more;
             foreach ($res->order_list as $order) {
-                array_push($order_list, $order->order_sn);
-            }
-            if (count($order_list) <= 50) {
-                $details = $this->getOrderDetails($order_list, $auth->access_token);
-                $orders =  json_decode($details)->response->order_list;
-                foreach ($orders as $order) {
-                    $logist = $this->getTrackingNumber($order->order_sn, $auth->access_token);
-                    $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
-                    $order->tracking_number = $trackingNumber;
-                    // $order->logistic = json_decode($logist)->response;
-                }
-                array_push($fullOrder, $orders);
-                $order_list = [];
+                $response = $this->getOrderByNo($order->order_sn);
+                array_push($fullOrder, $response);
             }
         }
-
         return $fullOrder;
     }
 
@@ -168,7 +155,7 @@ class ShopeeApiController extends Controller
             $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&order_sn_list=' . $orderSn . '&response_optional_fields=item_list,shipping_carrier,total_amount,prescription_images';
             $response =  $this->curlRequest($url, "GET");
             if (json_decode($response)->error != "") {
-                return response()->json(['message' => json_decode($response)->message], 500);
+                return response()->json(['message' => json_decode($response)->message . ' On Number ' . $orderSn], 500);
             }
             $logist = $this->getTrackingNumber($orderSn, $auth->access_token);
             $orderList = json_decode($response)->response->order_list;
@@ -178,7 +165,7 @@ class ShopeeApiController extends Controller
             }
             return $orderList;
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => $th->getMessage() . ' On Number ' . $orderSn], 500);
         }
     }
 
