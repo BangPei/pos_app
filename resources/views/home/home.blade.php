@@ -17,7 +17,7 @@
           $.unblockUI()
         },
         function(err){
-            console.log(json)
+            console.log(err)
           toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
           $.unblockUI()
         })

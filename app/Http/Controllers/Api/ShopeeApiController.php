@@ -97,23 +97,26 @@ class ShopeeApiController extends Controller
 
     public function getFullOrder($status = "PROCESSED")
     {
-        $auth = $this->getRefreshToken();
         $fullOrder = [];
-        $nextCursor = "";
+        $nextCursor = null;
         $isMore = true;
         while ($isMore) {
+            $auth = $this->getRefreshToken();
             $res = $this->getOrders($status, $nextCursor, $auth->access_token);
+            $isMore = $res->more == 1 ? true : false;
             $nextCursor = $res->next_cursor;
-            $isMore = $res->more;
             foreach ($res->order_list as $order) {
                 $response = $this->getOrderByNo($order->order_sn);
-                array_push($fullOrder, $response);
+                foreach ($response as $order) {
+                    # code...
+                    array_push($fullOrder, $order);
+                }
             }
         }
         return $fullOrder;
     }
 
-    public function getOrders($status = "PROCESSED", $nextCursor = 0, $access_token)
+    public function getOrders($status = "PROCESSED", $nextCursor = null, $access_token)
     {
         // status == "PROCESSED" -> telah di proses pada web seller shopee
         // status == "READY_TO_SHIP" ->belum di print pada web seller shopee atau belum ada resi / kecuali instant atau sameday
