@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\OnlineShop;
 use App\Models\ShopeAccessToken;
+use App\Models\TransactionOnline;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Calculation\TextData\Format;
 
 class ShopeeApiController extends Controller
 {
@@ -106,9 +109,8 @@ class ShopeeApiController extends Controller
             $isMore = $res->more == 1 ? true : false;
             $nextCursor = $res->next_cursor;
             foreach ($res->order_list as $order) {
-                $response = $this->getOrderByNo($order->order_sn);
+                $response = $this->getOrderByNoV2($order->order_sn);
                 foreach ($response as $order) {
-                    # code...
                     array_push($fullOrder, $order);
                 }
             }
@@ -171,10 +173,69 @@ class ShopeeApiController extends Controller
             return response()->json(['message' => $th->getMessage() . ' On Number ' . $orderSn], 500);
         }
     }
+    public function getOrderByNoV2($orderSn)
+    {
+        try {
+            $fullOrder = [];
+            $auth = $this->getRefreshToken();
+            $platform = OnlineShop::where('name', 'Shopee')->first();
+            $timestamp = time();
+            $path = "/api/v2/order/get_order_detail";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&order_sn_list=' . $orderSn . '&response_optional_fields=item_list,shipping_carrier,total_amount,prescription_images';
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message . ' On Number ' . $orderSn], 500);
+            }
+            $logist = $this->getTrackingNumber($orderSn, $auth->access_token);
+            $orderList = json_decode($response)->response->order_list;
+            foreach ($orderList as $order) {
+                $fixData = null;
+                $items = [];
+                $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
+                $transaction = TransactionOnline::where('tracking_number', $trackingNumber)->first();
+
+                $fixData["create_time_online"] = date('Y-m-d H:i:s', $order->create_time);
+                $fixData["update_time_online"] = date('Y-m-d H:i:s', $order->update_time);
+                $fixData["message_to_seller"] = $order->message_to_seller;
+                $fixData["order_no"] = $order->order_sn;
+                $fixData["order_status"] = $order->order_status;
+                $fixData["tracking_number"] = $trackingNumber;
+                $fixData["delivery_by"] = $order->shipping_carrier;
+                $fixData["pickup_by"] = $order->shipping_carrier;
+                $fixData["total_amount"] = $order->total_amount;
+                $fixData["total_qty"] = 0;
+                $fixData["status"] = 1;
+                $fixData["online_shop_id"] = $platform->id;
+                $fixData["order_id"] = null;
+                $fixData["product_picture"] = null;
+                $fixData["package_picture"] = null;
+                foreach ($order->item_list as $itemOrder) {
+                    $item = null;
+                    $item['image_url'] = $itemOrder->image_info->image_url;
+                    $item['item_name'] = $itemOrder->item_name;
+                    $item['item_sku'] = $itemOrder->item_sku;
+                    $item['variation'] = $itemOrder->model_name;
+                    $item['order_item_id'] = $itemOrder->order_item_id;
+                    $item['qty'] = $itemOrder->model_quantity_purchased;
+                    $item['original_price'] = $itemOrder->model_original_price;
+                    $item['discounted_price'] = $itemOrder->model_discounted_price;
+                    $item['product_id'] = null;
+                    $item['order_id'] = null;
+                    $item['order_type'] = null;
+                    array_push($items, $item);
+                }
+                $fixData["items"] = $items;
+                array_push($fullOrder, $fixData);
+            }
+            return $fullOrder;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage() . ' On Number ' . $orderSn], 500);
+        }
+    }
 
     public function getTrackingNumber($order_sn, $AccessToken)
     {
-
         try {
             $timestamp = time();
             $path = "/api/v2/logistics/get_tracking_number";

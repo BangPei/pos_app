@@ -5,6 +5,8 @@ use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
 use App\Http\Controllers\API\lazadaApiController;
 use App\Http\Controllers\API\ShopeeApiController;
+use App\Http\Controllers\API\TransactionOnlineApiController;
+use App\Http\Controllers\TransactionOnlineController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,7 +47,9 @@ Route::get('lazada-order/packed/{sorting}', [lazadaApiController::class, 'packed
 Route::resource('lazada-order', lazadaApiController::class);
 
 Route::get('shopee-order/order/{orderSn}', [ShopeeApiController::class, 'getOrderByNo']);
+Route::get('shopee-order/order/v2/{orderSn}', [ShopeeApiController::class, 'getOrderByNoV2']);
 Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::resource('shopee-order', ShopeeApiController::class);
+Route::resource('transaction-online', TransactionOnlineApiController::class);
 
 Route::resource('receipt', ReceiptApiController::class);

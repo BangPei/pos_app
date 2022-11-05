@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddStatusFieldToOnlineOrdersTable extends Migration
+class CreateOnlineShopsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddStatusFieldToOnlineOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('online_orders', function (Blueprint $table) {
-            $table->string("status");
+        Schema::create('online_shops', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddStatusFieldToOnlineOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('online_orders', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('online_shops');
     }
 }
