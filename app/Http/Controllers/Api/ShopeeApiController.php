@@ -210,6 +210,7 @@ class ShopeeApiController extends Controller
                 $fixData["order_id"] = null;
                 $fixData["product_picture"] = null;
                 $fixData["package_picture"] = null;
+                $fixData["shipping_provider_type"] = null;
                 foreach ($order->item_list as $itemOrder) {
                     $item = null;
                     $item['image_url'] = $itemOrder->image_info->image_url;

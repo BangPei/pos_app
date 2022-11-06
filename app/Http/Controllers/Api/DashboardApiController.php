@@ -17,32 +17,17 @@ class DashboardApiController extends Controller
     public function index()
     {
         // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
-        $lazadaUrl = "https://api.lazada.co.id/rest";
+        $lazadaUrl = "https://api.lazada.com/rest";
         $apiKey = "112922";
         $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-        $code = "0_112922_5yiLbQhBbDXIPN4G6NzELkUw821";
+        $code = "0_112922_ut3ggTd3vLKkmyeamK4MyBsj68244";
         $accessToken = "50000000317b51qacxzhr6monxnRA1582c50ee6F1kksAzpfAkFr9nTTepqYKi1v";
 
         $c = new LazopClient($lazadaUrl, $apiKey, $apiSecret);
-        $orderUrl = new LazopRequest('/orders/get', 'GET');
-        $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-        // $orderUrl->addApiParam('update_before', '2018-02-10T16:00:00+08:00');
-        $orderUrl->addApiParam('sort_direction', 'ASC');
-        // $orderUrl->addApiParam('offset', '0');
-        // $orderUrl->addApiParam('limit', '10');
-        // $orderUrl->addApiParam('update_after', '2022-10-14T09:00:00+08:00');
-        // $orderUrl->addApiParam('sort_by', 'updated_at');
-        // $orderUrl->addApiParam('created_before', '2018-02-10T16:00:00+08:00');
-        $orderUrl->addApiParam('created_after', '2022-10-10T00:00:00+00:00');
-        $orderUrl->addApiParam('status', 'pending');
-        $orders =  $c->execute($orderUrl, $accessToken);
-        $jsonObject = json_decode($orders);
-        foreach ($jsonObject->data->orders as $od) {
-            $itemsUrl->addApiParam('order_id', $od->order_id);
-            $items = $c->execute($itemsUrl, $accessToken);
-            $od->items = json_decode($items);
-        }
-        return $jsonObject;
+        $orderUrl = new LazopRequest("/auth/token/create");
+        $orderUrl->addApiParam('code', $code);
+        $orders =  $c->execute($orderUrl);
+        return $orders;
     }
 
     /**

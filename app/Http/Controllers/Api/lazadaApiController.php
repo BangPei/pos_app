@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\OnlineShop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Lazada\LazopClient;
@@ -15,7 +16,8 @@ class lazadaApiController extends Controller
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
     public $code = "0_112922_5yiLbQhBbDXIPN4G6NzELkUw821";
-    public $accessToken = "50000000317b51qacxzhr6monxnRA1582c50ee6F1kksAzpfAkFr9nTTepqYKi1v";
+    public $accessToken = "50000000225yiUVobiUOeqBM9pwOQfgYn1fkQ1c392f7ehsrGfGcv6MRvmssxTJi";
+    public $refresh_token = "50001001e25rm5ebrBPvuckIJiwFRyHC4GrrB1da769e9RpyTuRx17QBIks8M3Iv";
     /**
      * Display a listing of the resource.
      *
@@ -23,14 +25,7 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        $orders = $this->orderCenter("packed", '100', "DESC");
-        $rts = $this->orderCenter("ready_to_ship", '1');
-        $pending = $this->orderCenter("pending", '1');
-        $orders->totalPacked = $orders->countTotal;
-        $orders->totalRts = $rts->countTotal;
-        $orders->totalPending = $pending->countTotal;
-        $orders->allTotal = $orders->totalRts + $orders->totalPending + $orders->totalPacked;
-        return $orders;
+        return $this->getCount();
     }
 
     public function packed($sorting)
@@ -105,6 +100,73 @@ class lazadaApiController extends Controller
         }
     }
 
+    public function getFullOrder($status, $sorting)
+    {
+        try {
+            $fullOrder = [];
+            $offset = 0;
+            $limit = 100;
+            $data = $this->getOrders($status, $sorting, $limit, $offset);
+            $offset = $data->count;
+            foreach ($data->orders as $order) {
+                $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+                $itemsUrl = new LazopRequest('/order/items/get', 'GET');
+                $itemsUrl->addApiParam('order_id', $order->order_id);
+                $items = $c->execute($itemsUrl, $this->accessToken);
+                $itemDecode = json_decode($items);
+                $validItems = [];
+                foreach ($itemDecode->data as $item) {
+                    $itemData = $this->mapingOrder($order, $item);
+                    array_push($validItems, $itemData);
+                }
+                $order->items = $validItems;
+
+                $fixData = $this->mapingOrderHeader($order);
+                array_push($fullOrder, $fixData);
+            }
+            while ($offset == $limit) {
+                $data = $this->getOrders($status, $sorting, $limit, $offset);
+                $offset = $offset = $data->count;
+                foreach ($data->orders as $order) {
+                    $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+                    $itemsUrl = new LazopRequest('/order/items/get', 'GET');
+                    $itemsUrl->addApiParam('order_id', $order->order_id);
+                    $items = $c->execute($itemsUrl, $this->accessToken);
+                    $itemDecode = json_decode($items);
+                    $validItems = [];
+                    foreach ($itemDecode->data as $item) {
+                        $itemData = $this->mapingOrder($order, $item);
+                        array_push($validItems, $itemData);
+                    }
+                    $order->items = $validItems;
+
+                    $fixData = $this->mapingOrderHeader($order);
+                    array_push($fullOrder, $fixData);
+                }
+            }
+            return $fullOrder;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function getOrders($status, $sorting, $limit, $offset)
+    {
+        try {
+            $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+            $orderUrl = new LazopRequest('/orders/get', 'GET');
+            $orderUrl->addApiParam('sort_direction',  $sorting);
+            $orderUrl->addApiParam('limit', $limit);
+            $orderUrl->addApiParam('offset', $offset);
+            $orderUrl->addApiParam('created_after', Carbon::now()->subDays(4)->format('c'));
+            $orderUrl->addApiParam('status', $status);
+            $orders =  $c->execute($orderUrl, $this->accessToken);
+            return json_decode($orders)->data;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -128,6 +190,19 @@ class lazadaApiController extends Controller
         return $orders;
     }
 
+    public function getCount()
+    {
+        $orders = $this->orderCenter("packed", '1');
+        $rts = $this->orderCenter("ready_to_ship", '1');
+        $pending = $this->orderCenter("pending", '1');
+        $dataCount = null;
+        $dataCount["packed"] = $orders->countTotal;
+        $dataCount["pending"] = $pending->countTotal;
+        $dataCount["rts"] = $rts->countTotal;
+        $dataCount["total"] = $rts->countTotal + $pending->countTotal + $orders->countTotal;
+        return $dataCount;
+    }
+
     /**
      * Display the specified resource.
      *
@@ -136,19 +211,34 @@ class lazadaApiController extends Controller
      */
     public function show($id) // show order
     {
-        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
-        $request = new LazopRequest('/order/get', 'GET');
-        $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-        $request->addApiParam('order_id', $id);
-        $order = $c->execute($request, $this->accessToken);
-        $jsonObject = json_decode($order)->data;
+        try {
+            $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+            $request = new LazopRequest('/order/get', 'GET');
+            $itemsUrl = new LazopRequest('/order/items/get', 'GET');
 
-        $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
-        $items = $c->execute($itemsUrl, $this->accessToken);
-        $itemDecode = json_decode($items);
-        $jsonObject->items = $itemDecode->data;
-        $jsonObject->tracking_number =  $itemDecode->data[0]->tracking_code;
-        return $jsonObject;
+            //get order
+            $request->addApiParam('order_id', $id);
+            $order = $c->execute($request, $this->accessToken);
+            $jsonObject = json_decode($order)->data;
+
+            // get items order and tracking number
+            $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
+            $items = $c->execute($itemsUrl, $this->accessToken);
+            $itemDecode = json_decode($items);
+
+            $validItems = [];
+            foreach ($itemDecode->data as $item) {
+                $itemData = $this->mapingOrder($jsonObject, $item);
+                array_push($validItems, $itemData);
+            }
+            $jsonObject->items = $validItems;
+
+            $fixData = $this->mapingOrderHeader($jsonObject);
+
+            return $fixData;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage() . ' On Number ' . $id], 500);
+        }
     }
 
     /**
@@ -172,5 +262,56 @@ class lazadaApiController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function mapingOrder($headerObject, $detail)
+    {
+        $itemData = null;
+        $itemData['image_url'] = $detail->product_main_image;
+        $itemData['item_name'] = $detail->name;
+        $itemData['item_sku'] = $detail->sku;
+        $itemData['variation'] = $detail->variation;
+        $itemData['order_item_id'] = $detail->order_item_id;
+        $itemData['qty'] = 1;
+        $itemData['original_price'] = $detail->item_price;
+        $itemData['discounted_price'] = $detail->paid_price;
+        $itemData['product_id'] = $detail->product_id;
+        $itemData['order_id'] = $detail->order_id;
+        $itemData['order_type'] = $detail->order_type;
+        $headerObject->tracking_number = $detail->tracking_code !== "" ? $detail->tracking_code : "";
+        $headerObject->shipping_provider_type = $detail->shipping_provider_type;
+        $headerObject->shipment_provider = $detail->shipment_provider;
+        return $itemData;
+    }
+    private function mapingOrderHeader($headerObject)
+    {
+        $platform = OnlineShop::where('name', 'Lazada')->first();
+        $deliveryBy = "";
+        $pickupBy = "";
+
+        if ($headerObject->shipment_provider !== "") {
+            $splited = explode(",", $headerObject->shipment_provider);
+            $deliveryBy = str_replace(" Delivery: ", "", $splited[1]);
+            $pickupBy = str_replace("Pickup: ", "", $splited[0]);
+        }
+        $fixData = null;
+        $fixData["create_time_online"] = $headerObject->created_at;
+        $fixData["update_time_online"] = $headerObject->updated_at;
+        $fixData["message_to_seller"] = null;
+        $fixData["order_no"] = $headerObject->order_number;
+        $fixData["order_status"] = $headerObject->statuses[0];
+        $fixData["tracking_number"] = $headerObject->tracking_number;
+        $fixData["delivery_by"] = $deliveryBy;
+        $fixData["pickup_by"] = $pickupBy;
+        $fixData["total_amount"] = (float) $headerObject->price;
+        $fixData["total_qty"] = $headerObject->items_count;
+        $fixData["items"] = $headerObject->items;
+        $fixData["status"] = 1;
+        $fixData["online_shop_id"] = $platform->id;
+        $fixData["order_id"] = $headerObject->order_id;
+        $fixData["shipping_provider_type"] = $headerObject->shipping_provider_type;
+        $fixData["product_picture"] = null;
+        $fixData["package_picture"] = null;
+        return $fixData;
     }
 }
