@@ -27,8 +27,8 @@ class ShopeeApiController extends Controller
     public function index()
     {
         // return $this->getLink();
-        return $this->getFullOrder();
-        // return $this->getOrderByNo("221031T8F2JXXA");
+        // return $this->getFullOrder();
+        return $this->getOrderByNoV2("221031T8F2JXXA");
     }
 
     public function getLink()
@@ -193,8 +193,6 @@ class ShopeeApiController extends Controller
                 $fixData = null;
                 $items = [];
                 $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
-                $transaction = TransactionOnline::where('tracking_number', $trackingNumber)->first();
-
                 $fixData["create_time_online"] = date('Y-m-d H:i:s', $order->create_time);
                 $fixData["update_time_online"] = date('Y-m-d H:i:s', $order->update_time);
                 $fixData["message_to_seller"] = $order->message_to_seller;
@@ -221,7 +219,8 @@ class ShopeeApiController extends Controller
                     $item['qty'] = $itemOrder->model_quantity_purchased;
                     $item['original_price'] = $itemOrder->model_original_price;
                     $item['discounted_price'] = $itemOrder->model_discounted_price;
-                    $item['product_id'] = null;
+                    $item['product_id'] = $itemOrder->item_id;
+                    $item['sku_id'] = null;
                     $item['order_id'] = null;
                     $item['order_type'] = null;
                     array_push($items, $item);

@@ -25,7 +25,7 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        return $this->getCount();
+        return $this->getFullOrder("packed", "DESC");
     }
 
     public function packed($sorting)
@@ -272,6 +272,7 @@ class lazadaApiController extends Controller
         $itemData['item_sku'] = $detail->sku;
         $itemData['variation'] = $detail->variation;
         $itemData['order_item_id'] = $detail->order_item_id;
+        $itemData['sku_id'] = $detail->sku_id;
         $itemData['qty'] = 1;
         $itemData['original_price'] = $detail->item_price;
         $itemData['discounted_price'] = $detail->paid_price;
@@ -298,7 +299,7 @@ class lazadaApiController extends Controller
         $fixData["create_time_online"] = $headerObject->created_at;
         $fixData["update_time_online"] = $headerObject->updated_at;
         $fixData["message_to_seller"] = null;
-        $fixData["order_no"] = $headerObject->order_number;
+        $fixData["order_no"] = (string)$headerObject->order_number;
         $fixData["order_status"] = $headerObject->statuses[0];
         $fixData["tracking_number"] = $headerObject->tracking_number;
         $fixData["delivery_by"] = $deliveryBy;
@@ -308,7 +309,7 @@ class lazadaApiController extends Controller
         $fixData["items"] = $headerObject->items;
         $fixData["status"] = 1;
         $fixData["online_shop_id"] = $platform->id;
-        $fixData["order_id"] = $headerObject->order_id;
+        $fixData["order_id"] = (string)$headerObject->order_id;
         $fixData["shipping_provider_type"] = $headerObject->shipping_provider_type;
         $fixData["product_picture"] = null;
         $fixData["package_picture"] = null;
