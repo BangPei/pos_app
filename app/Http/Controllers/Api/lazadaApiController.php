@@ -25,7 +25,7 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        return $this->getFullOrder("packed", "DESC");
+        return $this->packed("DESC");
     }
 
     public function packed($sorting)
@@ -116,8 +116,10 @@ class lazadaApiController extends Controller
                 $itemDecode = json_decode($items);
                 $validItems = [];
                 foreach ($itemDecode->data as $item) {
-                    $itemData = $this->mapingOrder($order, $item);
-                    array_push($validItems, $itemData);
+                    if ($item->tracking_code !== "") {
+                        $itemData = $this->mapingOrder($order, $item);
+                        array_push($validItems, $itemData);
+                    }
                 }
                 $order->items = $validItems;
 
