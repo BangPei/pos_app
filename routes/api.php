@@ -50,6 +50,7 @@ Route::resource('lazada-order', lazadaApiController::class);
 Route::get('shopee-order/order/{orderSn}', [ShopeeApiController::class, 'getOrderByNo']);
 Route::get('shopee-order/order/v2/{orderSn}', [ShopeeApiController::class, 'getOrderByNoV2']);
 Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
+Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
 
 Route::resource('transaction-online', TransactionOnlineApiController::class);

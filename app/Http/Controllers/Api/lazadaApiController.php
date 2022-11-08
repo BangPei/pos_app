@@ -25,7 +25,7 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        return $this->packed("DESC");
+        return $this->getFullOrder("pending", "DESC");
     }
 
     public function packed($sorting)
@@ -115,10 +115,17 @@ class lazadaApiController extends Controller
                 $items = $c->execute($itemsUrl, $this->accessToken);
                 $itemDecode = json_decode($items);
                 $validItems = [];
-                foreach ($itemDecode->data as $item) {
-                    if ($item->tracking_code !== "") {
+                if ($order->statuses[0] == "pending") {
+                    foreach ($itemDecode->data as $item) {
                         $itemData = $this->mapingOrder($order, $item);
                         array_push($validItems, $itemData);
+                    }
+                } else {
+                    foreach ($itemDecode->data as $item) {
+                        if ($item->tracking_code !== "") {
+                            $itemData = $this->mapingOrder($order, $item);
+                            array_push($validItems, $itemData);
+                        }
                     }
                 }
                 $order->items = $validItems;
@@ -278,8 +285,8 @@ class lazadaApiController extends Controller
         $itemData['qty'] = 1;
         $itemData['original_price'] = $detail->item_price;
         $itemData['discounted_price'] = $detail->paid_price;
-        $itemData['product_id'] = $detail->product_id;
-        $itemData['order_id'] = $detail->order_id;
+        $itemData['product_id'] = (int)$detail->product_id;
+        $itemData['order_id'] = (int)$detail->order_id;
         $itemData['order_type'] = $detail->order_type;
         $headerObject->tracking_number = $detail->tracking_code !== "" ? $detail->tracking_code : "";
         $headerObject->shipping_provider_type = $detail->shipping_provider_type;
@@ -291,11 +298,12 @@ class lazadaApiController extends Controller
         $platform = OnlineShop::where('name', 'Lazada')->first();
         $deliveryBy = "";
         $pickupBy = "";
-
-        if ($headerObject->shipment_provider !== "") {
-            $splited = explode(",", $headerObject->shipment_provider);
-            $deliveryBy = str_replace(" Delivery: ", "", $splited[1]);
-            $pickupBy = str_replace("Pickup: ", "", $splited[0]);
+        if ($headerObject->statuses[0] != "pending") {
+            if ($headerObject->shipment_provider !== "") {
+                $splited = explode(",", $headerObject->shipment_provider);
+                $deliveryBy = str_replace(" Delivery: ", "", $splited[1]);
+                $pickupBy = str_replace("Pickup: ", "", $splited[0]);
+            }
         }
         $fixData = null;
         $fixData["create_time_online"] = $headerObject->created_at;
@@ -303,7 +311,7 @@ class lazadaApiController extends Controller
         $fixData["message_to_seller"] = null;
         $fixData["order_no"] = (string)$headerObject->order_number;
         $fixData["order_status"] = $headerObject->statuses[0];
-        $fixData["tracking_number"] = $headerObject->tracking_number;
+        $fixData["tracking_number"] = $headerObject->tracking_number ?? "";
         $fixData["delivery_by"] = $deliveryBy;
         $fixData["pickup_by"] = $pickupBy;
         $fixData["total_amount"] = (float) $headerObject->price;
@@ -312,7 +320,7 @@ class lazadaApiController extends Controller
         $fixData["status"] = 1;
         $fixData["online_shop_id"] = $platform->id;
         $fixData["order_id"] = (string)$headerObject->order_id;
-        $fixData["shipping_provider_type"] = $headerObject->shipping_provider_type;
+        $fixData["shipping_provider_type"] = $headerObject->shipping_provider_type ?? "";
         $fixData["product_picture"] = null;
         $fixData["package_picture"] = null;
         return $fixData;

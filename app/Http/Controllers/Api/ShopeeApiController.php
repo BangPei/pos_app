@@ -5,9 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\OnlineShop;
 use App\Models\ShopeAccessToken;
-use App\Models\TransactionOnline;
 use Illuminate\Http\Request;
-use PhpOffice\PhpSpreadsheet\Calculation\TextData\Format;
 
 class ShopeeApiController extends Controller
 {
@@ -26,9 +24,65 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        // return $this->getLink();
-        // return $this->getFullOrder();
-        return $this->getOrderByNoV2("221031T8F2JXXA");
+        return $this->getFullOrder("READY_TO_SHIP");
+    }
+
+    public function rts($orderSn)
+    {
+        $param = $this->getShippingParameter($orderSn);
+        $addressList = $param->pickup->address_list;
+        $pickupAddress = null;
+        foreach ($addressList as $address) {
+            if (str_contains(join(',', $address->address_flag), 'pickup_address')) {
+                $pickupAddress = $address;
+            }
+        }
+        foreach ($pickupAddress->time_slot_list as $times) {
+            $times->date =  date('Y-m-d H:i:s',  $times->date);
+        }
+        $pickupTimeId = $pickupAddress->time_slot_list[0]->pickup_time_id;
+        return $this->shipOrder($orderSn, $pickupAddress->address_id, $pickupTimeId);
+    }
+
+    public function getShippingParameter($orderSn)
+    {
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/logistics/get_shipping_parameter";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&order_sn=' . $orderSn;
+            $response =  $this->curlRequest($url, "GET");
+            return json_decode($response)->response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function shipOrder($orderSn, $addressId, $pickupTimeId)
+    {
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/logistics/ship_order";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id;
+            $response =  $this->curlRequest(
+                $url,
+                "POST",
+                array(
+                    "order_sn" => $orderSn,
+                    "pickup" => array(
+                        "address_id" => $addressId,
+                        "pickup_time_id" => $pickupTimeId,
+                        "tracking_number" => ""
+                    )
+                )
+            );
+            return $response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 
     public function getLink()
@@ -217,8 +271,8 @@ class ShopeeApiController extends Controller
                     $item['variation'] = $itemOrder->model_name;
                     $item['order_item_id'] = $itemOrder->order_item_id;
                     $item['qty'] = $itemOrder->model_quantity_purchased;
-                    $item['original_price'] = $itemOrder->model_original_price;
-                    $item['discounted_price'] = $itemOrder->model_discounted_price;
+                    $item['original_price'] = (float)$itemOrder->model_original_price;
+                    $item['discounted_price'] = (float)$itemOrder->model_discounted_price;
                     $item['product_id'] = $itemOrder->item_id;
                     $item['sku_id'] = null;
                     $item['order_id'] = null;
