@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\DailyTaskApiController;
 use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
+use App\Http\Controllers\API\JdIdApiController;
 use App\Http\Controllers\API\lazadaApiController;
 use App\Http\Controllers\API\ShopeeApiController;
 use App\Http\Controllers\API\TransactionOnlineApiController;
@@ -52,6 +53,8 @@ Route::get('shopee-order/order/v2/{orderSn}', [ShopeeApiController::class, 'getO
 Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
+
+Route::resource('jd-order', JdIdApiController::class);
 
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 

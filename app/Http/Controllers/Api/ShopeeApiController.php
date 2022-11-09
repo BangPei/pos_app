@@ -24,7 +24,7 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getFullOrder("READY_TO_SHIP");
+        return $this->getFullOrder();
     }
 
     public function rts($orderSn)
