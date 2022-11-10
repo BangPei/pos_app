@@ -106,6 +106,8 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         ),
         'P' => 
         array (
+            'Purnamasari\\JD\\Request\\' => 23,
+            'Purnamasari\\JD\\' => 15,
             'Psy\\' => 4,
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
@@ -362,6 +364,14 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'Ramsey\\Collection\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/collection/src',
+        ),
+        'Purnamasari\\JD\\Request\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request',
+        ),
+        'Purnamasari\\JD\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd',
         ),
         'Psy\\' => 
         array (
@@ -625,6 +635,13 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
             'Mockery' => 
             array (
                 0 => __DIR__ . '/..' . '/mockery/mockery/library',
+            ),
+        ),
+        'J' => 
+        array (
+            'JsonMapper' => 
+            array (
+                0 => __DIR__ . '/..' . '/netresearch/jsonmapper/src',
             ),
         ),
         'H' => 
@@ -3519,6 +3536,8 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'Illuminate\\View\\ViewName' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewName.php',
         'Illuminate\\View\\ViewServiceProvider' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
+        'JsonMapper' => __DIR__ . '/..' . '/netresearch/jsonmapper/src/JsonMapper.php',
+        'JsonMapper_Exception' => __DIR__ . '/..' . '/netresearch/jsonmapper/src/JsonMapper/Exception.php',
         'L5Swagger\\ConfigFactory' => __DIR__ . '/..' . '/darkaonline/l5-swagger/src/ConfigFactory.php',
         'L5Swagger\\Console\\GenerateDocsCommand' => __DIR__ . '/..' . '/darkaonline/l5-swagger/src/Console/GenerateDocsCommand.php',
         'L5Swagger\\Exceptions\\L5SwaggerException' => __DIR__ . '/..' . '/darkaonline/l5-swagger/src/Exceptions/L5SwaggerException.php',
@@ -6029,6 +6048,50 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'Psy\\VersionUpdater\\GitHubChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/GitHubChecker.php',
         'Psy\\VersionUpdater\\IntervalChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/IntervalChecker.php',
         'Psy\\VersionUpdater\\NoopChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/NoopChecker.php',
+        'Purnamasari\\JD\\JdClient' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/JdClient.php',
+        'Purnamasari\\JD\\RequestCheckUtil' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/RequestCheckUtil.php',
+        'Purnamasari\\JD\\Request\\BrandBrandSdkQueryBrandListByPageRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/BrandBrandSdkQueryBrandListByPageRequest.php',
+        'Purnamasari\\JD\\Request\\CategoryApiReadGetAttrValueByValueIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/CategoryApiReadGetAttrValueByValueIdRequest.php',
+        'Purnamasari\\JD\\Request\\CategoryApiReadGetAttrValuesByCatIdAndAttrIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/CategoryApiReadGetAttrValuesByCatIdAndAttrIdRequest.php',
+        'Purnamasari\\JD\\Request\\CategoryApiReadGetAttributesByCatIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/CategoryApiReadGetAttributesByCatIdRequest.php',
+        'Purnamasari\\JD\\Request\\ComJdOrderTrackSiteExportQueryOrderFlowLogsForAPIRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/ComJdOrderTrackSiteExportQueryOrderFlowLogsForAPIRequest.php',
+        'Purnamasari\\JD\\Request\\ComJdQlBasicWsGlscGlscBasicSecondaryWSGetAssortByFidRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/ComJdQlBasicWsGlscGlscBasicSecondaryWSGetAssortByFidRequest.php',
+        'Purnamasari\\JD\\Request\\EpiEptOrderSecondSplitOrderRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/EpiEptOrderSecondSplitOrderRequest.php',
+        'Purnamasari\\JD\\Request\\EpiShopCenterSdkServiceOuterBrandSdkGetAllOpenBrandsRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/EpiShopCenterSdkServiceOuterBrandSdkGetAllOpenBrandsRequest.php',
+        'Purnamasari\\JD\\Request\\EpistockQueryEpiMerchantWareStockRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/EpistockQueryEpiMerchantWareStockRequest.php',
+        'Purnamasari\\JD\\Request\\EpistockUpdateEpiMerchantWareStockRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/EpistockUpdateEpiMerchantWareStockRequest.php',
+        'Purnamasari\\JD\\Request\\PopOrderSearchRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/PopOrderSearchRequest.php',
+        'Purnamasari\\JD\\Request\\SellerCategoryApiReadGetAllCategoryRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerCategoryApiReadGetAllCategoryRequest.php',
+        'Purnamasari\\JD\\Request\\SellerCategoryApiReadGetCategoryByCatIdsRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerCategoryApiReadGetCategoryByCatIdsRequest.php',
+        'Purnamasari\\JD\\Request\\SellerGetAccountByPinRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerGetAccountByPinRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderBatchGetOrderInfoListRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderBatchGetOrderInfoListRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderGetGoSendOrderStatusRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderGetGoSendOrderStatusRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderGetOrderIdListByConditionRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderGetOrderIdListByConditionRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderGetOrderInfoByOrderIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderGetOrderInfoByOrderIdRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderPrintOrderRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderPrintOrderRequest.php',
+        'Purnamasari\\JD\\Request\\SellerOrderSendGoodsOpenApiRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerOrderSendGoodsOpenApiRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPriceUpdatePriceBySkuIdsRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPriceUpdatePriceBySkuIdsRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiReadGetSkuImgsBySpuIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiReadGetSkuImgsBySpuIdRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteAddProductRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteAddProductRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteDelSpuRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteDelSpuRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteOffShelfRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteOffShelfRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteOnShelfRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteOnShelfRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteSubmitAuditRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteSubmitAuditRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductApiWriteUpdateProductRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductApiWriteUpdateProductRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductGetSkuInfoBySpuIdAndVenderIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductGetSkuInfoBySpuIdAndVenderIdRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductGetWareBySpuIdsRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductGetWareBySpuIdsRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductGetWareInfoListByVendorIdRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductGetWareInfoListByVendorIdRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuReadGetSkuBySkuIdsRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuReadGetSkuBySkuIdsRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuWriteAddSkuInfoRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuWriteAddSkuInfoRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuWriteDelSkuRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuWriteDelSkuRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuWriteUpdateProductImagesRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuWriteUpdateProductImagesRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuWriteUpdateSkuInfoRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuWriteUpdateSkuInfoRequest.php',
+        'Purnamasari\\JD\\Request\\SellerProductSkuWriteUpdateSkuListRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerProductSkuWriteUpdateSkuListRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPromoDoApprovePromoRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPromoDoApprovePromoRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPromoGetPlummetedDetailRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPromoGetPlummetedDetailRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPromoQueryPlummetedInfoByConditionRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPromoQueryPlummetedInfoByConditionRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPromoSingleCreatePlummetedPromoRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPromoSingleCreatePlummetedPromoRequest.php',
+        'Purnamasari\\JD\\Request\\SellerPromoSingleTerminatePromoRequest' => __DIR__ . '/..' . '/purnamasari/aces-php-sdk/jd/request/SellerPromoSingleTerminatePromoRequest.php',
         'Ramsey\\Collection\\AbstractArray' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractArray.php',
         'Ramsey\\Collection\\AbstractCollection' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractCollection.php',
         'Ramsey\\Collection\\AbstractSet' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractSet.php',

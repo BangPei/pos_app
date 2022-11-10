@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="14826985-b8fa-42a1-830f-a2627721eee3" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="ProjectId" id="1pxyJA3P9ORow8kLAxbgsuqWc09" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="14826985-b8fa-42a1-830f-a2627721eee3" name="Default Changelist" comment="" />
+      <created>1616138961216</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1616138961216</updated>
+      <workItem from="1616138962704" duration="435000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="780" y="304" key="#Composer" timestamp="1616138969773">
+      <screen x="0" y="0" width="2560" height="1440" />
+    </state>
+    <state x="780" y="304" key="#Composer/2560.270.1680.1050/0.0.2560.1440@0.0.2560.1440" timestamp="1616138969773" />
+    <state x="890" y="426" width="780" height="588" key="find.popup" timestamp="1616139439176">
+      <screen x="0" y="0" width="2560" height="1440" />
+    </state>
+    <state x="890" y="426" width="780" height="588" key="find.popup/2560.270.1680.1050/0.0.2560.1440@0.0.2560.1440" timestamp="1616139439176" />
+  </component>
+</project>

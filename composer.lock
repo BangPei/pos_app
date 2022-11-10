@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07e326c0ced44f6ef8fdfa6e38b0775f",
+    "content-hash": "8c169a3a0cf56f4aba7399502944e8f9",
     "packages": [
         {
             "name": "appolous/lazada-php-sdk",
@@ -2974,6 +2974,57 @@
             "time": "2022-06-29T21:43:55+00:00"
         },
         {
+            "name": "netresearch/jsonmapper",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cweiske/jsonmapper.git",
+                "reference": "0d4d1b48d682a93b6bfedf60b88c7750e9cb0b06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cweiske/jsonmapper/zipball/0d4d1b48d682a93b6bfedf60b88c7750e9cb0b06",
+                "reference": "0d4d1b48d682a93b6bfedf60b88c7750e9cb0b06",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-pcre": "*",
+                "ext-reflection": "*",
+                "ext-spl": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8.35 || ~5.7 || ~6.4",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JsonMapper": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Weiske",
+                    "email": "cweiske@cweiske.de",
+                    "homepage": "http://github.com/cweiske/jsonmapper/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Map nested JSON structures onto PHP classes",
+            "support": {
+                "email": "cweiske@cweiske.de",
+                "issues": "https://github.com/cweiske/jsonmapper/issues",
+                "source": "https://github.com/cweiske/jsonmapper/tree/master"
+            },
+            "time": "2019-08-15T19:41:25+00:00"
+        },
+        {
             "name": "nette/schema",
             "version": "v1.2.2",
             "source": {
@@ -3899,6 +3950,41 @@
                 "source": "https://github.com/bobthecow/psysh/tree/v0.11.7"
             },
             "time": "2022-07-07T13:49:11+00:00"
+        },
+        {
+            "name": "purnamasari/aces-php-sdk",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/purnamasari/aces-php-sdk.git",
+                "reference": "3bb0f6252544e6c2c59292ed648e683be14a05de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/purnamasari/aces-php-sdk/zipball/3bb0f6252544e6c2c59292ed648e683be14a05de",
+                "reference": "3bb0f6252544e6c2c59292ed648e683be14a05de",
+                "shasum": ""
+            },
+            "require": {
+                "monolog/monolog": ">=1.24.0",
+                "netresearch/jsonmapper": "1.6.0",
+                "php": ">=5.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Purnamasari\\JD\\": "jd/",
+                    "Purnamasari\\JD\\Request\\": "jd/request/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "aces php sdk laravel",
+            "support": {
+                "issues": "https://github.com/purnamasari/aces-php-sdk/issues",
+                "source": "https://github.com/purnamasari/aces-php-sdk/tree/main"
+            },
+            "time": "2021-11-06T06:45:17+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -9809,7 +9895,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "purnamasari/aces-php-sdk": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
