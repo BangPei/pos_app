@@ -25,7 +25,8 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        return $this->getFullOrder("pending", "DESC");
+        // return $this->getFullOrder("pending");
+        return $this->show(987179015819484);
     }
 
     public function packed($sorting)
@@ -100,7 +101,7 @@ class lazadaApiController extends Controller
         }
     }
 
-    public function getFullOrder($status, $sorting)
+    public function getFullOrder($status, $sorting = "DESC")
     {
         try {
             $fullOrder = [];
@@ -230,7 +231,7 @@ class lazadaApiController extends Controller
             $order = $c->execute($request, $this->accessToken);
             $jsonObject = json_decode($order)->data;
 
-            // get items order and tracking number
+            // // get items order and tracking number
             $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
             $items = $c->execute($itemsUrl, $this->accessToken);
             $itemDecode = json_decode($items);
