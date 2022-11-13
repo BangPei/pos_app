@@ -277,6 +277,7 @@ class ShopeeApiController extends Controller
                     $item['sku_id'] = null;
                     $item['order_id'] = null;
                     $item['order_type'] = null;
+                    $item['order_status'] = null;
                     array_push($items, $item);
                 }
                 $fixData["items"] = $items;

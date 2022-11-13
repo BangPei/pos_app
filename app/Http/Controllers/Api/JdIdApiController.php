@@ -107,6 +107,7 @@ class JdIdApiController extends Controller
                 $itemData['product_id'] = null;
                 $itemData['order_id'] = null;
                 $itemData['order_type'] = $order->orderType;
+                $itemData['order_status'] = null;
                 $fixData["message_to_seller"] = $item->buyerMessage;
                 array_push($items, $itemData);
             }

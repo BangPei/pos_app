@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSkuIdToTrnsactionOnlineDetailsTable extends Migration
+class AddOrderStatusToTransactionOnlineDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,6 @@ class AddSkuIdToTrnsactionOnlineDetailsTable extends Migration
     public function up()
     {
         Schema::table('transaction_online_details', function (Blueprint $table) {
-            $table->string("sku_id");
             $table->string('order_status');
             $table->string('tracking_number');
         });
