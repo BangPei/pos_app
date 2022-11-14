@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class ShopeeApiController extends Controller
 {
-
-    public $secondAccessToken = "49696d546148587055426f5a59685064";
-    public $secondRefreshToken = "506442575276547379797678726a794b";
     public $partner_id = 2005013;
     public $host = "https://partner.shopeemobile.com";
     public $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
@@ -278,6 +275,7 @@ class ShopeeApiController extends Controller
                     $item['order_id'] = null;
                     $item['order_type'] = null;
                     $item['order_status'] = null;
+                    $item['tracking_number'] = null;
                     array_push($items, $item);
                 }
                 $fixData["items"] = $items;
