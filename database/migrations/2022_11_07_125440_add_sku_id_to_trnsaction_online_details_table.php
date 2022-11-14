@@ -15,8 +15,6 @@ class AddSkuIdToTrnsactionOnlineDetailsTable extends Migration
     {
         Schema::table('transaction_online_details', function (Blueprint $table) {
             $table->string("sku_id");
-            $table->string('order_status');
-            $table->string('tracking_number');
         });
     }
 
