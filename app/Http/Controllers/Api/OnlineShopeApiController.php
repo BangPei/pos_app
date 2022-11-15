@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\OnlineShop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class OnlineShopeApiController extends Controller
 {
@@ -65,6 +66,9 @@ class OnlineShopeApiController extends Controller
     public function active()
     {
         $onlineShop = OnlineShop::where('is_active', 1)->get();
+        foreach ($onlineShop as $ol) {
+            $ol->logo = asset('image/' . strtolower($ol->name) . '.png');
+        };
         return response()->json($onlineShop);
     }
 }

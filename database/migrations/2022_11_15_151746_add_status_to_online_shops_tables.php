@@ -15,7 +15,7 @@ class AddStatusToOnlineShopsTables extends Migration
     {
         Schema::table('online_shops', function (Blueprint $table) {
             $table->boolean("is_active")->default(false);
-            $table->string("logo");
+            $table->string("logo")->nullable();
         });
     }
 
