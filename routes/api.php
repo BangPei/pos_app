@@ -5,6 +5,7 @@ use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ExpeditionApiController;
 use App\Http\Controllers\API\JdIdApiController;
 use App\Http\Controllers\API\lazadaApiController;
+use App\Http\Controllers\API\OnlineShopeApiController;
 use App\Http\Controllers\API\ShopeeApiController;
 use App\Http\Controllers\API\TransactionOnlineApiController;
 use App\Http\Controllers\TransactionOnlineController;
@@ -55,6 +56,9 @@ Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
 
 Route::resource('jd-order', JdIdApiController::class);
+
+Route::get('platform/active', [OnlineShopeApiController::class, 'active']);
+Route::resource('platform', OnlineShopeApiController::class);
 
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 

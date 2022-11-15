@@ -9,4 +9,8 @@ class OnlineShop extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+
+    public $casts = [
+        'is_active' => 'boolean',
+    ];
 }

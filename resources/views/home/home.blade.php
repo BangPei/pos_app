@@ -10,7 +10,7 @@
 <script src="js/script.js"></script>
 <script>
     $(document).ready(function(){
-        ajax(null, `${baseApi}/jd-order`, "GET",
+        ajax(null, `${baseApi}/platform`, "GET",
         function(json) {
             console.log(json)
           toastr.success('Berhasil')

@@ -34,70 +34,6 @@ class JdIdApiController extends Controller
         // return $this->refreshToken();
     }
 
-    public function getOrderByOrderId($orderId)
-    {
-        try {
-            $auth = $this->refreshToken();
-            $c = new JdClient();
-            $c->appKey = $this->appKey;
-            $c->appSecret = $this->appSecret;
-            $c->accessToken = $this->accsessToken;
-            $c->serverUrl = $this->host;
-            $req = new SellerOrderGetOrderInfoByOrderIdRequest();
-            $req->setOrderId($orderId);
-            $resp = $c->execute($req, $auth->access_token);
-            $response = $resp->jingdong_seller_order_getOrderInfoByOrderId_response;
-            // if ($resp->error_response) {
-            //     return response()->json(['message' => $resp->error_response->en_desc], 500);
-            // }
-            $platform = OnlineShop::where('name', 'JD.ID')->first();
-            $order = $response->result->model;
-            $fixData = null;
-            $fixData["create_time_online"] = date('Y-m-d H:i:s', $order->createTime);
-            $fixData["update_time_online"] = null;
-            $fixData["message_to_seller"] = null;
-            $fixData["order_no"] = (string)$order->orderId;
-            $fixData["order_status"] = $this->getOrderStatus($order->orderState);
-            $fixData["tracking_number"] = $order->expressNo ?? "";
-            $fixData["delivery_by"] = $order->carrierCompany;
-            $fixData["pickup_by"] = $order->carrierCompany;
-
-            $fixData["total_amount"] = (float) $order->paySubtotal;
-            $fixData["total_qty"] = $order->orderSkuNum;
-            // $fixData["items"] = $order->items;
-            $fixData["status"] = 1;
-            $fixData["online_shop_id"] = $platform->id;
-            $fixData["order_id"] = (string)$order->orderId;
-            $fixData["shipping_provider_type"] = null;
-            $fixData["product_picture"] = null;
-            $fixData["package_picture"] = null;
-            $items = [];
-            foreach ($order->orderSkuinfos as $item) {
-                $itemData = null;
-                $itemData['image_url'] = $item->skuImage;
-                $itemData['item_name'] = $item->skuName;
-                $itemData['item_sku'] = null;
-                $itemData['variation'] = null;
-                $itemData['order_item_id'] = null;
-                $itemData['sku_id'] = $item->skuId;
-                $itemData['qty'] = $item->skuNumber;
-                $itemData['original_price'] = $item->jdPrice;
-                $itemData['discounted_price'] = $item->costPrice;
-                $itemData['product_id'] = null;
-                $itemData['order_id'] = null;
-                $itemData['order_type'] = $order->orderType;
-                $itemData['order_status'] = null;
-                $itemData['tracking_number'] = null;
-                $fixData["message_to_seller"] = $item->buyerMessage ?? "";
-                array_push($items, $itemData);
-            }
-            $fixData['items'] = $items;
-            return $fixData;
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -160,13 +96,13 @@ class JdIdApiController extends Controller
                 $itemData['item_sku'] = null;
                 $itemData['variation'] = null;
                 $itemData['order_item_id'] = null;
-                $itemData['sku_id'] = $item->skuId;
+                $itemData['sku_id'] = (string)$item->skuId;
                 $itemData['qty'] = $item->skuNumber;
                 $itemData['original_price'] = $item->jdPrice;
                 $itemData['discounted_price'] = $item->costPrice;
                 $itemData['product_id'] = null;
                 $itemData['order_id'] = null;
-                $itemData['order_type'] = $order->orderType;
+                $itemData['order_type'] = (string)$order->orderType;
                 $itemData['order_status'] = null;
                 $itemData['tracking_number'] = null;
                 $fixData["message_to_seller"] = $item->buyerMessage ?? "";
