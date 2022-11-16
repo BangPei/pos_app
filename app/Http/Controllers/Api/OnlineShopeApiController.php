@@ -67,7 +67,8 @@ class OnlineShopeApiController extends Controller
     {
         $onlineShop = OnlineShop::where('is_active', 1)->get();
         foreach ($onlineShop as $ol) {
-            $ol->logo = asset('image/' . strtolower($ol->name) . '.png');
+            $ol->logo = asset('image/logo/' . strtolower($ol->name) . '.png');
+            $ol->icon = asset('image/icon/' . strtolower($ol->name) . '.png');
         };
         return response()->json($onlineShop);
     }
