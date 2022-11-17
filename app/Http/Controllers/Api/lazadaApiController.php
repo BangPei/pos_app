@@ -107,56 +107,8 @@ class lazadaApiController extends Controller
             $fullOrder = [];
             $offset = 0;
             $limit = 100;
-            // $data = $this->getOrders($status, $sorting, $limit, $offset);
-            // $offset = $data->count;
-            // foreach ($data->orders as $order) {
-            //     $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
-            //     $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-            //     $itemsUrl->addApiParam('order_id', $order->order_id);
-            //     $items = $c->execute($itemsUrl, $this->accessToken);
-            //     $itemDecode = json_decode($items);
-            //     $validItems = [];
-            //     if ($order->statuses[0] == "pending") {
-            //         foreach ($itemDecode->data as $item) {
-            //             $itemData = $this->mapingOrder($order, $item);
-            //             array_push($validItems, $itemData);
-            //         }
-            //     } else {
-            //         foreach ($itemDecode->data as $item) {
-            //             if ($item->tracking_code !== "") {
-            //                 $itemData = $this->mapingOrder($order, $item);
-            //                 array_push($validItems, $itemData);
-            //             }
-            //         }
-            //     }
-            //     $order->items = $validItems;
-
-            //     $fixData = $this->mapingOrderHeader($order);
-            //     array_push($fullOrder, $fixData);
-            // }
-            // while ($offset == $limit) {
-            //     $data = $this->getOrders($status, $sorting, $limit, $offset);
-            //     $offset = $offset = $data->count;
-            //     foreach ($data->orders as $order) {
-            //         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
-            //         $itemsUrl = new LazopRequest('/order/items/get', 'GET');
-            //         $itemsUrl->addApiParam('order_id', $order->order_id);
-            //         $items = $c->execute($itemsUrl, $this->accessToken);
-            //         $itemDecode = json_decode($items);
-            //         $validItems = [];
-            //         foreach ($itemDecode->data as $item) {
-            //             $itemData = $this->mapingOrder($order, $item);
-            //             array_push($validItems, $itemData);
-            //         }
-            //         $order->items = $validItems;
-
-            //         $fixData = $this->mapingOrderHeader($order);
-            //         array_push($fullOrder, $fixData);
-            //     }
-            // }
-            // return $fullOrder;
             $data = $this->getOrders($status, $sorting, $limit, $offset);
-            $offset = $offset = $data->count;
+            $offset = $data->count;
             foreach ($data->orders as $order) {
                 $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
                 $itemsUrl = new LazopRequest('/order/items/get', 'GET');
@@ -182,7 +134,55 @@ class lazadaApiController extends Controller
                 $fixData = $this->mapingOrderHeader($order);
                 array_push($fullOrder, $fixData);
             }
+            while ($offset == $limit) {
+                $data = $this->getOrders($status, $sorting, $limit, $offset);
+                $offset = $offset = $data->count;
+                foreach ($data->orders as $order) {
+                    $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+                    $itemsUrl = new LazopRequest('/order/items/get', 'GET');
+                    $itemsUrl->addApiParam('order_id', $order->order_id);
+                    $items = $c->execute($itemsUrl, $this->accessToken);
+                    $itemDecode = json_decode($items);
+                    $validItems = [];
+                    foreach ($itemDecode->data as $item) {
+                        $itemData = $this->mapingOrder($order, $item);
+                        array_push($validItems, $itemData);
+                    }
+                    $order->items = $validItems;
+
+                    $fixData = $this->mapingOrderHeader($order);
+                    array_push($fullOrder, $fixData);
+                }
+            }
             return $fullOrder;
+            // $data = $this->getOrders($status, $sorting, $limit, $offset);
+            // $offset = $offset = $data->count;
+            // foreach ($data->orders as $order) {
+            //     $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+            //     $itemsUrl = new LazopRequest('/order/items/get', 'GET');
+            //     $itemsUrl->addApiParam('order_id', $order->order_id);
+            //     $items = $c->execute($itemsUrl, $this->accessToken);
+            //     $itemDecode = json_decode($items);
+            //     $validItems = [];
+            //     if ($order->statuses[0] == "pending") {
+            //         foreach ($itemDecode->data as $item) {
+            //             $itemData = $this->mapingOrder($order, $item);
+            //             array_push($validItems, $itemData);
+            //         }
+            //     } else {
+            //         foreach ($itemDecode->data as $item) {
+            //             if ($item->tracking_code !== "") {
+            //                 $itemData = $this->mapingOrder($order, $item);
+            //                 array_push($validItems, $itemData);
+            //             }
+            //         }
+            //     }
+            //     $order->items = $validItems;
+
+            //     $fixData = $this->mapingOrderHeader($order);
+            //     array_push($fullOrder, $fixData);
+            // }
+            // return $fullOrder;
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }

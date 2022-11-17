@@ -30,7 +30,7 @@ class JdIdApiController extends Controller
      */
     public function index()
     {
-        return $this->show(1115108500);
+        return $this->show(1117685142);
         // return $this->refreshToken();
     }
 
@@ -67,7 +67,7 @@ class JdIdApiController extends Controller
             // if ($resp->error_response) {
             //     return response()->json(['message' => $resp->error_response->en_desc], 500);
             // }
-            $platform = OnlineShop::where('name', 'JD.ID')->first();
+            $platform = OnlineShop::where('name', 'JDID')->first();
             $order = $response->result->model;
             $fixData = null;
             $fixData["create_time_online"] = date('Y-m-d H:i:s', $order->createTime);
