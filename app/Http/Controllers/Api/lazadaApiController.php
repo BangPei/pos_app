@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\OnlineShop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Lazada\LazopClient;
 use Lazada\LazopRequest;
 
@@ -26,7 +27,7 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->packed("ASC");
-        return $this->show(997667941611954);
+        return $this->show(1003412508627123);
     }
 
     public function packed($sorting)
@@ -263,10 +264,21 @@ class lazadaApiController extends Controller
             $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
             $items = $c->execute($itemsUrl, $this->accessToken);
             $itemDecode = json_decode($items);
-
             $validItems = [];
             foreach ($itemDecode->data as $item) {
                 $itemData = $this->mapingOrder($jsonObject, $item);
+                // if (count($validItems) == 0) {
+                //     array_push($validItems, $itemData);
+                // } else {
+                //     foreach ($validItems as $validData) {
+                //         if ($validData['sku_id'] === $itemData['sku_id']) {
+                //             $validData['qty'] = $validData['qty'] + 1;
+                //         } else {
+                //             $itemData['qty'] = 1;
+                //             array_push($validItems, $itemData);
+                //         }
+                //     }
+                // }
                 array_push($validItems, $itemData);
             }
             $jsonObject->items = $validItems;
@@ -276,6 +288,7 @@ class lazadaApiController extends Controller
             return $fixData;
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage() . ' On Number ' . $id], 500);
+            // return $th;
         }
     }
 
@@ -342,7 +355,7 @@ class lazadaApiController extends Controller
         $fixData["update_time_online"] = $headerObject->updated_at;
         $fixData["message_to_seller"] = null;
         $fixData["order_no"] = (string)$headerObject->order_number;
-        $fixData["order_status"] = $headerObject->status;
+        $fixData["order_status"] = $headerObject->status; //$this->getOrderStatus($headerObject->status);
         $fixData["tracking_number"] = $headerObject->tracking_number ?? "";
         $fixData["delivery_by"] = $deliveryBy;
         $fixData["pickup_by"] = $pickupBy;
@@ -356,5 +369,49 @@ class lazadaApiController extends Controller
         $fixData["product_picture"] = null;
         $fixData["package_picture"] = null;
         return $fixData;
+    }
+
+    private function getOrderStatus($status)
+    {
+        $orderStatus = "";
+        switch ($status) {
+            case "pending":
+                $orderStatus = "PESANAN BARU";
+                break;
+            case "topack":
+                $orderStatus = "DIKEMAS";
+                break;
+            case "returned":
+                $orderStatus = "RETURN";
+                break;
+            case "canceled":
+                $orderStatus = "BATAL";
+                break;
+            case "delivered":
+                $orderStatus = "SELESAI";
+                break;
+            case "ready_to_ship":
+                $orderStatus = "SIAP KIRIM";
+                break;
+            case "unpaid":
+                $orderStatus = "BELUM BAYAR";
+                break;
+            case "failed":
+                $orderStatus = "GAGAL KIRIM";
+                break;
+            case "shipped":
+                $orderStatus = "DI PICKUP";
+                break;
+            case "shipping":
+                $orderStatus = "DALAM PENGIRIMAN";
+                break;
+            case "lost":
+                $orderStatus = "PAKET HILANG";
+                break;
+            default:
+                $orderStatus = $status;
+                break;
+        }
+        return $orderStatus;
     }
 }

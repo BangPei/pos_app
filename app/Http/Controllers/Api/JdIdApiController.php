@@ -7,7 +7,9 @@ use App\Models\JdIdAccessToken;
 use App\Models\OnlineShop;
 use Illuminate\Http\Request;
 use Purnamasari\JD\JdClient;
+use Purnamasari\JD\Request\SellerOrderGetGoSendOrderStatusRequest;
 use Purnamasari\JD\Request\SellerOrderGetOrderInfoByOrderIdRequest;
+use Purnamasari\JD\Request\SellerOrderSendGoodsOpenApiRequest;
 
 class JdIdApiController extends Controller
 {
@@ -30,7 +32,7 @@ class JdIdApiController extends Controller
      */
     public function index()
     {
-        return $this->show(1117685142);
+        return $this->show(1117646409);
         // return $this->refreshToken();
     }
 
@@ -114,6 +116,24 @@ class JdIdApiController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+    public function rts($id)
+    {
+        try {
+            $auth = $this->refreshToken();
+            $c = new JdClient();
+            $c->appKey = $this->appKey;
+            $c->appSecret = $this->appSecret;
+            $c->accessToken = $this->accsessToken;
+            $c->serverUrl = $this->host;
+            $req = new SellerOrderSendGoodsOpenApiRequest();
+            $req->setOrderId($id);
+            $resp = $c->execute($req, $auth->access_token);
+
+            return $resp;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -172,23 +192,31 @@ class JdIdApiController extends Controller
         $orderStatus = "";
         switch ($status) {
             case 1:
-                $orderStatus = "awaiting shipment";
+                $orderStatus = "PESANAN BARU";
                 break;
             case 2:
-                $orderStatus = "awaiting acceptance";
+                $orderStatus = "DIKEMAS";
+                break;
+            case 3:
+                $orderStatus = "PENGAJUAN PEMBATALAN";
+                break;
+            case 4:
+                $orderStatus = "RETURN";
                 break;
             case 5:
-                $orderStatus = "cancel";
+                $orderStatus = "BATAL";
                 break;
             case 6:
-                $orderStatus = "complete";
+                $orderStatus = "SELESAI";
                 break;
             case 7:
-                $orderStatus = "ready to ship";
+                $orderStatus = "SIAP KIRIM";
                 break;
-
+            case 8:
+                $orderStatus = "BELUM BAYAR";
+                break;
             default:
-                # code...
+                $orderStatus = "CUSTOM";
                 break;
         }
         return $orderStatus;

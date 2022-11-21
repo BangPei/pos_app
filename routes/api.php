@@ -55,6 +55,7 @@ Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
 
+Route::get('jd-order/rts/{id}', [JdIdApiController::class, 'rts']);
 Route::resource('jd-order', JdIdApiController::class);
 
 Route::get('platform/active', [OnlineShopeApiController::class, 'active']);

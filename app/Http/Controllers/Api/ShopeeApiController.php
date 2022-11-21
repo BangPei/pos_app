@@ -21,7 +21,7 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getFullOrder();
+        return $this->getOrderByNoV2("221121MMK4STH7");
     }
 
     public function rts($orderSn)
@@ -241,6 +241,7 @@ class ShopeeApiController extends Controller
             $logist = $this->getTrackingNumber($orderSn, $auth->access_token);
             $orderList = json_decode($response)->response->order_list;
             foreach ($orderList as $order) {
+                $total_qty = 0;
                 $fixData = null;
                 $items = [];
                 $trackingNumber = json_decode($logist)->response->tracking_number ?? "";
@@ -248,12 +249,11 @@ class ShopeeApiController extends Controller
                 $fixData["update_time_online"] = date('Y-m-d H:i:s', $order->update_time);
                 $fixData["message_to_seller"] = $order->message_to_seller;
                 $fixData["order_no"] = $order->order_sn;
-                $fixData["order_status"] = $order->order_status;
+                $fixData["order_status"] = $order->order_status; // $this->getOrderStatus($order->order_status);
                 $fixData["tracking_number"] = $trackingNumber;
                 $fixData["delivery_by"] = $order->shipping_carrier;
                 $fixData["pickup_by"] = $order->shipping_carrier;
                 $fixData["total_amount"] = $order->total_amount;
-                $fixData["total_qty"] = 0;
                 $fixData["status"] = 1;
                 $fixData["online_shop_id"] = $platform->id;
                 $fixData["order_id"] = null;
@@ -276,8 +276,10 @@ class ShopeeApiController extends Controller
                     $item['order_type'] = null;
                     $item['order_status'] = null;
                     $item['tracking_number'] = null;
+                    $total_qty = $total_qty + $item['qty'];
                     array_push($items, $item);
                 }
+                $fixData["total_qty"] = $total_qty;
                 $fixData["items"] = $items;
                 array_push($fullOrder, $fixData);
             }
@@ -372,5 +374,40 @@ class ShopeeApiController extends Controller
         // }
         curl_close($curl);
         return $response;
+    }
+
+    private function getOrderStatus($status)
+    {
+        $orderStatus = "";
+        switch ($status) {
+            case "READY_TO_SHIP":
+                $orderStatus = "DIKEMAS";
+                break;
+            case "IN_CANCEL":
+                $orderStatus = "PENGAJUAN PEMBATALAN";
+                break;
+            case "CANCELLED":
+                $orderStatus = "BATAL";
+                break;
+            case "COMPLETED":
+                $orderStatus = "SELESAI";
+                break;
+            case "PROCESSED":
+                $orderStatus = "SIAP KIRIM";
+                break;
+            case "UNPAID":
+                $orderStatus = "BELUM BAYAR";
+                break;
+            case "SHIPPED":
+                $orderStatus = "DALAM PENGIRIMAN";
+                break;
+            case "INVOICE_PENDING":
+                $orderStatus = "INVOICE PENDING";
+                break;
+            default:
+                $orderStatus = $status;
+                break;
+        }
+        return $orderStatus;
     }
 }
