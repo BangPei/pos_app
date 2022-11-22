@@ -27,7 +27,7 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->packed("ASC");
-        return $this->show(1003412508627123);
+        return $this->show(992854877011100);
     }
 
     public function packed($sorting)
@@ -267,18 +267,6 @@ class lazadaApiController extends Controller
             $validItems = [];
             foreach ($itemDecode->data as $item) {
                 $itemData = $this->mapingOrder($jsonObject, $item);
-                // if (count($validItems) == 0) {
-                //     array_push($validItems, $itemData);
-                // } else {
-                //     foreach ($validItems as $validData) {
-                //         if ($validData['sku_id'] === $itemData['sku_id']) {
-                //             $validData['qty'] = $validData['qty'] + 1;
-                //         } else {
-                //             $itemData['qty'] = 1;
-                //             array_push($validItems, $itemData);
-                //         }
-                //     }
-                // }
                 array_push($validItems, $itemData);
             }
             $jsonObject->items = $validItems;

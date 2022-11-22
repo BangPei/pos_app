@@ -21,7 +21,7 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getOrderByNoV2("221121MMK4STH7");
+        return $this->getOrderByNoV2("2211167NVNUAGA");
     }
 
     public function rts($orderSn)
