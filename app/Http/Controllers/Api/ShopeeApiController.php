@@ -21,7 +21,7 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getOrderByNoV2("2211167NVNUAGA");
+        return $this->getOrderByNo("221122R070JC0M");
     }
 
     public function rts($orderSn)
@@ -249,7 +249,8 @@ class ShopeeApiController extends Controller
                 $fixData["update_time_online"] = date('Y-m-d H:i:s', $order->update_time);
                 $fixData["message_to_seller"] = $order->message_to_seller;
                 $fixData["order_no"] = $order->order_sn;
-                $fixData["order_status"] = $order->order_status; // $this->getOrderStatus($order->order_status);
+                $fixData["order_status"] = $this->getOrderStatus($order->order_status)['status'];
+                $fixData["show_request"] = $this->getOrderStatus($order->order_status)['show_request'];
                 $fixData["tracking_number"] = $trackingNumber;
                 $fixData["delivery_by"] = $order->shipping_carrier;
                 $fixData["pickup_by"] = $order->shipping_carrier;
@@ -274,7 +275,7 @@ class ShopeeApiController extends Controller
                     $item['sku_id'] = null;
                     $item['order_id'] = null;
                     $item['order_type'] = null;
-                    $item['order_status'] = null;
+                    $item['order_status'] = $this->getOrderStatus($order->order_status)['status'];
                     $item['tracking_number'] = null;
                     $total_qty = $total_qty + $item['qty'];
                     array_push($items, $item);
@@ -378,34 +379,61 @@ class ShopeeApiController extends Controller
 
     private function getOrderStatus($status)
     {
-        $orderStatus = "";
+        $orderStatus = array();
         switch ($status) {
             case "READY_TO_SHIP":
-                $orderStatus = "DIKEMAS";
+                $orderStatus = [
+                    "status" => "DIKEMAS",
+                    "show_request" => true
+                ];
                 break;
             case "IN_CANCEL":
-                $orderStatus = "PENGAJUAN PEMBATALAN";
+                $orderStatus = [
+                    "status" => "PENGAJUAN PEMBATALAN",
+                    "show_request" => false
+                ];
                 break;
             case "CANCELLED":
-                $orderStatus = "BATAL";
+                $orderStatus = [
+                    "status" => "BATAL",
+                    "show_request" => false
+                ];
                 break;
             case "COMPLETED":
-                $orderStatus = "SELESAI";
+                $orderStatus = [
+                    "status" => "SELESAI",
+                    "show_request" => false
+                ];
                 break;
             case "PROCESSED":
-                $orderStatus = "SIAP KIRIM";
+                $orderStatus = [
+                    "status" => "SIAP KIRIM",
+                    "show_request" => false
+                ];
                 break;
             case "UNPAID":
-                $orderStatus = "BELUM BAYAR";
+                $orderStatus = [
+                    "status" => "BELUM BAYAR",
+                    "show_request" => false
+                ];
                 break;
             case "SHIPPED":
-                $orderStatus = "DALAM PENGIRIMAN";
+                $orderStatus = [
+                    "status" => "DALAM PENGIRIMAN",
+                    "show_request" => false
+                ];
                 break;
             case "INVOICE_PENDING":
-                $orderStatus = "INVOICE PENDING";
+                $orderStatus = [
+                    "status" => "INVOICE PENDING",
+                    "show_request" => false
+                ];
                 break;
             default:
-                $orderStatus = $status;
+                $orderStatus = [
+                    "status" => $status,
+                    "show_request" => false
+                ];
                 break;
         }
         return $orderStatus;

@@ -27,7 +27,7 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->packed("ASC");
-        return $this->show(992854877011100);
+        return $this->show(1005397378158264);
     }
 
     public function packed($sorting)
@@ -318,7 +318,7 @@ class lazadaApiController extends Controller
         $itemData['product_id'] = (int)$detail->product_id;
         $itemData['order_id'] = (int)$detail->order_id;
         $itemData['order_type'] = $detail->order_type;
-        $itemData['order_status'] = $detail->status;
+        $itemData['order_status'] = $this->getOrderStatus($detail->status)['status'];
         $itemData['tracking_number'] = $detail->tracking_code;
         $headerObject->tracking_number = $detail->tracking_code !== "" ? $detail->tracking_code : "";
         $headerObject->shipping_provider_type = $detail->shipping_provider_type;
@@ -343,7 +343,8 @@ class lazadaApiController extends Controller
         $fixData["update_time_online"] = $headerObject->updated_at;
         $fixData["message_to_seller"] = null;
         $fixData["order_no"] = (string)$headerObject->order_number;
-        $fixData["order_status"] = $headerObject->status; //$this->getOrderStatus($headerObject->status);
+        $fixData["order_status"] = $this->getOrderStatus($headerObject->status)['status'];
+        $fixData["show_request"] = $this->getOrderStatus($headerObject->status)['show_request'];
         $fixData["tracking_number"] = $headerObject->tracking_number ?? "";
         $fixData["delivery_by"] = $deliveryBy;
         $fixData["pickup_by"] = $pickupBy;
@@ -361,43 +362,79 @@ class lazadaApiController extends Controller
 
     private function getOrderStatus($status)
     {
-        $orderStatus = "";
+        $orderStatus = array();
         switch ($status) {
             case "pending":
-                $orderStatus = "PESANAN BARU";
+                $orderStatus = [
+                    "status" => "PESANAN BARU",
+                    "show_request" => false
+                ];
                 break;
-            case "topack":
-                $orderStatus = "DIKEMAS";
+            case "packed":
+                $orderStatus = [
+                    "status" => "DIKEMAS",
+                    "show_request" => true
+                ];
                 break;
             case "returned":
-                $orderStatus = "RETURN";
+                $orderStatus = [
+                    "status" => "RETURN",
+                    "show_request" => false
+                ];
                 break;
             case "canceled":
-                $orderStatus = "BATAL";
+                $orderStatus = [
+                    "status" => "BATAL",
+                    "show_request" => false
+                ];
                 break;
             case "delivered":
-                $orderStatus = "SELESAI";
+                $orderStatus = [
+                    "status" => "SELESAI",
+                    "show_request" => false
+                ];
                 break;
             case "ready_to_ship":
-                $orderStatus = "SIAP KIRIM";
+                $orderStatus = [
+                    "status" => "SIAP KIRIM",
+                    "show_request" => false
+                ];
                 break;
             case "unpaid":
-                $orderStatus = "BELUM BAYAR";
+                $orderStatus = [
+                    "status" => "BELUM BAYAR",
+                    "show_request" => false
+                ];
                 break;
             case "failed":
-                $orderStatus = "GAGAL KIRIM";
+                $orderStatus = [
+                    "status" => "GAGAL KIRIM",
+                    "show_request" => false
+                ];
                 break;
             case "shipped":
-                $orderStatus = "DI PICKUP";
+                $orderStatus = [
+                    "status" => "DI PICKUP",
+                    "show_request" => false
+                ];
                 break;
             case "shipping":
-                $orderStatus = "DALAM PENGIRIMAN";
+                $orderStatus = [
+                    "status" => "DALAM PENGIRIMAN",
+                    "show_request" => false
+                ];
                 break;
             case "lost":
-                $orderStatus = "PAKET HILANG";
+                $orderStatus = [
+                    "status" => "PAKET HILANG",
+                    "show_request" => false
+                ];
                 break;
             default:
-                $orderStatus = $status;
+                $orderStatus = [
+                    "status" => $status,
+                    "show_request" => false
+                ];
                 break;
         }
         return $orderStatus;

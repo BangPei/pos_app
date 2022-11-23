@@ -76,7 +76,8 @@ class JdIdApiController extends Controller
             $fixData["update_time_online"] = null;
             $fixData["message_to_seller"] = null;
             $fixData["order_no"] = (string)$order->orderId;
-            $fixData["order_status"] = $this->getOrderStatus($order->orderState);
+            $fixData["order_status"] = $this->getOrderStatus($order->orderState)['status'];
+            $fixData["show_request"] = $this->getOrderStatus($order->orderState)['show_request'];
             $fixData["tracking_number"] = $order->expressNo ?? "";
             $fixData["delivery_by"] = $order->carrierCompany;
             $fixData["pickup_by"] = $order->carrierCompany;
@@ -105,7 +106,7 @@ class JdIdApiController extends Controller
                 $itemData['product_id'] = null;
                 $itemData['order_id'] = null;
                 $itemData['order_type'] = (string)$order->orderType;
-                $itemData['order_status'] = null;
+                $itemData['order_status'] = $this->getOrderStatus($order->orderState)['status'];
                 $itemData['tracking_number'] = null;
                 $fixData["message_to_seller"] = $item->buyerMessage ?? "";
                 array_push($items, $itemData);
@@ -189,34 +190,61 @@ class JdIdApiController extends Controller
 
     private function getOrderStatus($status)
     {
-        $orderStatus = "";
+        $orderStatus = array();
         switch ($status) {
             case 1:
-                $orderStatus = "PESANAN BARU";
+                $orderStatus = [
+                    "status" => "DIKEMAS",
+                    "show_request" => true,
+                ];
                 break;
             case 2:
-                $orderStatus = "DIKEMAS";
+                $orderStatus = [
+                    "status" => "DALAM PENGIRIMAN",
+                    "show_request" => false
+                ];
                 break;
             case 3:
-                $orderStatus = "PENGAJUAN PEMBATALAN";
+                $orderStatus = [
+                    "status" => "PENGAJUAN PEMBATALAN",
+                    "show_request" => false
+                ];
                 break;
             case 4:
-                $orderStatus = "RETURN";
+                $orderStatus = [
+                    "status" => "RETURN",
+                    "show_request" => false
+                ];
                 break;
             case 5:
-                $orderStatus = "BATAL";
+                $orderStatus = [
+                    "status" => "BATAL",
+                    "show_request" => false
+                ];
                 break;
             case 6:
-                $orderStatus = "SELESAI";
+                $orderStatus = [
+                    "status" => "SELESAI",
+                    "show_request" => false
+                ];
                 break;
             case 7:
-                $orderStatus = "SIAP KIRIM";
+                $orderStatus = [
+                    "status" => "SIAP KIRIM",
+                    "show_request" => false
+                ];
                 break;
             case 8:
-                $orderStatus = "BELUM BAYAR";
+                $orderStatus = [
+                    "status" => "BELUM BAYAR",
+                    "show_request" => false
+                ];
                 break;
             default:
-                $orderStatus = "CUSTOM";
+                $orderStatus = [
+                    "status" => "CUSTOM",
+                    "show_request" => false
+                ];
                 break;
         }
         return $orderStatus;
