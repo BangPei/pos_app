@@ -32,7 +32,7 @@ class JdIdApiController extends Controller
      */
     public function index()
     {
-        return $this->show(1117646409);
+        // return $this->rts(1117984700);
         // return $this->refreshToken();
     }
 
@@ -127,7 +127,7 @@ class JdIdApiController extends Controller
             $c->accessToken = $this->accsessToken;
             $c->serverUrl = $this->host;
             $req = new SellerOrderSendGoodsOpenApiRequest();
-            $req->setOrderId($id);
+            $req->setOrderId((int)$id);
             $resp = $c->execute($req, $auth->access_token);
 
             return $resp;
