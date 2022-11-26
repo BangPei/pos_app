@@ -32,7 +32,7 @@ class JdIdApiController extends Controller
      */
     public function index()
     {
-        // return $this->rts(1117984700);
+        return $this->show(1118054796);
         // return $this->refreshToken();
     }
 
@@ -79,8 +79,8 @@ class JdIdApiController extends Controller
             $fixData["order_status"] = $this->getOrderStatus($order->orderState)['status'];
             $fixData["show_request"] = $this->getOrderStatus($order->orderState)['show_request'];
             $fixData["tracking_number"] = $order->expressNo ?? "";
-            $fixData["delivery_by"] = $order->carrierCompany;
-            $fixData["pickup_by"] = $order->carrierCompany;
+            $fixData["delivery_by"] = $order->carrierCompany ?? "";
+            $fixData["pickup_by"] = $order->carrierCompany ?? "";
 
             $fixData["total_amount"] = (float) $order->paySubtotal;
             $fixData["total_qty"] = $order->orderSkuNum;

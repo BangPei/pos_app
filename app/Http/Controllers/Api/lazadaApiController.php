@@ -27,7 +27,7 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->packed("ASC");
-        return $this->show(1005397378158264);
+        // return $this->show(1005397378158264);
     }
 
     public function packed($sorting)
@@ -204,6 +204,15 @@ class lazadaApiController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
+    }
+
+    public function timeLine()
+    {
+        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/logistic/order/trace');
+        $request->addApiParam('order_id', '997587686886125');
+        $response =  $c->execute($request, $this->accessToken);
+        return $response;
     }
 
     /**

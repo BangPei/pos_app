@@ -58,6 +58,26 @@ class DailyTaskApiController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+    public function multiple(Request $request)
+    {
+        try {
+            foreach ($request as $task) {
+                $dailyTask = DailyTask::where('expedition_id', $task->expedition['id'])->where('date', $task->date)->where('status', 0)->first();
+                if ($dailyTask) {
+                    return response()->json(['message' => 'Tugas Harian Untuk Expedisi' . $task->expedition['name'] . ' Sudah Dibuat !'], 400);
+                } else {
+                    $dailyTask = new DailyTask();
+                    $dailyTask->expedition_id = $task->expedition['id'];
+                    $dailyTask->date = $task->date;
+                    $dailyTask->total_package = $task->total_package;
+                    $dailyTask->save();
+                }
+            }
+            return response()->json(['message' => "Berhasil Membuat Tugas Harian"], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
 
     public function receipt(Request $request, $id)
     {
