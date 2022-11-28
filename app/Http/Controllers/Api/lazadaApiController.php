@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\OnlineShop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Lazada\LazopClient;
 use Lazada\LazopRequest;
 
@@ -16,9 +15,11 @@ class lazadaApiController extends Controller
     public $lazadaUrl = "https://api.lazada.co.id/rest";
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-    public $code = "0_112922_5yiLbQhBbDXIPN4G6NzELkUw821";
-    public $accessToken = "50000000225yiUVobiUOeqBM9pwOQfgYn1fkQ1c392f7ehsrGfGcv6MRvmssxTJi";
-    public $refresh_token = "50001001e25rm5ebrBPvuckIJiwFRyHC4GrrB1da769e9RpyTuRx17QBIks8M3Iv";
+    public $code = "0_112922_oER52KsSSfDMvWgLzdEXres146917";
+    public $accessToken = "500000016401pSfirhWsdWgFp5lTUinDRoygR0AfaHTqgMQVrvzA19da8092ZrCg";
+    public $refresh_token = "50001001e40rm5ebrBPvuckIJiwFRyHC4GrrBRpyTuRx17QBIks8163f23deM3Iv";
+
+    // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=${app call back url}&client_id=${appkey}
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +28,8 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->packed("ASC");
-        // return $this->show(1005397378158264);
+        // return $this->show(1007738936426474);
+        return $this->getToken();
     }
 
     public function packed($sorting)
@@ -447,5 +449,14 @@ class lazadaApiController extends Controller
                 break;
         }
         return $orderStatus;
+    }
+
+    public function getToken()
+    {
+        $c = new LazopClient("https://auth.lazada.com/rest", $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/auth/token/create', 'GET');
+        $request->addApiParam('code', $this->code);
+        $response = $c->execute($request);
+        return $response;
     }
 }
