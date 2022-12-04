@@ -21,7 +21,8 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getOrderByNo("221122R070JC0M");
+        // return $this->getOrderByNo("221122R070JC0M");
+        return $this->getProductSearch();
     }
 
     public function rts($orderSn)
@@ -293,10 +294,64 @@ class ShopeeApiController extends Controller
     public function getTrackingNumber($order_sn, $AccessToken)
     {
         try {
+
             $timestamp = time();
             $path = "/api/v2/logistics/get_tracking_number";
             $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $AccessToken . $this->shop_id), $this->partner_key);
             $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $AccessToken . '&shop_id=' . $this->shop_id . '&order_sn=' . $order_sn;
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            return $response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function getProducts()
+    {
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/product/get_item_list";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&offset=0&page_size=50&item_status=NORMAL';
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            return $response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function getProductSearch()
+    {
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/product/search_item";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&page_size=50&item_name=zee';
+            $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            $listProductId = json_decode($response)->response->item_id_list;
+            $products = $this->getProductInfo(join(",", $listProductId), $auth->access_token);
+            return $products;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function getProductInfo($productId, $access_token)
+    {
+        try {
+            $timestamp = time();
+            $path = "/api/v2/product/get_item_base_info";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $access_token . '&shop_id=' . $this->shop_id . '&item_id_list=' . $productId . '&need_complaint_policy=true&need_tax_info=true';
             $response =  $this->curlRequest($url, "GET");
             if (json_decode($response)->error != "") {
                 return response()->json(['message' => json_decode($response)->message], 500);

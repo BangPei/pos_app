@@ -15,11 +15,11 @@ class lazadaApiController extends Controller
     public $lazadaUrl = "https://api.lazada.co.id/rest";
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-    public $code = "0_112922_oER52KsSSfDMvWgLzdEXres146917";
-    public $accessToken = "500000016401pSfirhWsdWgFp5lTUinDRoygR0AfaHTqgMQVrvzA19da8092ZrCg";
-    public $refresh_token = "50001001e40rm5ebrBPvuckIJiwFRyHC4GrrBRpyTuRx17QBIks8163f23deM3Iv";
+    public $code = "0_112922_Sj201kKH3BBQ8Sj7eyoa3F3a58904";
+    public $accessToken = "50000001440ciXiuepUdsohBbcqfLx1CnlMjWlrvnlbAurCtq5201f83d206QiJ9";
+    public $refresh_token = "50001001740i3BkqbzTgXbfU3msVDllto3gtTHdzmxTcPrXPnw8A15438636ibzL";
 
-    // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=${app call back url}&client_id=${appkey}
+    // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
      * Display a listing of the resource.
      *
@@ -27,9 +27,10 @@ class lazadaApiController extends Controller
      */
     public function index()
     {
-        // return $this->packed("ASC");
-        // return $this->show(1007738936426474);
-        return $this->getToken();
+        // return $this->getFullOrder('packed', "ASC");
+        // return $this->show(1012092583219838);
+        // return $this->getToken();
+        return $this->getProducts();
     }
 
     public function packed($sorting)
@@ -312,6 +313,23 @@ class lazadaApiController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getProducts()
+    {
+        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/products/get', 'GET');
+        $request->addApiParam('filter', 'all');
+        // $request->addApiParam('update_before', '2018-01-01T00:00:00+0800');
+        // $request->addApiParam('create_before', '2018-01-01T00:00:00+0800');
+        $request->addApiParam('offset', '50');
+        // $request->addApiParam('create_after', '2010-01-01T00:00:00+0800');
+        // $request->addApiParam('update_after', '2010-01-01T00:00:00+0800');
+        $request->addApiParam('limit', '50');
+        $request->addApiParam('options', '1');
+        // $request->addApiParam('sku_seller_list', '["7099610043-1668618486975-0"]');
+        $response = $c->execute($request, $this->accessToken);
+        return $response;
     }
 
     private function mapingOrder($headerObject, $detail)
