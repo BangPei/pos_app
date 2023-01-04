@@ -21,8 +21,8 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        // return $this->getOrderByNo("221122R070JC0M");
-        return $this->getProductSearch();
+        return $this->getBuyerInvoiceInfo("221214MET95VCM");
+        // return $this->getProductSearch();
     }
 
     public function rts($orderSn)
@@ -318,6 +318,30 @@ class ShopeeApiController extends Controller
             $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
             $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id . '&offset=0&page_size=50&item_status=NORMAL';
             $response =  $this->curlRequest($url, "GET");
+            if (json_decode($response)->error != "") {
+                return response()->json(['message' => json_decode($response)->message], 500);
+            }
+            return $response;
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function getBuyerInvoiceInfo($orderSn)
+    {
+        try {
+            $auth = $this->getRefreshToken();
+            $timestamp = time();
+            $path = "/api/v2/order/get_buyer_invoice_info";
+            $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp . $auth->access_token . $this->shop_id), $this->partner_key);
+            $url = $this->host . $path . '?timestamp=' . $timestamp . '&partner_id=' . $this->partner_id . '&sign=' . $sign . '&access_token=' . $auth->access_token . '&shop_id=' . $this->shop_id;
+            $response =  $this->curlRequest(
+                $url,
+                "POST",
+                array(
+                    "queries" => [array("order_sn" => $orderSn)],
+
+                )
+            );
             if (json_decode($response)->error != "") {
                 return response()->json(['message' => json_decode($response)->message], 500);
             }

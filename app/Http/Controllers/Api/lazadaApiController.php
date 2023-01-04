@@ -15,9 +15,9 @@ class lazadaApiController extends Controller
     public $lazadaUrl = "https://api.lazada.co.id/rest";
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-    public $code = "0_112922_Sj201kKH3BBQ8Sj7eyoa3F3a58904";
-    public $accessToken = "50000001440ciXiuepUdsohBbcqfLx1CnlMjWlrvnlbAurCtq5201f83d206QiJ9";
-    public $refresh_token = "50001001740i3BkqbzTgXbfU3msVDllto3gtTHdzmxTcPrXPnw8A15438636ibzL";
+    public $code = "0_112922_JqxfZyV1Z6xEeB0stl6f7WIf24325";
+    public $accessToken = "50000001223pz8bzh1HlqZwTcYcCQ9sR1ki1c78ab61guowgU1oe2BQOcT1ATYA0";
+    public $refresh_token = "50001001a23kz8upeeGeq3pWtegFum3Dy0C13e2f898fXGprESTxvoOVxE1quN3y";
 
     // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
@@ -28,9 +28,9 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->getFullOrder('packed', "ASC");
-        // return $this->show(1012092583219838);
+        return $this->show(1036417921355801);
         // return $this->getToken();
-        return $this->getProducts();
+        // return $this->getSessionList();
     }
 
     public function packed($sorting)
@@ -254,6 +254,16 @@ class lazadaApiController extends Controller
         return $dataCount;
     }
 
+    public function getSessionList()
+    {
+        // $timestamp = time();
+        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/im/session/open');
+        $request->addApiParam('order_id',  1026840299421197);
+        $orders =  $c->execute($request, $this->accessToken);
+        return $orders;
+    }
+
     /**
      * Display the specified resource.
      *
@@ -320,8 +330,6 @@ class lazadaApiController extends Controller
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $request = new LazopRequest('/products/get', 'GET');
         $request->addApiParam('filter', 'all');
-        // $request->addApiParam('update_before', '2018-01-01T00:00:00+0800');
-        // $request->addApiParam('create_before', '2018-01-01T00:00:00+0800');
         $request->addApiParam('offset', '50');
         // $request->addApiParam('create_after', '2010-01-01T00:00:00+0800');
         // $request->addApiParam('update_after', '2010-01-01T00:00:00+0800');
@@ -331,7 +339,6 @@ class lazadaApiController extends Controller
         $response = $c->execute($request, $this->accessToken);
         return $response;
     }
-
     private function mapingOrder($headerObject, $detail)
     {
         $itemData = null;
@@ -349,10 +356,17 @@ class lazadaApiController extends Controller
         $itemData['order_type'] = $detail->order_type;
         $itemData['order_status'] = $this->getOrderStatus($detail->status)['status'];
         $itemData['tracking_number'] = $detail->tracking_code;
-        $headerObject->tracking_number = $detail->tracking_code !== "" ? $detail->tracking_code : "";
+        if ($detail->tracking_code !== "") {
+            $headerObject->tracking_number = $detail->tracking_code;
+        }
+        $headerObject->status = $detail->status;
+        // if (($detail->status == "pending") || ($detail->status == "canceled")) {
+        //     $headerObject->status = $detail->status;
+        // }
+        // $headerObject->tracking_number = $detail->tracking_code !== "" ? $detail->tracking_code : "";
         $headerObject->shipping_provider_type = $detail->shipping_provider_type;
         $headerObject->shipment_provider = $detail->shipment_provider;
-        $headerObject->status = $detail->status;
+
         return $itemData;
     }
     private function mapingOrderHeader($headerObject)
@@ -423,6 +437,12 @@ class lazadaApiController extends Controller
                     "show_request" => false
                 ];
                 break;
+            case "confirmed":
+                $orderStatus = [
+                    "status" => "DITERIMA PELANGGAN",
+                    "show_request" => false
+                ];
+                break;
             case "ready_to_ship":
                 $orderStatus = [
                     "status" => "SIAP KIRIM",
@@ -453,9 +473,27 @@ class lazadaApiController extends Controller
                     "show_request" => false
                 ];
                 break;
+            case "shipped_back":
+                $orderStatus = [
+                    "status" => "PENGIRIMAN GAGAL",
+                    "show_request" => false
+                ];
+                break;
             case "lost":
                 $orderStatus = [
                     "status" => "PAKET HILANG",
+                    "show_request" => false
+                ];
+                break;
+            case "lost_by_3pl":
+                $orderStatus = [
+                    "status" => "HILANG",
+                    "show_request" => false
+                ];
+                break;
+            case "damaged_by_3pl":
+                $orderStatus = [
+                    "status" => "RUSAK",
                     "show_request" => false
                 ];
                 break;
