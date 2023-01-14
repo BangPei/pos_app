@@ -60,6 +60,7 @@ return array(
     'Opis\\Closure\\' => array($vendorDir . '/opis/closure/src'),
     'OpenApi\\' => array($vendorDir . '/zircote/swagger-php/src'),
     'NunoMaduro\\Collision\\' => array($vendorDir . '/nunomaduro/collision/src'),
+    'NVuln\\TiktokShop\\' => array($vendorDir . '/nvuln/tiktokshop-php/src'),
     'MyCLabs\\Enum\\' => array($vendorDir . '/myclabs/php-enum/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Mike42\\' => array($vendorDir . '/mike42/escpos-php/src/Mike42'),

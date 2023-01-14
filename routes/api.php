@@ -7,6 +7,7 @@ use App\Http\Controllers\API\JdIdApiController;
 use App\Http\Controllers\API\lazadaApiController;
 use App\Http\Controllers\API\OnlineShopeApiController;
 use App\Http\Controllers\API\ShopeeApiController;
+use App\Http\Controllers\API\TiktokApiController;
 use App\Http\Controllers\API\TransactionOnlineApiController;
 use App\Http\Controllers\TransactionOnlineController;
 use Illuminate\Http\Request;
@@ -55,6 +56,8 @@ Route::get('shopee-order/order/v2/{orderSn}', [ShopeeApiController::class, 'getO
 Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
+
+Route::resource('tiktok-order', TiktokApiController::class);
 
 Route::get('jd-order/rts/{id}', [JdIdApiController::class, 'rts']);
 Route::resource('jd-order', JdIdApiController::class);

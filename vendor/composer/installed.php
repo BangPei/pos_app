@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '4b21b9b963ce9c898d203cca2efff31365da7e26',
+        'reference' => '3e69b184c0f858a318619c72120278769bc6fc8c',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -469,7 +469,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '4b21b9b963ce9c898d203cca2efff31365da7e26',
+            'reference' => '3e69b184c0f858a318619c72120278769bc6fc8c',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -705,6 +705,15 @@
             'install_path' => __DIR__ . '/../nunomaduro/collision',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'nvuln/tiktokshop-php' => array(
+            'pretty_version' => 'v1.1.9',
+            'version' => '1.1.9.0',
+            'reference' => '62a4f61d17d50bbd332d4e57df4489bb8e466a66',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nvuln/tiktokshop-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'opis/closure' => array(
             'pretty_version' => '3.6.3',

@@ -22,14 +22,15 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         '9cdd7b9056abc3081735233ba9dd9c7f' => __DIR__ . '/..' . '/facade/flare-client-php/src/helpers.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '265b4faa2b3a9766332744949e83bf97' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Collections/helpers.php',
         'c7a3c339e7e14b60e06a2d7fcce9476b' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Events/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
@@ -38,7 +39,6 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'ac0aa5b57142c92aeadc397fa46b9d39' => __DIR__ . '/..' . '/darkaonline/l5-swagger/src/helpers.php',
         'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
 
@@ -129,6 +129,7 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'N' => 
         array (
             'NunoMaduro\\Collision\\' => 21,
+            'NVuln\\TiktokShop\\' => 17,
         ),
         'M' => 
         array (
@@ -433,6 +434,10 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'NunoMaduro\\Collision\\' => 
         array (
             0 => __DIR__ . '/..' . '/nunomaduro/collision/src',
+        ),
+        'NVuln\\TiktokShop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src',
         ),
         'MyCLabs\\Enum\\' => 
         array (
@@ -4362,6 +4367,24 @@ class ComposerStaticInit1509a542b8bfbb471c3eb5ea79c879e0
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'MyCLabs\\Enum\\Enum' => __DIR__ . '/..' . '/myclabs/php-enum/src/Enum.php',
         'MyCLabs\\Enum\\PHPUnit\\Comparator' => __DIR__ . '/..' . '/myclabs/php-enum/src/PHPUnit/Comparator.php',
+        'NVuln\\TiktokShop\\Auth' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Auth.php',
+        'NVuln\\TiktokShop\\Client' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Client.php',
+        'NVuln\\TiktokShop\\Errors\\AuthorizationException' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Errors/AuthorizationException.php',
+        'NVuln\\TiktokShop\\Errors\\ResponseException' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Errors/ResponseException.php',
+        'NVuln\\TiktokShop\\Errors\\TiktokShopException' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Errors/TiktokShopException.php',
+        'NVuln\\TiktokShop\\Errors\\TokenException' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Errors/TokenException.php',
+        'NVuln\\TiktokShop\\Resource' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resource.php',
+        'NVuln\\TiktokShop\\Resources\\Finance' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Finance.php',
+        'NVuln\\TiktokShop\\Resources\\Fulfillment' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Fulfillment.php',
+        'NVuln\\TiktokShop\\Resources\\GlobalProduct' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/GlobalProduct.php',
+        'NVuln\\TiktokShop\\Resources\\Logistic' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Logistic.php',
+        'NVuln\\TiktokShop\\Resources\\Order' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Order.php',
+        'NVuln\\TiktokShop\\Resources\\Product' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Product.php',
+        'NVuln\\TiktokShop\\Resources\\Promotion' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Promotion.php',
+        'NVuln\\TiktokShop\\Resources\\Reverse' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Reverse.php',
+        'NVuln\\TiktokShop\\Resources\\Seller' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Seller.php',
+        'NVuln\\TiktokShop\\Resources\\Shop' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Resources/Shop.php',
+        'NVuln\\TiktokShop\\Webhook' => __DIR__ . '/..' . '/nvuln/tiktokshop-php/src/Webhook.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\DeprecatedException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\DirectoryNotFoundException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',

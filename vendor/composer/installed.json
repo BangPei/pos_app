@@ -4114,6 +4114,60 @@
             "install-path": "../nunomaduro/collision"
         },
         {
+            "name": "nvuln/tiktokshop-php",
+            "version": "v1.1.9",
+            "version_normalized": "1.1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nVuln/tiktokshop-php.git",
+                "reference": "62a4f61d17d50bbd332d4e57df4489bb8e466a66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nVuln/tiktokshop-php/zipball/62a4f61d17d50bbd332d4e57df4489bb8e466a66",
+                "reference": "62a4f61d17d50bbd332d4e57df4489bb8e466a66",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.3",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8|^9"
+            },
+            "time": "2022-12-26T07:18:01+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "NVuln\\TiktokShop\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jin",
+                    "email": "j@sax.vn",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Unofficial Tiktok Shop API Client in PHP",
+            "support": {
+                "issues": "https://github.com/nVuln/tiktokshop-php/issues",
+                "source": "https://github.com/nVuln/tiktokshop-php/tree/v1.1.9"
+            },
+            "install-path": "../nvuln/tiktokshop-php"
+        },
+        {
             "name": "opis/closure",
             "version": "3.6.3",
             "version_normalized": "3.6.3.0",
