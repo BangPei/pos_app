@@ -57,6 +57,7 @@ Route::get('shopee-order/get', [ShopeeApiController::class, 'getOrders']);
 Route::post('shopee-order/rts/{orderSn}', [ShopeeApiController::class, 'rts']);
 Route::resource('shopee-order', ShopeeApiController::class);
 
+Route::get('tiktok-order/get', [TiktokApiController::class, 'getOrders']);
 Route::resource('tiktok-order', TiktokApiController::class);
 
 Route::get('jd-order/rts/{id}', [JdIdApiController::class, 'rts']);

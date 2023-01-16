@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\OnlineShop;
 use Illuminate\Http\Request;
 use NVuln\TiktokShop\Client;
 
@@ -22,6 +23,7 @@ class TiktokApiController extends Controller
      */
     public function index()
     {
+        // return $this->getOrderDetail("576947223578839163");
         return $this->getOrders();
     }
 
@@ -76,7 +78,21 @@ class TiktokApiController extends Controller
         $client->setAccessToken($this->access_token);
         $client->setShopId($this->shopId);
         $orders = $client->Order->getOrderDetail($listOrder);
-        return $orders;
+        $orderList = $orders['order_list'];
+        $validOrders = [];
+        foreach ($orderList as $order) {
+            (int)$order['create_time'];
+            (int)$order['update_time'];
+            $validItems = [];
+            foreach ($order['order_line_list'] as $item) {
+                $itemData = $this->mapingOrder($order, $item);
+                array_push($validItems, $itemData);
+            }
+            $order['order_line_list'] = $validItems;
+
+            array_push($validOrders, $this->mapingOrderHeader($order));
+        }
+        return $validOrders;
     }
 
     public function getOrders()
@@ -121,15 +137,116 @@ class TiktokApiController extends Controller
                 array_push($fullOrder, $order);
             }
         }
-        return $fullOrder;
+        return $orderFull;
     }
-    public function getShippingInfo()
+
+    private function mapingOrder($headerObject, $detail)
     {
-        $client = new Client($this->apiKey, $this->apiSecret);
-        $client->setAccessToken($this->access_token);
-        $client->setShopId($this->shopId);
-        $orders = $client->Logistic->getShippingInfo("576892428622465293");
-        return $orders;
+        $itemData = null;
+        $itemData['image_url'] = $detail['sku_image'];
+        $itemData['item_name'] = $detail['product_name'];
+        $itemData['item_sku'] = $detail['seller_sku'];
+        $itemData['variation'] = $detail['sku_name'];
+        $itemData['order_item_id'] = null;
+        $itemData['sku_id'] = $detail['sku_id'];
+        $itemData['qty'] = 1;
+        $itemData['original_price'] = $detail['original_price'];
+        $itemData['discounted_price'] = $detail['sale_price'];
+        $itemData['product_id'] = (int)$detail['product_id'];
+        $itemData['order_id'] = (int)$detail['order_line_id'];
+        $itemData['order_type'] = null;
+        $itemData['order_status'] = $this->getOrderStatus($detail['display_status'])['status'];
+        $itemData['tracking_number'] = $detail['tracking_number'];
+
+        return $itemData;
+    }
+
+    private function mapingOrderHeader($headerObject)
+    {
+        $platform = OnlineShop::where('name', 'TikTok')->first();
+        $fixData = null;
+        $fixData["create_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['create_time']);
+        $fixData["update_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['update_time']);
+        $fixData["message_to_seller"] = null;
+        $fixData["order_no"] = $headerObject['order_id'];
+        $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'])['status'];
+        $fixData["show_request"] = $this->getOrderStatus($headerObject['order_status'])['show_request'];
+        $fixData["tracking_number"] = $headerObject['tracking_number'] ?? "";
+        $fixData["delivery_by"] = $headerObject['shipping_provider'];
+        $fixData["pickup_by"] = $headerObject['shipping_provider'];
+        $fixData["total_amount"] = 0;
+        $fixData["total_qty"] = count($headerObject['order_line_list']);
+        $fixData["items"] = $headerObject['order_line_list'];
+        $fixData["status"] = 1;
+        $fixData["online_shop_id"] = $platform->id;
+        $fixData["order_id"] = (string)$headerObject['order_id'];
+        $fixData["shipping_provider_type"] = $headerObject['delivery_option'] ?? "";
+        $fixData["product_picture"] = null;
+        $fixData["package_picture"] = null;
+        return $fixData;
+    }
+
+    private function getOrderStatus($status)
+    {
+        $orderStatus = array();
+        switch ($status) {
+            case 100:
+                $orderStatus = [
+                    "status" => "BELUM BAYAR",
+                    "show_request" => false
+                ];
+                break;
+            case 111:
+                $orderStatus = [
+                    "status" => "MENUNGGU DIPROSES",
+                    "show_request" => false
+                ];
+                break;
+            case 112:
+                $orderStatus = [
+                    "status" => "SIAP KIRIM",
+                    "show_request" => false
+                ];
+                break;
+            case 114:
+                $orderStatus = [
+                    "status" => "PENGIRIMAN PARSIAL",
+                    "show_request" => false
+                ];
+                break;
+            case 121:
+                $orderStatus = [
+                    "status" => "TRANSIT",
+                    "show_request" => false
+                ];
+                break;
+            case 122:
+                $orderStatus = [
+                    "status" => "TERKIRIM",
+                    "show_request" => false
+                ];
+                break;
+            case 130:
+                $orderStatus = [
+                    "status" => "SELESAI",
+                    "show_request" => false
+                ];
+                break;
+            case 140:
+                $orderStatus = [
+                    "status" => "BATAL",
+                    "show_request" => false
+                ];
+                break;
+
+            default:
+                $orderStatus = [
+                    "status" => (string)$status,
+                    "show_request" => false
+                ];
+                break;
+        }
+        return $orderStatus;
     }
 
     public function getAccessToken()
@@ -171,31 +288,5 @@ class TiktokApiController extends Controller
         // }
         curl_close($curl);
         return $response;
-    }
-
-    protected function prepareSignature($uri, $params)
-    {
-        $paramsToBeSigned = $params;
-        $stringToBeSigned = '';
-
-        // 1. Extract all query param EXCEPT ' sign ', ' access_token ', reorder the params based on alphabetical order.
-        unset($paramsToBeSigned['sign'], $paramsToBeSigned['access_token']);
-        ksort($paramsToBeSigned);
-
-        // 2. Concat all the param in the format of {key}{value}
-        foreach ($paramsToBeSigned as $k => $v) {
-            if (!is_array($v)) {
-                $stringToBeSigned .= "$k$v";
-            }
-        }
-
-        // 3. Append the request path to the beginning
-        $stringToBeSigned = $uri . $stringToBeSigned;
-
-        // 4. Wrap string generated in step 3 with app_secret.
-        $stringToBeSigned = $this->getAppSecret() . $stringToBeSigned . $this->apiSecret;
-
-        // 7. Use sha256 to generate sign with salt(secret).
-        $params['sign'] = hash_hmac('sha256', $stringToBeSigned, $this->apiSecret);
     }
 }
