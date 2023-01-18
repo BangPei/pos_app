@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Expedition;
 use App\Models\OnlineShop;
 use App\Models\ShopeAccessToken;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        return $this->getBuyerInvoiceInfo("221214MET95VCM");
+        return $this->getOrderByNoV2("221214MET95VCM");
         // return $this->getProductSearch();
     }
 
@@ -258,6 +259,7 @@ class ShopeeApiController extends Controller
                 $fixData["total_amount"] = $order->total_amount;
                 $fixData["status"] = 1;
                 $fixData["online_shop_id"] = $platform->id;
+                $fixData["expedition_id"] = $this->getExpedition($trackingNumber);
                 $fixData["order_id"] = null;
                 $fixData["product_picture"] = null;
                 $fixData["package_picture"] = null;
@@ -285,7 +287,7 @@ class ShopeeApiController extends Controller
                 $fixData["items"] = $items;
                 array_push($fullOrder, $fixData);
             }
-            return $fullOrder;
+            return $fixData;
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage() . ' On Number ' . $orderSn], 500);
         }
@@ -516,5 +518,19 @@ class ShopeeApiController extends Controller
                 break;
         }
         return $orderStatus;
+    }
+    private function getExpedition($trackingNumber)
+    {
+        $expeditionName = null;
+        if (str_contains($trackingNumber, "SPXID")) {
+            $expeditionName = "Shopee Express"; // get shopee expedition
+        } elseif (str_contains($trackingNumber, "CM") || str_contains($trackingNumber, "JT") || str_contains($trackingNumber, "JY")) {
+            $expeditionName = "JNE Reguler"; // get JNE Regular expedition
+        } elseif (str_contains($trackingNumber, "JP")) {
+            $expeditionName = "J&T Express"; // get JNE Regular expedition  
+        }
+        //get Shopee
+        $expedition = Expedition::where('name', $expeditionName)->first();
+        return $expedition->id;
     }
 }
