@@ -259,7 +259,6 @@ class ShopeeApiController extends Controller
                 $fixData["total_amount"] = $order->total_amount;
                 $fixData["status"] = 1;
                 $fixData["online_shop_id"] = $platform->id;
-                // $fixData["expedition_id"] = $this->getExpedition($trackingNumber);
                 $fixData["order_id"] = null;
                 $fixData["product_picture"] = null;
                 $fixData["package_picture"] = null;
@@ -287,7 +286,7 @@ class ShopeeApiController extends Controller
                 $fixData["items"] = $items;
                 array_push($fullOrder, $fixData);
             }
-            return $fixData;
+            return $fullOrder;
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage() . ' On Number ' . $orderSn], 500);
         }
