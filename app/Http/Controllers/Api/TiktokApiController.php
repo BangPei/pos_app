@@ -10,12 +10,12 @@ use NVuln\TiktokShop\Client;
 class TiktokApiController extends Controller
 {
 
-    public $code = "ROW_jeXEnwAAAABTpmVYZgZzPSYDx8NQ2nU03QmO-I6A3xp-KURBbVLFHfd3eViLfJd-TkO_THb5reeybGK38MR6kdn1M6CrPAL2";
+    public $code = "ROW_07xHjwAAAABTpmVYZgZzPSYDx8NQ2nU03QmO-I6A3xp-KURBbVLFHbd7Ho7sf2dfpQ85Dl3G8IAVvYMwEce-LGzqK47hcigD";
     public $apiKey = "67eui64gqqriu";
     public $shopId = "7494670387281169228";
     public $apiSecret = "da24ac38ba6931114cd43e7b49f1bd0a7ae2f2e1";
-    public $refreshToken = "ROW_MGEwODVmOWExM2FjNGFiYmVlMWEyYjIxMGYzMDI0OTk1NTFmOGE2NDVkYTQ2Yg";
-    public $access_token = "ROW_US0K7AAAAADn98JTwrilby-8D5Me_l6_qAKLDXpCVTURqLpy76I9aYkj6fjzeCqeflphJJRQPpELozZpQEbuvQqh7Zh8RmnBv-ywyo_crQWqM6WhbXnkWA";
+    public $refreshToken = "ROW_ZjYwOTRkN2VmNmFhNDk3OTU1NDgxN2UwNzRmMWMxMTM2NzYyNGEyNzM2NmQ5OQ";
+    public $access_token = "ROW_eAxJMAAAAADn98JTwrilby-8D5Me_l6_35jN75WHBB8ZqhOUIAQxbIG8_5peAVbBUkiZ_3pXJx51EKTNDjcAlk8UrCn4wrN9QPWraQaTvCp_NrkxMlxTgw";
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +25,8 @@ class TiktokApiController extends Controller
     {
         // return $this->getOrderDetail("576947223578839163");
         // return $this->getOrders();
-        // return $this->getRefreshToken();
+        return $this->getRefreshToken();
+        // return $this->getAccessToken();
     }
 
     /**
