@@ -49,5 +49,12 @@ class UomSeeder extends Seeder
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
+        Uom::create([
+            "name" => "Pack",
+            "description" => "Kemasan Pack",
+            "is_active" => true,
+            "created_by_id" => 1,
+            "edit_by_id" => 1,
+        ]);
     }
 }

@@ -17,10 +17,6 @@ class Product extends Model
     ];
     protected $with = ['category', 'created_by', 'edit_by', 'itemsConvertion'];
 
-    public $casts = [
-        'barcode' => 'string',
-    ];
-
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -36,10 +32,5 @@ class Product extends Model
     public function itemsConvertion()
     {
         return $this->hasMany(ItemConvertion::class);
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'barcode';
     }
 }

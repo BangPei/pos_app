@@ -30,17 +30,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-12">
                             <div class="form-group">
-                                <label for="barcode">Barcode</label>
-                                <input {{ isset($product)? 'readonly':'' }} required value="{{ old('barcode',$product->barcode??'') }}" type="text" autofocus="true" class="form-control @error('barcode') is-invalid @enderror" name="barcode" id="barcode">
-                                @error('barcode')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-12">
-                            <div class="form-group">
                                 <label for="name">Nama Produk</label>
                                 <input required  type="text" value="{{ old('name',$product->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
                                 @error('name')
@@ -175,11 +164,10 @@
     <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        let barcode ="<?=isset($product)?$product->barcode:null?>";
+        let _productId ="<?=isset($product)?$product->id:null?>";
         let product = {
             items_convertion : [],
             category:null,
-            barcode:null,
             name:null,
         }
         $(document).ready(function(){
@@ -221,8 +209,8 @@
                         mRender:function(data,type,full){
                             // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
                             return `<div class="custom-control custom-switch">
-                                        <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.barcode}">
-                                        <label class="custom-control-label" for="switch-${full.barcode}"></label>
+                                        <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
+                                        <label class="custom-control-label" for="switch-${full.id}"></label>
                                     </div>`
                         }
                     },
@@ -309,12 +297,12 @@
                 }
             });
 
-            barcode!=""?getProduct():null;
+            _productId!=""?getProduct():null;
         })
 
         function getProduct(){
             let data = {
-                barcode:barcode,
+                id:_productId,
             }
             ajax(data, `{{URL::to('product/show')}}`, "GET",
                 function(json) {
@@ -329,11 +317,10 @@
                     alert('Konversi Satuan dan Harga Tidak boleh kosong');
                     return false;
                 }
-                product.barcode = $('#barcode').val();
                 product.name = $('#name').val();
                 product.category ={id:$('#category_id').val()};
-                let method = barcode == ""?"POST":"PUT";
-                let url = barcode == ""?"{{ route('product.store') }}":"{{URL::to('product/update')}}"
+                let method = _productId == ""?"POST":"PUT";
+                let url = _productId == ""?"{{ route('product.store') }}":"{{URL::to('product/update')}}"
                 let isActive = 0;
                 product.items_convertion.forEach(val=>{
                     val.is_active==0?(isActive+0):(isActive++)

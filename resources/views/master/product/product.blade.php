@@ -18,7 +18,6 @@
       <table class="table table-striped table-bordered table-sm " id="table-product">
         <thead>
           <tr>
-            <th>Barcode</th>
             <th>Nama</th>
             <th>Kategori</th>
             <th>Status</th>
@@ -45,10 +44,6 @@
       },
       columns:[
         {
-          data:"barcode",
-          defaultContent:"--"
-        },
-        {
           data:"name",
           defaultContent:"--"
         },
@@ -70,17 +65,17 @@
         {
 					data: 'id',
 					mRender: function(data, type, full) {
-						return `<a href="/product/${full.barcode}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>`
+						return `<a href="/product/${full.id}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>`
 					}
 				}
       ],
       columnDefs: [
           { 
             className: "text-center",
-            targets: [2,3,4]
+            targets: [1,2,3]
           },
         ],
-      order:[[3,'desc'],[1,'asc']]
+      order:[[3,'desc'],[0,'asc']]
     })
     $('div.dataTables_filter input', tblProduct.table().container()).focus();
 

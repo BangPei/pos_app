@@ -52,7 +52,6 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $product = new Product();
-        $product->barcode = $request->barcode;
         $product->name = $request->name;
         $product->category_id = $request->category['id'];
         $product->created_by_id = auth()->user()->id;
@@ -87,7 +86,7 @@ class ProductController extends Controller
     {
         $product = new Product();
         if ($request->ajax()) {
-            $product = Product::where('barcode', $request->barcode)->first();
+            $product = Product::where('id', $request->id)->first();
         }
         return response()->json($product);
     }
@@ -136,9 +135,8 @@ class ProductController extends Controller
                     $convertion->save();
                     array_push($itemConvertion, $convertion);
                 }
-                Product::where('barcode', $product['barcode'])->update([
+                Product::where('id', $product['id'])->update([
                     'name' => $product['name'],
-                    'barcode' => $product['barcode'],
                     'category_id' => $product['category']['id'],
                     'edit_by_id' => auth()->user()->id,
                     'is_active' => $product['is_active'] ? 1 : 0,
@@ -155,9 +153,8 @@ class ProductController extends Controller
     {
         $product = $request;
         if ($request->ajax()) {
-            Product::where('barcode', $product['barcode'])->update([
+            Product::where('id', $product['id'])->update([
                 'name' => $product['name'],
-                'barcode' => $product['barcode'],
                 'is_active' => $product['is_active'] ? 1 : 0,
                 'category_id' => $product['category_id'],
                 'edit_by_id' => auth()->user()->id,
