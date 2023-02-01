@@ -209,9 +209,12 @@
       data:directSales.details,
       columns:[
         {
-          data:"product.name",
+          data:"product",
           bSortable: false,
-          defaultContent:"--"
+          defaultContent:"--",
+          mRender:function (data,type,full) {
+            return `${data.product_name??""} (${data.name})`
+          }
         },
         {
           data:"product.uom.name",
