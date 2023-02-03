@@ -87,6 +87,8 @@ class ProductController extends Controller
         $product = new Product();
         if ($request->ajax()) {
             $product = Product::where('id', $request->id)->first();
+            $itemConvertions = ItemConvertion::where('product_id', $request->id)->get();
+            $product['items_convertion'] = $itemConvertions;
         }
         return response()->json($product);
     }

@@ -9,7 +9,7 @@ class ItemConvertion extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['uom'];
+    protected $with = ['uom', 'product'];
     protected $hidden = ['uom_id', 'product_id'];
 
     public $casts = [

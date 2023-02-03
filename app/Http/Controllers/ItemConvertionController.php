@@ -21,6 +21,7 @@ class ItemConvertionController extends Controller
     {
         //
     }
+
     public function dataTable(UtilitiesRequest $request)
     {
         $itemConvertions = ItemConvertion::where('is_active', 1);
@@ -65,9 +66,6 @@ class ItemConvertionController extends Controller
                 ['is_active', 1]
             ])->first();
         }
-        $product = new Product();
-        $product = Product::where('id', $convertion->product_id)->first();
-        $convertion['product_name'] = $product->name;
         return response()->json($convertion);
     }
 

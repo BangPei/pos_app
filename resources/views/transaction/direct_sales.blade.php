@@ -179,6 +179,64 @@
   </div>
 </div>
 
+<div style="font-size: 10px" class="modal fade" id="modal-print" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Print Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="row">
+              <div class="col-3">
+                <img width="60" src="/image/logo/logo.png" alt="">
+              </div>
+              <div class="col-9">
+                <strong class="text-center">Toko SS Bumi Indah</strong>
+                <br>
+                <small>Jl Bumi Indah Raya Ruko Union Blok ROR 10</small>
+              </div>
+            </div>
+            <hr style="margin: 0px !important;background:black;">
+            <div class="row">
+              <div class="col-4 text-left">Tanggal</div>
+              <div class="col-8 text-right">2 February 2023 17:23:59</div>
+              <div class="col-4 text-left">No</div>
+              <div class="col-8 text-right">DS2023020100001</div>
+            </div>
+            <hr style="margin: 0px !important;background:black;">
+            <br>
+            <table style="border: 1px;width:100%">
+              <thead>
+                  <tr>
+                      <th>Produk</th>
+                      <th>Harga</th>
+                      <th>Qty</th>
+                      <th>Jumlah</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <td>Paseo Pack 50 s</td>
+                    <td>2,000</td>
+                    <td>2</td>
+                    <td>4,000</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="centered">Thanks for your purchase!</p>
+            <button id="btnPrint" class="hidden-print">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('content-script')
@@ -213,7 +271,7 @@
           bSortable: false,
           defaultContent:"--",
           mRender:function (data,type,full) {
-            return `${data.product_name??""} (${data.name})`
+            return `${data.product.name??""} (${data.name})`
           }
         },
         {
@@ -293,6 +351,10 @@
     })
 
     keyupTableNumber($('#table-order'))
+
+    $('#btnPrint').on('click',function(){
+      window.print();
+    })
 
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
@@ -548,32 +610,34 @@
       })
   }
   function saveTransaction(){
-    let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
-    let dataCash = $("#payment-type").find(':selected').attr('show-cash');
-    let dataBank = $('input[name="bank"]:checked').val();
-    if (directSales.details.length==0) {
-      alert('Transaksi Tidak boleh kosong')
-      return false;
-    }
-    if (dataAtm!="" && dataBank==undefined) {
-      alert('Silahkan Pilih ATM')
-      return false;
-    }
-    if (dataCash!="" && $('#cash').val()=="") {
-      alert('Uang Tunai Tidak Boleh Kosong')
-      return false;
-    }
-    directSales.customer_name = $("#customer-name").val();
-    directSales.payment_type_id = $('#payment-type').val();
-    $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
-    ajax(directSales, "{{ route('transaction.store') }}", "POST",
-        function(json) {
-          toastr.success('Transaksi Berhasil Disimpan')
-          cancelTransaction();
-          $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    },function(json){
-      $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    })
+    $('#modal-print').modal();
+    // let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
+    // let dataCash = $("#payment-type").find(':selected').attr('show-cash');
+    // let dataBank = $('input[name="bank"]:checked').val();
+    // if (directSales.details.length==0) {
+    //   alert('Transaksi Tidak boleh kosong')
+    //   return false;
+    // }
+    // if (dataAtm!="" && dataBank==undefined) {
+    //   alert('Silahkan Pilih ATM')
+    //   return false;
+    // }
+    // if (dataCash!="" && $('#cash').val()=="") {
+    //   alert('Uang Tunai Tidak Boleh Kosong')
+    //   return false;
+    // }
+    // directSales.customer_name = $("#customer-name").val();
+    // directSales.payment_type_id = $('#payment-type').val();
+    // $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
+    // ajax(directSales, "{{ route('transaction.store') }}", "POST",
+    //     function(json) {
+    //       toastr.success('Transaksi Berhasil Disimpan')
+    //       cancelTransaction();
+    //       $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    //       $('#modal-print').modal();
+    // },function(json){
+    //   $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    // })
   }
 
   function countTotality() {
