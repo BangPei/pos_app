@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         Product::create([
-            "name" => "Sasa Saus Tomat 24's x 8 gr",
+            "name" => "Sasa Saus Tomat 8 gr",
             "is_active" => true,
             "category_id" => 1,
             "created_by_id" => 2,
@@ -50,7 +50,7 @@ class ProductSeeder extends Seeder
             "edit_by_id" => 2,
         ]);
         Product::create([
-            "name" => "Carex Sabun Cuci Tangan Aloe Vera 2x200 ml",
+            "name" => "Carex Sabun Cuci Tangan Aloe Vera 200 ml",
             "is_active" => true,
             "category_id" => 4,
             "created_by_id" => 1,

@@ -179,7 +179,7 @@
   </div>
 </div>
 
-<div style="font-size: 10px" class="modal fade" id="modal-print" tabindex="-1">
+<div style="font-size: 12px" class="modal fade" id="modal-print" tabindex="-1">
   <div class="modal-dialog modal-sm modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
@@ -190,7 +190,7 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-12 text-center">
+          <div class="col-12 text-center d-print-block">
             <div class="row">
               <div class="col-3">
                 <img width="60" src="/image/logo/logo.png" alt="">
@@ -208,28 +208,28 @@
               <div class="col-4 text-left">No</div>
               <div class="col-8 text-right">DS2023020100001</div>
             </div>
-            <hr style="margin: 0px !important;background:black;">
             <br>
-            <table style="border: 1px;width:100%">
-              <thead>
+            
+            <table style="border: 1px solid black;width:100%">
+              <thead style="border: 1px solid black">
                   <tr>
-                      <th>Produk</th>
-                      <th>Harga</th>
-                      <th>Qty</th>
-                      <th>Jumlah</th>
+                      <th class="text-left">Produk</th>
+                      <th class="text-right">Harga</th>
+                      <th class="text-right">Qty</th>
+                      <th class="text-right">Jumlah</th>
                   </tr>
               </thead>
               <tbody>
                 <tr>
-                    <td>Paseo Pack 50 s</td>
-                    <td>2,000</td>
-                    <td>2</td>
-                    <td>4,000</td>
+                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-left">Laurier Relax Night 30cm 16pcs - 1x 30cm 16pcs</td>
+                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">999,000</td>
+                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">1</td>
+                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">999,000</td>
                 </tr>
               </tbody>
             </table>
             <p class="centered">Thanks for your purchase!</p>
-            <button id="btnPrint" class="hidden-print">Print</button>
+            <button id="btnPrint" class="d-print-none">Print</button>
           </div>
         </div>
       </div>
@@ -371,7 +371,10 @@
           },
           {
             data:"name",
-            defaultContent:"--"
+            defaultContent:"--",
+            mRender:function(data,type,full){
+              return `${full.product.name} - ${data}`
+            }
           },
           {
             data:"uom.name",
