@@ -613,34 +613,33 @@
       })
   }
   function saveTransaction(){
-    $('#modal-print').modal();
-    // let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
-    // let dataCash = $("#payment-type").find(':selected').attr('show-cash');
-    // let dataBank = $('input[name="bank"]:checked').val();
-    // if (directSales.details.length==0) {
-    //   alert('Transaksi Tidak boleh kosong')
-    //   return false;
-    // }
-    // if (dataAtm!="" && dataBank==undefined) {
-    //   alert('Silahkan Pilih ATM')
-    //   return false;
-    // }
-    // if (dataCash!="" && $('#cash').val()=="") {
-    //   alert('Uang Tunai Tidak Boleh Kosong')
-    //   return false;
-    // }
-    // directSales.customer_name = $("#customer-name").val();
-    // directSales.payment_type_id = $('#payment-type').val();
-    // $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
-    // ajax(directSales, "{{ route('transaction.store') }}", "POST",
-    //     function(json) {
-    //       toastr.success('Transaksi Berhasil Disimpan')
-    //       cancelTransaction();
-    //       $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    //       $('#modal-print').modal();
-    // },function(json){
-    //   $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    // })
+    // $('#modal-print').modal();
+    let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
+    let dataCash = $("#payment-type").find(':selected').attr('show-cash');
+    let dataBank = $('input[name="bank"]:checked').val();
+    if (directSales.details.length==0) {
+      alert('Transaksi Tidak boleh kosong')
+      return false;
+    }
+    if (dataAtm!="" && dataBank==undefined) {
+      alert('Silahkan Pilih ATM')
+      return false;
+    }
+    if (dataCash!="" && $('#cash').val()=="") {
+      alert('Uang Tunai Tidak Boleh Kosong')
+      return false;
+    }
+    directSales.customer_name = $("#customer-name").val();
+    directSales.payment_type_id = $('#payment-type').val();
+    $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
+    ajax(directSales, "{{ route('transaction.store') }}", "POST",
+        function(json) {
+          toastr.success('Transaksi Berhasil Disimpan')
+          cancelTransaction();
+          $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    },function(json){
+      $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    })
   }
 
   function countTotality() {

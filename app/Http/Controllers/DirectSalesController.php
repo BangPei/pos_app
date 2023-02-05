@@ -8,6 +8,8 @@ use App\Models\Atm;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\Printer;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DirectSalesController extends Controller
@@ -101,7 +103,22 @@ class DirectSalesController extends Controller
             $detail->save();
             array_push($details, $detail);
         }
-        $ds->details = $details;
+        // $ds->details = $details;
+        $ds = DirectSales::where('id', $ds->id)->first();
+
+        $connector = new WindowsPrintConnector("kasir");
+        $printer = new Printer($connector);
+
+        // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
+        // $printer->graphics($img, 20);
+        $printer->text("Toko SS Bumi Indah");
+        $printer->text("Hello World!\n");
+        $printer->text("Hello World!\n");
+        $printer->text("Hello World!\n");
+        $printer->text("Hello World!\n");
+        $printer->text("Hello World!\n");
+        $printer->cut();
+        $printer->close();
         return response()->json($ds);
     }
 
