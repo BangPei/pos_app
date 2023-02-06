@@ -97,6 +97,7 @@ class DirectSalesController extends Controller
             $detail->item_convertion_barcode = $request->details[$i]["product"]['barcode'];
             $detail->price = $request->details[$i]["price"];
             $detail->qty = $request->details[$i]["qty"];
+            $detail->product_name = $request->details[$i]["product_name"];
             $detail->discount = $request->details[$i]["discount"];
             $detail->program = $request->details[$i]["program"];
             $detail->subtotal = $request->details[$i]["subtotal"];
@@ -106,17 +107,34 @@ class DirectSalesController extends Controller
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
 
-        $connector = new WindowsPrintConnector("kasir");
+        $connector = new WindowsPrintConnector("cashier_dev");
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
         // $printer->graphics($img, 20);
-        $printer->text("Toko SS Bumi Indah");
+        $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Toko SS Bumi Indah\n");
+        $printer->feed();
+        $printer->selectPrintMode();
+        $printer->setJustification();
+        $testStr = $ds->code;
+        // $printer->pdf417Code($testStr);
+        $printer->text("NO Trans : " . $testStr . "\n");
+        $printer->text("Tanggal : " . date('d-m-Y H:i:s', time()) . "\n");
+        $printer->text("Kasir : " . auth()->user()->name . "\n");
+        // $printer->feed();
+        for ($i = 1; $i < 33; $i++) {
+            $printer->text("_");
+        }
+        $printer->text("\n");
+        foreach ($ds['details'] as $detail) {
+            $printer->text($detail->product_name);
+        }
         $printer->text("Hello World!\n");
         $printer->text("Hello World!\n");
         $printer->text("Hello World!\n");
-        $printer->text("Hello World!\n");
-        $printer->text("Hello World!\n");
+        $printer->feed(5);
         $printer->cut();
         $printer->close();
         return response()->json($ds);

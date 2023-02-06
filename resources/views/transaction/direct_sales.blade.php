@@ -179,64 +179,6 @@
   </div>
 </div>
 
-<div style="font-size: 12px" class="modal fade" id="modal-print" tabindex="-1">
-  <div class="modal-dialog modal-sm modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal-title">Print Order</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-12 text-center d-print-block">
-            <div class="row">
-              <div class="col-3">
-                <img width="60" src="/image/logo/logo.png" alt="">
-              </div>
-              <div class="col-9">
-                <strong class="text-center">Toko SS Bumi Indah</strong>
-                <br>
-                <small>Jl Bumi Indah Raya Ruko Union Blok ROR 10</small>
-              </div>
-            </div>
-            <hr style="margin: 0px !important;background:black;">
-            <div class="row">
-              <div class="col-4 text-left">Tanggal</div>
-              <div class="col-8 text-right">2 February 2023 17:23:59</div>
-              <div class="col-4 text-left">No</div>
-              <div class="col-8 text-right">DS2023020100001</div>
-            </div>
-            <br>
-            
-            <table style="border: 1px solid black;width:100%">
-              <thead style="border: 1px solid black">
-                  <tr>
-                      <th class="text-left">Produk</th>
-                      <th class="text-right">Harga</th>
-                      <th class="text-right">Qty</th>
-                      <th class="text-right">Jumlah</th>
-                  </tr>
-              </thead>
-              <tbody>
-                <tr>
-                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-left">Laurier Relax Night 30cm 16pcs - 1x 30cm 16pcs</td>
-                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">999,000</td>
-                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">1</td>
-                    <td style="border: 1px solid rgb(66, 61, 61)" class="text-right">999,000</td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="centered">Thanks for your purchase!</p>
-            <button id="btnPrint" class="d-print-none">Print</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 @endsection
 
 @section('content-script')
@@ -271,7 +213,7 @@
           bSortable: false,
           defaultContent:"--",
           mRender:function (data,type,full) {
-            return `${data.product.name??""} (${data.name})`
+            return `${data.product?.name??""} (${data.name})`
           }
         },
         {
@@ -370,10 +312,10 @@
             defaultContent:"--"
           },
           {
-            data:"name",
+            data:"product.name",
             defaultContent:"--",
             mRender:function(data,type,full){
-              return `${full.product.name} - ${data}`
+              return `${data} - ${full.name}`
             }
           },
           {
@@ -613,7 +555,6 @@
       })
   }
   function saveTransaction(){
-    // $('#modal-print').modal();
     let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
     let dataCash = $("#payment-type").find(':selected').attr('show-cash');
     let dataBank = $('input[name="bank"]:checked').val();
@@ -690,6 +631,7 @@
         }else{
           let detail = {
             product:params,
+            product_name:`${params.product?.name??""} (${params.name})`,
             product_id:params.id,
             qty:1,
             price:parseFloat(params.price),

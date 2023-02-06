@@ -9,7 +9,7 @@ class ItemConvertion extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['uom', 'product'];
+    protected $with = ['uom'];
     protected $hidden = ['uom_id', 'product_id'];
 
     public $casts = [
@@ -25,8 +25,8 @@ class ItemConvertion extends Model
         return $this->belongsTo(Uom::class);
     }
 
-    // public function getRouteKeyName()
-    // {
-    //     return 'barcode';
-    // }
+    public function getRouteKeyName()
+    {
+        return 'barcode';
+    }
 }
