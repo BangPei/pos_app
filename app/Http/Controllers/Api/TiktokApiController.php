@@ -14,8 +14,8 @@ class TiktokApiController extends Controller
     public $apiKey = "67eui64gqqriu";
     public $shopId = "7494670387281169228";
     public $apiSecret = "da24ac38ba6931114cd43e7b49f1bd0a7ae2f2e1";
-    public $refreshToken = "ROW_ZjYwOTRkN2VmNmFhNDk3OTU1NDgxN2UwNzRmMWMxMTM2NzYyNGEyNzM2NmQ5OQ";
-    public $access_token = "ROW_eAxJMAAAAADn98JTwrilby-8D5Me_l6_35jN75WHBB8ZqhOUIAQxbIG8_5peAVbBUkiZ_3pXJx51EKTNDjcAlk8UrCn4wrN9QPWraQaTvCp_NrkxMlxTgw";
+    public $refreshToken = "ROW_NTE3YjBhNjQyNWIzNDE3MTYzYjg5ZWRhNjg1NmZiYTU5MDJkNjg3Y2I0Nzc1Mg";
+    public $access_token = "ROW_2ZCpHwAAAADn98JTwrilby-8D5Me_l6_lCcm_fJAgkKrt8k6PbzEevSfoe6UJyBQBoC9PB0TF8UGQ9Cet20tHpWFkS-CUlgGXR3-OUKSAPUafi_0NdtP1Q";
     /**
      * Display a listing of the resource.
      *
