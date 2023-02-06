@@ -198,6 +198,7 @@
     total_item:0,
     subtotal:0,
     reduce:0,
+    is_cash:0,
     details:[]
   };
   $(document).ready(function(){
@@ -213,7 +214,7 @@
           bSortable: false,
           defaultContent:"--",
           mRender:function (data,type,full) {
-            return `${data.product?.name??""} (${data.name})`
+            return `${data.product?.name??""} ${data.name}`
           }
         },
         {
@@ -631,7 +632,7 @@
         }else{
           let detail = {
             product:params,
-            product_name:`${params.product?.name??""} (${params.name})`,
+            product_name:`${params.product?.name??""} ${params.name}`,
             product_id:params.id,
             qty:1,
             price:parseFloat(params.price),

@@ -115,25 +115,47 @@ class DirectSalesController extends Controller
         $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Toko SS Bumi Indah\n");
-        $printer->feed();
         $printer->selectPrintMode();
-        $printer->setJustification();
+        $printer->feed();
         $testStr = $ds->code;
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
         // $printer->pdf417Code($testStr);
         $printer->text("NO Trans : " . $testStr . "\n");
         $printer->text("Tanggal : " . date('d-m-Y H:i:s', time()) . "\n");
         $printer->text("Kasir : " . auth()->user()->name . "\n");
-        // $printer->feed();
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
         $printer->text("\n");
         foreach ($ds['details'] as $detail) {
-            $printer->text($detail->product_name);
+            $printer->setJustification();
+            $printer->text($detail->product_name . "\n");
+            $printer->setJustification(Printer::JUSTIFY_RIGHT);
+            $printer->text($detail->price . " x " . $detail->qty . " = " . $detail->subtotal . "\n");
+            $printer->setJustification();
         }
-        $printer->text("Hello World!\n");
-        $printer->text("Hello World!\n");
-        $printer->text("Hello World!\n");
+        $printer->setLineSpacing();
+        for ($i = 1; $i < 33; $i++) {
+            $printer->text("_");
+        }
+        $printer->setJustification(Printer::JUSTIFY_RIGHT);
+        $printer->text("Subtotal : " . $ds->subtotal . "\n");
+        $printer->text("Total Qty : " . $ds->total_item . "\n");
+        $printer->text("Diskon 1 : " . $ds->discount . "\n");
+        $printer->text("Diskon 2 : " . $ds->additional_discount . "\n");
+        $printer->text("Total : " . $ds->amount . "\n");
+        for ($i = 1; $i < 33; $i++) {
+            $printer->text("_");
+        }
+        $printer->text("Cash : " . $ds->cash . "\n");
+        $printer->text("Kembalian : " . $ds->change . "\n");
+        for ($i = 1; $i < 33; $i++) {
+            $printer->text("_");
+        }
+        $printer->selectPrintMode(Printer::MODE_FONT_B);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Terimakasih !!!\n");
+        $printer->text("Selamat Berbelanja Kembali !!!\n");
         $printer->feed(5);
         $printer->cut();
         $printer->close();
