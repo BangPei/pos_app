@@ -129,12 +129,12 @@ class DirectSalesController extends Controller
         $printer->text("\n");
         foreach ($ds['details'] as $detail) {
             $printer->setJustification();
+            $printer->setLineSpacing();
             $printer->text($detail->product_name . "\n");
             $printer->setJustification(Printer::JUSTIFY_RIGHT);
             $printer->text($detail->price . " x " . $detail->qty . " = " . $detail->subtotal . "\n");
             $printer->setJustification();
         }
-        $printer->setLineSpacing();
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
