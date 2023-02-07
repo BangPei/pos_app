@@ -1,6 +1,7 @@
 @extends('layouts.main-layout')
 @section('content-class')
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endsection
 
 @section('content-child')
@@ -9,9 +10,18 @@
     <div class="card-header">
       <h2 class="card-title">Form Penjualan <em id="edit-area"></em></h2>
       <div class="card-tools">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-          <i class="fas fa-eye"></i> List Produk
-        </a>
+        <div class="row text-right">
+          <div class="col-7">
+            <div class="form-group">
+              <input type="text" class="form-control datetimepicker-input" id="trans-date" data-toggle="datetimepicker" data-target="#trans-date"/>
+            </div>
+          </div>
+          <div class="col-5">
+            <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+              <i class="fas fa-eye"></i> List Produk
+            </a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="card-body table-responsive">
@@ -185,10 +195,12 @@
 <script src="/plugins/moment/moment.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
     code:null,
+    date:moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     customer_name:null,
     amount:0,
     discount:0,
@@ -202,6 +214,7 @@
     details:[]
   };
   $(document).ready(function(){
+    // var getTime = currentTime();
     $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
@@ -294,6 +307,15 @@
     })
 
     keyupTableNumber($('#table-order'))
+    $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
+    $('#trans-date').datetimepicker({
+      format:"DD MMMM YYYY",
+    });
+
+    $('#trans-date').on("change.datetimepicker", ({newDate, oldDate}) => {   
+      let date = new Date();           
+      directSales.date = moment(newDate).format(`YYYY-MM-DD HH:mm:ss`)
+    })
 
     $('#btnPrint').on('click',function(){
       window.print();
@@ -673,5 +695,21 @@
     reloadJsonDataTable(tblOrder,directSales.details);
     countTotality();
   }
+
+  function currentTime(selectDate = new Date()) {
+  let date = selectDate; 
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+  let ss = date.getSeconds();
+
+   hh = (hh < 10) ? "0" + hh : hh;
+   mm = (mm < 10) ? "0" + mm : mm;
+   ss = (ss < 10) ? "0" + ss : ss;
+    
+   let time = hh + ":" + mm + ":" + ss + " ";
+
+   $('#trans-date').val(`${moment(date).format("DD MMM YYYY")} ${time}`); 
+  let t = setTimeout(function(){ currentTime() }, 1000);
+}
 </script>
 @endsection
