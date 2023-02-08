@@ -210,6 +210,7 @@
     total_item:0,
     subtotal:0,
     reduce:0,
+    reduce_value:0,
     is_cash:0,
     details:[]
   };
@@ -311,12 +312,6 @@
     $('#trans-date').datetimepicker({
       format:"DD MMMM YYYY",
     });
-
-    $('#trans-date').on("change.datetimepicker", ({newDate, oldDate}) => {   
-      let date = new Date();           
-      directSales.date = moment(newDate).format(`YYYY-MM-DD HH:mm:ss`)
-    })
-
     $('#btnPrint').on('click',function(){
       window.print();
     })
@@ -548,6 +543,17 @@
     dsCode!=""?getDirectSales():null;
   })
 
+  function getPayments() {
+    ajax(null, `{{URL::to('payment/get')}}`, "GET",
+          function(json) {
+            json.forEach(e => {
+              $('#payment-type').append(`
+                <option value="${e.id}" data-reduce="${e.reduce?.reduce??0}" show-cash= ${e.show_cash}  data-atm=${e.show_atm} ${e.is_default?"selected":""} data-id="${e.id}">${e.name}</option>
+              `)
+            });
+      })
+  }
+
   function getDirectSales(){
       let data = {
           code:dsCode,
@@ -593,6 +599,9 @@
       alert('Uang Tunai Tidak Boleh Kosong')
       return false;
     }
+    let now = new Date();
+    let val = `${$('#trans-date').val()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    directSales.date = moment(val,"DD MMMM YYYY HH:mm:ss").format(`YYYY-MM-DD HH:mm:ss`)
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
     $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
@@ -620,9 +629,9 @@
     directSales.discount = discount;
     directSales.total_item = qty;
     let subAmount = directSales.subtotal-(directSales.discount+(directSales.additional_discount))
-    let persentResult = (subAmount*(directSales.reduce/100));
-    directSales.amount = subAmount+persentResult;
-    $('#reduce').html(formatNumber(persentResult))
+    directSales.reduce_value = (subAmount*(directSales.reduce/100));
+    directSales.amount = subAmount+directSales.reduce_value;
+    $('#reduce').html(formatNumber(directSales.reduce_value))
     $('#subtotal').html(formatNumber(directSales.subtotal))
     $('#discount-1').html(formatNumber(directSales.discount))
     $('#total-qty').html(formatNumber(directSales.total_item))
@@ -691,6 +700,8 @@
     $('#is-cash').prop('checked',false);
     $('input[name="bank"]').prop('checked',false)
     $('#customer-name').val('')
+    $('#discount-2').val('')
+    $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);
     countTotality();

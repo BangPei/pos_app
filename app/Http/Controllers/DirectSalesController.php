@@ -74,6 +74,7 @@ class DirectSalesController extends Controller
         $fullCode = $code . "" . $currDate . "" . $n2;
         $ds = new DirectSales();
         $ds->code = $fullCode;
+        $ds->date = $request->date;
         $ds->customer_name = $request->customer_name;
         $ds->amount = $request->amount;
         $ds->discount = $request->discount;
@@ -88,6 +89,7 @@ class DirectSalesController extends Controller
         $ds->reduce = $request->reduce;
         $ds->is_cash = $request->is_cash;
         $ds->bank_id = $request->bank_id;
+        $ds->reduce_value = $request->reduce_value;
         $ds->save();
 
         $details = [];
@@ -121,40 +123,48 @@ class DirectSalesController extends Controller
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         // $printer->pdf417Code($testStr);
         $printer->text("NO Trans : " . $testStr . "\n");
-        $printer->text("Tanggal : " . date('d-m-Y H:i:s', time()) . "\n");
+        $timestamp = strtotime($ds->date);
+        $printer->text("Tanggal : " . date('d-m-Y H:i:s', $timestamp) . "\n");
         $printer->text("Kasir : " . auth()->user()->name . "\n");
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
         $printer->text("\n");
+        $printer->setEmphasis(true);
         foreach ($ds['details'] as $detail) {
             $printer->setJustification();
             $printer->setLineSpacing();
             $printer->text($detail->product_name . "\n");
             $printer->setJustification(Printer::JUSTIFY_RIGHT);
-            $printer->text($detail->price . " x " . $detail->qty . " = " . $detail->subtotal . "\n");
+            $printer->text(number_format($detail->price, 0, ',', ',') . " x " . number_format($detail->qty, 0, ',', ',') . " = " . number_format($detail->subtotal, 0, ',', ',') . "\n");
             $printer->setJustification();
         }
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
         $printer->setJustification(Printer::JUSTIFY_RIGHT);
-        $printer->text("Subtotal : " . $ds->subtotal . "\n");
-        $printer->text("Total Qty : " . $ds->total_item . "\n");
-        $printer->text("Diskon 1 : " . $ds->discount . "\n");
-        $printer->text("Diskon 2 : " . $ds->additional_discount . "\n");
-        $printer->text("Total : " . $ds->amount . "\n");
+        $printer->text("Subtotal : " . number_format($ds->subtotal, 0, ',', ',') . "\n");
+        $printer->text("Total Qty : " . number_format($ds->total_item, 0, ',', ',') . "\n");
+        $printer->text("Diskon 1 : " . number_format($ds->discount, 0, ',', ',') . "\n");
+        $printer->text("Diskon 2 : " . number_format($ds->additional_discount, 0, ',', ',') . "\n");
+        if ($ds->reduce !== 0) {
+            $printer->text("Cost Card (" . $ds->reduce . "%) : " . number_format($ds->reduce_value, 0, ',', ',') . "\n");
+        }
+        $printer->text("Total : " . number_format($ds->amount, 0, ',', ',') . "\n");
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
-        $printer->text("Cash : " . $ds->cash . "\n");
-        $printer->text("Kembalian : " . $ds->change . "\n");
-        for ($i = 1; $i < 33; $i++) {
-            $printer->text("_");
+        if ($ds->paymentType->show_cash) {
+            $printer->text("Cash : " . number_format($ds->cash, 0, ',', ',') . "\n");
+            $printer->text("Kembalian : " . number_format($ds->change, 0, ',', ',') . "\n");
+            for ($i = 1; $i < 33; $i++) {
+                $printer->text("_");
+            }
         }
         $printer->selectPrintMode(Printer::MODE_FONT_B);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Terimakasih !!!\n");
+        $printer->text($ds->PaymentType->name . "Selamat Berbelanja Kembali !!!\n");
         $printer->text("Selamat Berbelanja Kembali !!!\n");
         $printer->feed(5);
         $printer->cut();

@@ -145,4 +145,10 @@ class PaymentTypeController extends Controller
         ]);
         return Redirect::to('payment');
     }
+
+    public function get()
+    {
+        $paymentTypes = PaymentType::all();
+        return response()->json($paymentTypes);
+    }
 }
