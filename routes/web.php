@@ -55,6 +55,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::put('payment/default', [PaymentTypeController::class, 'changePayment'])->middleware('auth');
     Route::put('payment/status', [PaymentTypeController::class, 'changeStatus'])->middleware('auth');
+    Route::get('payment/get', [PaymentTypeController::class, 'get'])->middleware('auth');
     Route::resource('payment', PaymentTypeController::class)->middleware('auth');
 
     Route::resource('supplier', SupplierController::class)->middleware('auth');

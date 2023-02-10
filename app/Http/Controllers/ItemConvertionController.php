@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ItemConvertion;
 use App\Http\Requests\StoreItemConvertionRequest;
 use App\Http\Requests\UpdateItemConvertionRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
@@ -20,11 +21,13 @@ class ItemConvertionController extends Controller
     {
         //
     }
+
     public function dataTable(UtilitiesRequest $request)
     {
-        $itemConvertion = ItemConvertion::where('is_active', 1);
+        // $product = new Product();
+        $itemConvertions = ItemConvertion::where('is_active', 1)->with('product');
         if ($request->ajax()) {
-            return datatables()->of($itemConvertion)->make(true);
+            return datatables()->of($itemConvertions)->make(true);
         }
     }
 
@@ -57,14 +60,17 @@ class ItemConvertionController extends Controller
      */
     public function show(Request $request)
     {
-        $product = new ItemConvertion();
+        $convertion = new ItemConvertion();
         if ($request->ajax()) {
-            $product = ItemConvertion::where([
+            $convertion = ItemConvertion::where([
                 ['barcode', $request->barcode],
                 ['is_active', 1]
-            ])->first();
+            ])->with('product')->first();
+            // $product = new Product();
+            // $product = Product::where('id', $convertion->product_id)->first();
+            // $convertion['product_name'] = $product->name;
         }
-        return response()->json($product);
+        return response()->json($convertion);
     }
 
     /**

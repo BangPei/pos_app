@@ -1,6 +1,7 @@
 @extends('layouts.main-layout')
 @section('content-class')
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endsection
 
 @section('content-child')
@@ -9,9 +10,18 @@
     <div class="card-header">
       <h2 class="card-title">Form Penjualan <em id="edit-area"></em></h2>
       <div class="card-tools">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-          <i class="fas fa-eye"></i> List Produk
-        </a>
+        <div class="row text-right">
+          <div class="col-7">
+            <div class="form-group">
+              <input type="text" class="form-control datetimepicker-input" id="trans-date" data-toggle="datetimepicker" data-target="#trans-date"/>
+            </div>
+          </div>
+          <div class="col-5">
+            <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+              <i class="fas fa-eye"></i> List Produk
+            </a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="card-body table-responsive">
@@ -185,10 +195,12 @@
 <script src="/plugins/moment/moment.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
     code:null,
+    date:moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     customer_name:null,
     amount:0,
     discount:0,
@@ -198,9 +210,12 @@
     total_item:0,
     subtotal:0,
     reduce:0,
+    reduce_value:0,
+    is_cash:0,
     details:[]
   };
   $(document).ready(function(){
+    // var getTime = currentTime();
     $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
@@ -209,9 +224,12 @@
       data:directSales.details,
       columns:[
         {
-          data:"product.name",
+          data:"product",
           bSortable: false,
-          defaultContent:"--"
+          defaultContent:"--",
+          mRender:function (data,type,full) {
+            return `${data.product?.name??""} ${data.name}`
+          }
         },
         {
           data:"product.uom.name",
@@ -290,6 +308,13 @@
     })
 
     keyupTableNumber($('#table-order'))
+    $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
+    $('#trans-date').datetimepicker({
+      format:"DD MMMM YYYY",
+    });
+    $('#btnPrint').on('click',function(){
+      window.print();
+    })
 
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
@@ -305,8 +330,11 @@
             defaultContent:"--"
           },
           {
-            data:"name",
-            defaultContent:"--"
+            data:"product.name",
+            defaultContent:"--",
+            mRender:function(data,type,full){
+              return `${data} - ${full.name}`
+            }
           },
           {
             data:"uom.name",
@@ -515,6 +543,17 @@
     dsCode!=""?getDirectSales():null;
   })
 
+  function getPayments() {
+    ajax(null, `{{URL::to('payment/get')}}`, "GET",
+          function(json) {
+            json.forEach(e => {
+              $('#payment-type').append(`
+                <option value="${e.id}" data-reduce="${e.reduce?.reduce??0}" show-cash= ${e.show_cash}  data-atm=${e.show_atm} ${e.is_default?"selected":""} data-id="${e.id}">${e.name}</option>
+              `)
+            });
+      })
+  }
+
   function getDirectSales(){
       let data = {
           code:dsCode,
@@ -560,6 +599,9 @@
       alert('Uang Tunai Tidak Boleh Kosong')
       return false;
     }
+    let now = new Date();
+    let val = `${$('#trans-date').val()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    directSales.date = moment(val,"DD MMMM YYYY HH:mm:ss").format(`YYYY-MM-DD HH:mm:ss`)
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
     $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
@@ -587,9 +629,9 @@
     directSales.discount = discount;
     directSales.total_item = qty;
     let subAmount = directSales.subtotal-(directSales.discount+(directSales.additional_discount))
-    let persentResult = (subAmount*(directSales.reduce/100));
-    directSales.amount = subAmount+persentResult;
-    $('#reduce').html(formatNumber(persentResult))
+    directSales.reduce_value = (subAmount*(directSales.reduce/100));
+    directSales.amount = subAmount+directSales.reduce_value;
+    $('#reduce').html(formatNumber(directSales.reduce_value))
     $('#subtotal').html(formatNumber(directSales.subtotal))
     $('#discount-1').html(formatNumber(directSales.discount))
     $('#total-qty').html(formatNumber(directSales.total_item))
@@ -621,6 +663,7 @@
         }else{
           let detail = {
             product:params,
+            product_name:`${params.product?.name??""} ${params.name}`,
             product_id:params.id,
             qty:1,
             price:parseFloat(params.price),
@@ -657,9 +700,27 @@
     $('#is-cash').prop('checked',false);
     $('input[name="bank"]').prop('checked',false)
     $('#customer-name').val('')
+    $('#discount-2').val('')
+    $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);
     countTotality();
   }
+
+  function currentTime(selectDate = new Date()) {
+  let date = selectDate; 
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+  let ss = date.getSeconds();
+
+   hh = (hh < 10) ? "0" + hh : hh;
+   mm = (mm < 10) ? "0" + mm : mm;
+   ss = (ss < 10) ? "0" + ss : ss;
+    
+   let time = hh + ":" + mm + ":" + ss + " ";
+
+   $('#trans-date').val(`${moment(date).format("DD MMM YYYY")} ${time}`); 
+  let t = setTimeout(function(){ currentTime() }, 1000);
+}
 </script>
 @endsection

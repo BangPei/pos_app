@@ -66,6 +66,7 @@ class MultipleDiscountController extends Controller
             $detail->multiple_discount_id = $md["id"];
             $detail->item_convertion_barcode = $request->details[$i]["item_convertion"]['barcode'];
             $detail->is_active = $request->details[$i]['is_active'] ? 1 : 0;
+            $detail->product_name = $request->details[$i]['product_name'];
             array_push($details, $detail);
         }
         $md->details()->saveMany($details);
@@ -137,7 +138,7 @@ class MultipleDiscountController extends Controller
                 'is_active' => $multipleDiscount['is_active'] ? 1 : 0,
             ]);
 
-            $multipleDiscount->details = $details;
+            $multipleDiscount['details'] = $details;
             return response()->json($multipleDiscount);
         } catch (Exception $e) {
             print($e);
