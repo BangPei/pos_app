@@ -139,7 +139,7 @@ class TiktokApiController extends Controller
                 array_push($fullOrder, $order);
             }
         }
-        return $orderFull;
+        return $fullOrder;
     }
 
     private function mapingOrder($headerObject, $detail)
