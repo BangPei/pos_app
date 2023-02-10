@@ -45,6 +45,7 @@
                         <table class="table table-striped table-bordered table-sm" id="table-product-discount">
                             <thead>
                                 <tr>
+                                    <th>Barcode</th>
                                     <th>Nama</th>
                                     <th>Harga</th>
                                     <th>Status</th>
@@ -80,6 +81,7 @@
                             <thead>
                                 <tr>
                                     <th><input type="checkbox" class="checkAll"></th>
+                                    <th>Barcode</th>
                                     <th>Nama</th>
                                     <th>Satuan</th>
                                     <th>Harga</th>
@@ -114,8 +116,15 @@
             data: multipleDiscount.details,
             columns:[
                 {
+                    data:"item_convertion.barcode",
+                    defaultContent:"--",
+                },
+                {
                     data:"item_convertion.name",
                     defaultContent:"--",
+                    mRender:function(data,type,full){
+                        return `${full.product_name} ${data}`
+                    }
                 },
                 {
                     data:"item_convertion.price",
@@ -146,10 +155,13 @@
             columnDefs: [
                 { 
                     className: "text-center",
-                    targets: [2,3]
+                    targets: [3,4]
                 },
                 { width: '10%',
-                    targets: [1,2,3]
+                    targets: [2,3,4]
+                },
+                { width: '20%',
+                    targets: [0]
                 },
             ],
         })
@@ -174,8 +186,15 @@
                         }
                     },
                     {
-                        data:"name",
-                        defaultContent:"--"
+                        data:"barcode",
+                        defaultContent:"--",
+                    },
+                    {
+                        data:"product.name",
+                        defaultContent:"--",
+                        mRender:function(data,type,full){
+                            return `${data} - ${full.name}`
+                        }
                     },
                     {
                         data:"uom.name",
@@ -192,7 +211,7 @@
                 columnDefs: [
                     { 
                         className: "text-center",
-                        targets: [0,2,3]
+                        targets: [0,3,4]
                     },
                 ],
                 order: [[1, 'desc']],
@@ -201,7 +220,7 @@
                     var node = api.rows().nodes()
                     for (var i = 0; i < node.length; i++) {
                         let dataId = $(node[i]).find('input').attr('data-id')
-                        let isExist = multipleDiscount.details.some(item => item.item_convertion_id == dataId)
+                        let isExist = multipleDiscount.details.some(item => item.item_convertion.id == dataId)
                         if (isExist) {
                             $(node[i]).find('input').prop('checked',true)
                         }
@@ -214,6 +233,7 @@
             let item_convertion = tblProduct.row($(this).parents('tr')).data();
             let val = $(this).prop('checked');
             let detail = {
+                product_name:item_convertion.product.name,
                 item_convertion_id:item_convertion.id,
                 item_convertion:item_convertion,
                 is_active:true,

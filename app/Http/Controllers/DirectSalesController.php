@@ -129,47 +129,53 @@ class DirectSalesController extends Controller
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
-        $printer->text("\n");
-        $printer->setEmphasis(true);
         foreach ($ds['details'] as $detail) {
-            $printer->setJustification();
-            $printer->setLineSpacing();
             $printer->text($detail->product_name . "\n");
             $printer->setJustification(Printer::JUSTIFY_RIGHT);
             $printer->text(number_format($detail->price, 0, ',', ',') . " x " . number_format($detail->qty, 0, ',', ',') . " = " . number_format($detail->subtotal, 0, ',', ',') . "\n");
-            $printer->setJustification();
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
         }
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
-        $printer->setJustification(Printer::JUSTIFY_RIGHT);
-        $printer->text("Subtotal : " . number_format($ds->subtotal, 0, ',', ',') . "\n");
-        $printer->text("Total Qty : " . number_format($ds->total_item, 0, ',', ',') . "\n");
-        $printer->text("Diskon 1 : " . number_format($ds->discount, 0, ',', ',') . "\n");
-        $printer->text("Diskon 2 : " . number_format($ds->additional_discount, 0, ',', ',') . "\n");
+        $printer->feed();
+        $printer->initialize();
+        $printer->text($this->textPos("Total Qty", "(" . number_format($ds->total_item, 0, ',', ',') . ")"));
+        $printer->text($this->textPos("Subtotal", number_format($ds->subtotal, 0, ',', ',')));
+        $printer->text($this->textPos("Diskon 1", number_format($ds->discount, 0, ',', ',')));
+        $printer->text($this->textPos("Diskon 2", number_format($ds->additional_discount, 0, ',', ',')));
         if ($ds->reduce !== 0) {
-            $printer->text("Cost Card (" . $ds->reduce . "%) : " . number_format($ds->reduce_value, 0, ',', ',') . "\n");
+            $printer->text($this->textPos("Biaya Kartu (" . $ds->reduce . "%)", number_format($ds->reduce_value, 0, ',', ',')));
         }
-        $printer->text("Total : " . number_format($ds->amount, 0, ',', ',') . "\n");
+        $printer->text($this->textPos("Total", number_format($ds->amount, 0, ',', ',')));
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
         if ($ds->paymentType->show_cash) {
-            $printer->text("Cash : " . number_format($ds->cash, 0, ',', ',') . "\n");
-            $printer->text("Kembalian : " . number_format($ds->change, 0, ',', ',') . "\n");
+            $printer->text($this->textPos("Cash", number_format($ds->cash, 0, ',', ',')));
+            $printer->text($this->textPos("Kembalian", number_format($ds->change, 0, ',', ',')));
             for ($i = 1; $i < 33; $i++) {
-                $printer->text("_");
+                $printer->text("=");
             }
         }
+        $printer->feed();
+        $printer->initialize();
         $printer->selectPrintMode(Printer::MODE_FONT_B);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Terimakasih !!!\n");
-        $printer->text($ds->PaymentType->name . "Selamat Berbelanja Kembali !!!\n");
         $printer->text("Selamat Berbelanja Kembali !!!\n");
         $printer->feed(5);
         $printer->cut();
         $printer->close();
         return response()->json($ds);
+    }
+
+    function textPos($leftStr, $rightStr, $fontSize = 1)
+    {
+        $maxChar = (int)(32 / $fontSize);
+        $emptySpace = $maxChar - strlen($leftStr) - strlen($rightStr);
+        $space = str_repeat(' ', $emptySpace);
+        return $leftStr . $space . $rightStr;
     }
 
     /**
