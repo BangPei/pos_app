@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItemConvertionsTable extends Migration
+class CreateStocksTables extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,12 @@ class CreateItemConvertionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('item_convertions', function (Blueprint $table) {
+        Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('barcode')->unique();
             $table->string('name');
-            $table->foreignId('product_id');
-            $table->foreignId('uom_id');
-            $table->float('price');
-            $table->integer('qtyConvertion');
-            $table->boolean('is_active')->default(true);
+            $table->integer('value');
+            $table->foreignId('created_by_id');
+            $table->foreignId('edit_by_id');
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ class CreateItemConvertionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_convertions');
+        Schema::dropIfExists('stocks');
     }
 }

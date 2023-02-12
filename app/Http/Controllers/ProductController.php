@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\ItemConvertion;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Stock;
 use App\Models\Uom;
 use Exception;
 use Illuminate\Support\Facades\Redirect;
@@ -40,6 +40,7 @@ class ProductController extends Controller
             "menu" => "Master",
             "categories" => Category::where('is_active', 1)->get(),
             "uoms" => Uom::all(),
+            "stocks" => Stock::all(),
         ]);
     }
 
@@ -51,29 +52,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = new Product();
-        $product->name = $request->name;
-        $product->category_id = $request->category['id'];
-        $product->created_by_id = auth()->user()->id;
-        $product->edit_by_id = auth()->user()->id;
-        $product->save();
+        $product = $request->validate(
+            [
+                'barcode' => 'required',
+                'name' => 'required',
+                'price' => 'required',
+                'convertion' => 'required',
+                'stock_id' => 'required',
+                'category_id' => 'required',
+                'uom_id' => 'required',
+                'image' => '',
+            ]
+        );
 
-        $itemConvertion = [];
-        for ($i = 0; $i < count($request->items_convertion); $i++) {
-            $Convertion = new ItemConvertion();
-            $Convertion->product_id =  $product['id'];
-            $Convertion->barcode =  $request->items_convertion[$i]["barcode"];
-            $Convertion->name =  $request->items_convertion[$i]["name"];
-            $Convertion->qtyConvertion =  $request->items_convertion[$i]["qtyConvertion"];
-            $Convertion->price =  $request->items_convertion[$i]["price"];
-            $Convertion->uom_id =  $request->items_convertion[$i]["uom"]['id'];
-            $Convertion->is_active =  $request->items_convertion[$i]["is_active"] ? 1 : 0;
-            // $Convertion->save();
-            array_push($itemConvertion, $Convertion);
+        $product['is_active'] = true;
+        if (isset($product['image'])) {
+            $product['image'] = $request->file('image')->store('product-image');
         }
-        $product->itemsConvertion()->saveMany($itemConvertion);
-        $product->items_convertion = $itemConvertion;
-        return response()->json($product);
+        $product['created_by_id'] = auth()->user()->id;
+        $product['edit_by_id'] = auth()->user()->id;
+
+        Product::create($product);
+
+        return Redirect::to('product');
     }
 
     /**
@@ -87,8 +88,6 @@ class ProductController extends Controller
         $product = new Product();
         if ($request->ajax()) {
             $product = Product::where('id', $request->id)->first();
-            $itemConvertions = ItemConvertion::where('product_id', $request->id)->get();
-            $product['items_convertion'] = $itemConvertions;
         }
         return response()->json($product);
     }
@@ -106,6 +105,7 @@ class ProductController extends Controller
             "menu" => "Master",
             "categories" => Category::all(),
             "uoms" => Uom::all(),
+            "uoms" => Stock::all(),
             "product" => $product,
         ]);
     }
@@ -122,29 +122,12 @@ class ProductController extends Controller
         try {
             $product = $request;
             if ($request->ajax()) {
-
-                ItemConvertion::where('product_id', $product['id'])->delete();
-                $itemConvertion = [];
-                for ($i = 0; $i < count($product->items_convertion); $i++) {
-                    $convertion = new ItemConvertion();
-                    $convertion->product_id =  $product['id'];
-                    $convertion->barcode =  $product->items_convertion[$i]["barcode"];
-                    $convertion->name =  $product->items_convertion[$i]["name"];
-                    $convertion->qtyConvertion =  $product->items_convertion[$i]["qtyConvertion"];
-                    $convertion->price =  $product->items_convertion[$i]["price"];
-                    $convertion->uom_id =  $product->items_convertion[$i]["uom"]['id'];
-                    $convertion->is_active =  $product->items_convertion[$i]["is_active"] ? 1 : 0;
-                    $convertion->save();
-                    array_push($itemConvertion, $convertion);
-                }
                 Product::where('id', $product['id'])->update([
                     'name' => $product['name'],
                     'category_id' => $product['category']['id'],
                     'edit_by_id' => auth()->user()->id,
                     'is_active' => $product['is_active'] ? 1 : 0,
                 ]);
-
-                $product->items_convertion = $itemConvertion;
             }
             return response()->json($product);
         } catch (Exception $e) {
@@ -160,9 +143,6 @@ class ProductController extends Controller
                 'is_active' => $product['is_active'] ? 1 : 0,
                 'category_id' => $product['category_id'],
                 'edit_by_id' => auth()->user()->id,
-            ]);
-            ItemConvertion::where('product_id', $product['id'])->update([
-                "is_active" => $product['is_active'] ? 1 : 0,
             ]);
         }
         return response()->json($product);

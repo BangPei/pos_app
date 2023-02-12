@@ -18,7 +18,7 @@ class CreatePurchaseDetailsTable extends Migration
             // $table->unsignedInteger('purchase_id');
             $table->foreignId('purchase_id')->references('id')->on('purchases');
             // $table->unsignedInteger('product_id');
-            $table->foreignId('product_id')->references('id')->on('products');
+            $table->foreignId('product_id');
             $table->float('invoice_price')->default(0);
             $table->float('pcs_price')->default(0);
             $table->integer('qty')->default(0);

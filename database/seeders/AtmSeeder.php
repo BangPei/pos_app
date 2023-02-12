@@ -21,12 +21,5 @@ class AtmSeeder extends Seeder
             "created_by_id" => 1,
             "edit_by_id" => 1,
         ]);
-        Atm::create([
-            "name" => "Mandiri",
-            "description" => "Pembayaran Dengan ATM Mandiri",
-            "is_active" => true,
-            "created_by_id" => 1,
-            "edit_by_id" => 1,
-        ]);
     }
 }

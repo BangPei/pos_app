@@ -15,6 +15,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SearchTaskController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
@@ -59,6 +60,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('payment', PaymentTypeController::class)->middleware('auth');
 
     Route::resource('supplier', SupplierController::class)->middleware('auth');
+
+    Route::resource('stock', StockController::class)->middleware('auth');
 
     Route::resource('setting', SettingController::class)->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');

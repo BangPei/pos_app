@@ -32,10 +32,6 @@ class MultipleDiscountController extends Controller
      */
     public function create(UtilitiesRequest $request)
     {
-        $products = ItemConvertion::all();
-        if ($request->ajax()) {
-            return datatables()->of($products)->make(true);
-        }
         return view('discount/multiple/form', [
             "title" => "Diskon Form",
             "menu" => "Diskon"
@@ -97,10 +93,6 @@ class MultipleDiscountController extends Controller
      */
     public function edit(MultipleDiscount $multipleDiscount, UtilitiesRequest $request)
     {
-        $products = ItemConvertion::all();
-        if ($request->ajax()) {
-            return datatables()->of($products)->make(true);
-        }
         return view('discount/multiple/form', [
             "title" => "Diskon Form",
             "menu" => "Diskon",
