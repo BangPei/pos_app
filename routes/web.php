@@ -43,6 +43,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('user', UserController::class)->middleware('auth');
 
     Route::put('product/status', [ProductController::class, 'changeStatus'])->middleware('auth');
+    Route::get('product/dataTable', [ProductController::class, 'dataTable'])->middleware('auth');
     Route::resource('product', ProductController::class)->middleware('auth');
 
     Route::put('category/status', [CategoryController::class, 'changeStatus'])->middleware('auth');

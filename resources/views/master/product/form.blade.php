@@ -10,8 +10,12 @@
                 <h2 class="card-title">Form Produk</h2>
             </div>
             <div class="card-body ">
-                <form method="post" action="/product" enctype="multipart/form-data">
+                <form method="post" action={{ isset($product) ?"/product/".$product->id:"/product"}} enctype="multipart/form-data">
                     @csrf
+                    @if (isset($product->id))
+                        <input class="d-none" name="id" id="id" type="text" value="{{ $product->id }}">
+                        @method('put')
+                    @endif
                     <div class="row">
                         <div class="col-md-12">
                             @if (session()->has('message'))

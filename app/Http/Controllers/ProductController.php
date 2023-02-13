@@ -19,13 +19,26 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UtilitiesRequest $request)
+    public function index()
     {
-        $products = Product::all();
-        if ($request->ajax()) {
-            return datatables()->of($products)->make(true);
+        $product = Product::latest();
+        if (request('search')) {
+            $product->where('barcode', request('search'))
+                ->orWhere('name', 'like', '%' . request('search') . '%');
         }
-        return view('master/product/product', ["title" => "Product", "menu" => "Master",]);
+
+        return view('master/product/product', [
+            "title" => "Product",
+            "menu" => "Master",
+            "products" => $product->paginate(20)->withQueryString()
+        ]);
+    }
+    public function dataTable(UtilitiesRequest $request)
+    {
+        $product = Product::all();
+        if ($request->ajax()) {
+            return datatables()->of($product)->make(true);
+        }
     }
 
     /**
@@ -61,13 +74,13 @@ class ProductController extends Controller
                 'stock_id' => 'required',
                 'category_id' => 'required',
                 'uom_id' => 'required',
-                'image' => '',
+                'image' => 'image|file',
             ]
         );
 
         $product['is_active'] = true;
         if (isset($product['image'])) {
-            $product['image'] = $request->file('image')->store('product-image');
+            $product['image'] = $request->file('image')->store('product');
         }
         $product['created_by_id'] = auth()->user()->id;
         $product['edit_by_id'] = auth()->user()->id;
@@ -105,7 +118,7 @@ class ProductController extends Controller
             "menu" => "Master",
             "categories" => Category::all(),
             "uoms" => Uom::all(),
-            "uoms" => Stock::all(),
+            "stocks" => Stock::all(),
             "product" => $product,
         ]);
     }
@@ -119,20 +132,36 @@ class ProductController extends Controller
      */
     public function update(Request $request)
     {
-        try {
-            $product = $request;
-            if ($request->ajax()) {
-                Product::where('id', $product['id'])->update([
-                    'name' => $product['name'],
-                    'category_id' => $product['category']['id'],
-                    'edit_by_id' => auth()->user()->id,
-                    'is_active' => $product['is_active'] ? 1 : 0,
-                ]);
-            }
-            return response()->json($product);
-        } catch (Exception $e) {
-            print($e);
+        $product = $request->validate(
+            [
+                'barcode' => 'required',
+                'name' => 'required',
+                'price' => 'required',
+                'convertion' => 'required',
+                'stock_id' => 'required',
+                'category_id' => 'required',
+                'uom_id' => 'required',
+                'image' => 'image|file',
+            ]
+        );
+        $product['id'] = $request->input('id');
+        if (isset($product['image'])) {
+            $product['image'] = $request->file('image')->store('product');
         }
+        Product::where('id', $product['id'])->update([
+            'name' => $product['name'],
+            'is_active' => $product['is_active'] = true,
+            'image' => $product['image'],
+            'edit_by_id' => auth()->user()->id,
+            'barcode' => $product['barcode'],
+            'price' => $product['price'],
+            'convertion' => $product['convertion'],
+            'stock_id' => $product['stock_id'],
+            'category_id' => $product['category_id'],
+            'uom_id' => $product['uom_id'],
+        ]);
+        session()->flash('message', 'Berhasil merubah satuan ' . $request['name']);
+        return Redirect::to("/product/" . $product['id'] . "/edit");
     }
     public function changeStatus(Request $request)
     {

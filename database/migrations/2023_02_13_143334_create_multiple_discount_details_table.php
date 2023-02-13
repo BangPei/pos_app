@@ -15,8 +15,9 @@ class CreateMultipleDiscountDetailsTable extends Migration
     {
         Schema::create('multiple_discount_details', function (Blueprint $table) {
             $table->id();
-            $table->string('item_convertion_barcode');
+            $table->foreignId('product_id');
             $table->foreignId('multiple_discount_id');
+            $table->string('product_name')->default(null);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -41,8 +41,6 @@ class StockController extends Controller
         $stock = $request->validate([
             'name' => 'required',
             'value' => 'required',
-            'created_by_id' => '',
-            'edit_by_id' => '',
         ]);
         $stock['created_by_id'] = auth()->user()->id;
         $stock['edit_by_id'] = auth()->user()->id;
