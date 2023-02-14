@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::latest();
+        $product = Product::latest()->where('stock_id', "");
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');
@@ -30,6 +30,8 @@ class ProductController extends Controller
         return view('master/product/product', [
             "title" => "Product",
             "menu" => "Master",
+            "search" => request('search'),
+            "count" => count(Product::all()),
             "products" => $product->paginate(20)->withQueryString()
         ]);
     }
@@ -145,9 +147,7 @@ class ProductController extends Controller
             ]
         );
         $product['id'] = $request->input('id');
-        if (isset($product['image'])) {
-            $product['image'] = $request->file('image')->store('product');
-        }
+        $product['image'] = isset($product['image']) ? $request->file('image')->store('product') : null;
         Product::where('id', $product['id'])->update([
             'name' => $product['name'],
             'is_active' => $product['is_active'] = true,
@@ -161,7 +161,8 @@ class ProductController extends Controller
             'uom_id' => $product['uom_id'],
         ]);
         session()->flash('message', 'Berhasil merubah satuan ' . $request['name']);
-        return Redirect::to("/product/" . $product['id'] . "/edit");
+        // return Redirect::to("/product/" . $product['id'] . "/edit");
+        return Redirect::to('product');
     }
     public function changeStatus(Request $request)
     {

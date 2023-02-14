@@ -12,7 +12,7 @@
         <div class="col-6">
           <form action="" method="">
             <div class="input-group">
-              <input autofocus="true" type="text" name="search" id="search" class="form-control" placeholder="Cari Barcode atau Nama Barang" >
+              <input autofocus="true" type="text" value="{{ $search }}" name="search" id="search" class="form-control" placeholder="Cari Barcode atau Nama Barang" >
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
               </div>
@@ -86,69 +86,8 @@
 
   <div class="d-flex justify-content-center">
     {{ $products->links() }}
+    <br>
+    <p>{{ $count }}</p>
   </div>
 </div>
-@endsection
-
-@section('content-script')
-<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script>
-  $(document).ready(function(){
-    tblProduct = $('#table-product').DataTable({
-      processing:true,
-      serverSide:true,
-      ajax:{
-        url:"{{ route('product.index') }}",
-        type:"GET",
-      },
-      columns:[
-        {
-          data:"name",
-          defaultContent:"--"
-        },
-        {
-          data:"category.name",
-          defaultContent:"--"
-        },
-        {
-          data:"is_active",
-          defaultContent:"--",
-          mRender:function(data,type,full){
-            // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
-            return `<div class="custom-control custom-switch">
-                      <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.id}">
-                      <label class="custom-control-label" for="switch-${full.id}"></label>
-                    </div>`
-          }
-        },
-        {
-					data: 'id',
-					mRender: function(data, type, full) {
-						return `<a href="/product/${full.id}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>`
-					}
-				}
-      ],
-      columnDefs: [
-          { 
-            className: "text-center",
-            targets: [1,2,3]
-          },
-        ],
-      order:[[3,'desc'],[0,'asc']]
-    })
-    $('div.dataTables_filter input', tblProduct.table().container()).focus();
-
-    $('#table-product').on('click','.custom-control-input',function() {
-      let bool = $(this).prop('checked');
-      let data = tblProduct.row($(this).parents('tr')).data();
-      data.is_active = bool?1:0;
-      data.category_id = data.category.id;
-      ajax(data, `{{URL::to('/product/status')}}`, "PUT",
-          function(json) {
-            tblProduct.clear().draw();
-      })
-    })
-  })
-</script>
 @endsection
