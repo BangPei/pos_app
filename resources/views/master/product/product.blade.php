@@ -65,17 +65,32 @@
               <input type="text" name="id" class="d-none" value="{{ $p->id }}">
               @method('put')
               @csrf
-              <div class="input-group mb-3">
-                <input required  type="number" value="{{ old('price',$p->price??'') }}" class="form-control @error('price') is-invalid @enderror" name="price">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit" id="btn-price"><i class="fa fa-save"></i></button>
-                </div>
-            </div>
+                <div class="input-group mb-3">
+                  <input required  type="number" value="{{ old('price',$p->price??'') }}" class="form-control @error('price') is-invalid @enderror" name="price">
+                  <div class="input-group-append">
+                      <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                      <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
+                  </div>
+              </div>
             </form>
           </div>
           <div class="col-3">
             <p class="m-0 p-0">Stok</p>
-            <p class="m-0 p-0"> <label for="">{{ isset($p->stock)?number_format($p->stock?->value??0 / $p->convertion??0, 0, ',', ','):0 }}</label></p>
+            <p class="m-0 p-0 p-stock-{{ $p->stock_id??'' }}"> <label ondblclick={{ isset($p->stock)?"stockClick($p->stock_id)":"" }}>{{ isset($p->stock)?number_format($p->stock?->value??0 / $p->convertion??0, 0, ',', ','):0 }}</label></p>
+            <form method="post" action="/product/stock" class="form-stock-{{ $p->stock?->id??'' }} d-none">
+              <input type="text" name="id" class="d-none" value="{{ $p->stock?->value??'0' }}">
+              @method('put')
+              @csrf
+                <div class="input-group mb-3">
+                  <input required  type="number" value="{{ old('stock',$p->stock->value??'0') }}" class="form-control @error('price') is-invalid @enderror" name="value">
+                  <div class="input-group-append">
+                      <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                  </div>
+                  <div class="input-group-append">
+                      <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
+                  </div>
+              </div>
+            </form>
           </div>
           <div class="col">
             <p class="m-0 p-0">
@@ -109,6 +124,12 @@
     $(`.p-price-${id}`).dblclick(function(){
       $(`.p-price-${id}`).addClass('d-none')
       $(`.form-price-${id}`).removeClass('d-none')
+    })
+  }
+  function stockClick(id){
+    $(`.p-stock-${id}`).dblclick(function(){
+      $(`.p-stock-${id}`).addClass('d-none')
+      $(`.form-stock-${id}`).removeClass('d-none')
     })
   }
 </script>

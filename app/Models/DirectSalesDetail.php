@@ -19,6 +19,6 @@ class DirectSalesDetail extends Model
     }
     public function product()
     {
-        return $this->belongsTo(ItemConvertion::class, 'item_convertion_barcode', 'barcode');
+        return $this->belongsTo(Product::class, 'product_barcode', 'barcode');
     }
 }

@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::latest()->where('stock_id', "");
+        $product = Product::latest();
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');
@@ -189,6 +189,12 @@ class ProductController extends Controller
             'price' => $product['price'],
         ]);
         return back();
+    }
+    public function barcode($barcode)
+    {
+        $product = new Product();
+        $product = Product::where('barcode', $barcode)->first();
+        return response()->json($product);
     }
 
     /**

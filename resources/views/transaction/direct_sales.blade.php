@@ -224,12 +224,9 @@
       data:directSales.details,
       columns:[
         {
-          data:"product",
+          data:"product.name",
           bSortable: false,
           defaultContent:"--",
-          mRender:function (data,type,full) {
-            return `${data.product?.name??""} ${data.name}`
-          }
         },
         {
           data:"product.uom.name",
@@ -321,7 +318,7 @@
         processing:true,
         serverSide:true,
         ajax:{
-          url:"{{URL::to('item-convertion/dataTable')}}",
+          url:"{{URL::to('product/dataTable')}}",
           type:"GET",
         },
         columns:[
@@ -330,11 +327,8 @@
             defaultContent:"--"
           },
           {
-            data:"product.name",
+            data:"name",
             defaultContent:"--",
-            mRender:function(data,type,full){
-              return `${data} - ${full.name}`
-            }
           },
           {
             data:"uom.name",
@@ -395,7 +389,7 @@
         let val = $(this).val() ==""?"1":$(this).val()
         data.qty =parseInt(val.replace(/,/g, ""));
       
-        getMultipleDiscount(data.product.barcode,data.product,
+        getMultipleDiscount(data.product.id,data.product,
           function(json){
             if (Object.keys(json).length != 0){
               let mod = 0;
@@ -460,7 +454,7 @@
       if(e.keyCode == 13){
         let val = $(this).val();
         if (val !="") {
-          ajax({"barcode":val}, `{{URL::to('/item-convertion/show')}}`, "GET",
+          ajax(null, `{{URL::to('/product/barcode/${val}')}}`, "GET",
               function(item) {
                 if (Object.keys(item).length != 0) {
                   addProduct(item);
@@ -641,7 +635,7 @@
   }
 
   function addProduct(params) {
-    getMultipleDiscount(params.barcode,params,
+    getMultipleDiscount(params.id,params,
       function(json){
         if (directSales.details.some(item => item.product.id === params.id)) {
           directSales.details.forEach(data => {
@@ -663,7 +657,7 @@
         }else{
           let detail = {
             product:params,
-            product_name:`${params.product?.name??""} ${params.name}`,
+            product_name:params.name,
             product_id:params.id,
             qty:1,
             price:parseFloat(params.price),
@@ -689,7 +683,7 @@
   }
 
   function getMultipleDiscount(barcode,product,callback) {
-    ajax({"item_convertion_barcode":barcode}, `{{URL::to('multiple-discount-detail/show')}}`, "GET",
+    ajax({"product":barcode}, `{{URL::to('multiple-discount-detail/show')}}`, "GET",
         function(json) {
             callback(json)
     })
