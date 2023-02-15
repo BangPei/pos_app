@@ -31,7 +31,7 @@ class ProductController extends Controller
             "title" => "Product",
             "menu" => "Master",
             "search" => request('search'),
-            "count" => count(Product::all()),
+            "count" => count($product->get()),
             "products" => $product->paginate(20)->withQueryString()
         ]);
     }
@@ -176,6 +176,19 @@ class ProductController extends Controller
             ]);
         }
         return response()->json($product);
+    }
+    public function updatePrice(Request $request)
+    {
+        $product = $request->validate(
+            [
+                'price' => 'required',
+            ]
+        );
+        $product['id'] = $request->input('id');
+        Product::where('id', $product['id'])->update([
+            'price' => $product['price'],
+        ]);
+        return back();
     }
 
     /**

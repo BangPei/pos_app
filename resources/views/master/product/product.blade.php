@@ -60,7 +60,18 @@
           </div>
           <div class="col-3">
             <p class="m-0 p-0">Harga Jual</p>
-            <p class="m-0 p-0"><label for="">Rp. {{ number_format($p->price, 0, ',', ',') }}</label></p>
+            <p  class="m-0 p-0 p-price-{{ $p->id }}"><label ondblclick="priceClick({{ $p->id }})" for="">Rp. {{ number_format($p->price, 0, ',', ',') }}</label></p>
+            <form method="post" action="/product/price" class="form-price-{{ $p->id }} d-none">
+              <input type="text" name="id" class="d-none" value="{{ $p->id }}">
+              @method('put')
+              @csrf
+              <div class="input-group mb-3">
+                <input required  type="number" value="{{ old('price',$p->price??'') }}" class="form-control @error('price') is-invalid @enderror" name="price">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="btn-price"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+            </form>
           </div>
           <div class="col-3">
             <p class="m-0 p-0">Stok</p>
@@ -90,4 +101,15 @@
     <p>{{ $count }}</p>
   </div>
 </div>
+@endsection
+
+@section('content-script')
+<script>
+  function priceClick(id){
+    $(`.p-price-${id}`).dblclick(function(){
+      $(`.p-price-${id}`).addClass('d-none')
+      $(`.form-price-${id}`).removeClass('d-none')
+    })
+  }
+</script>
 @endsection
