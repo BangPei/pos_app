@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMultipleDiscountDetailsTable extends Migration
+class CreateStocksTables extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateMultipleDiscountDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('multiple_discount_details', function (Blueprint $table) {
+        Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('item_convertion_barcode');
-            $table->foreignId('multiple_discount_id');
-            $table->boolean('is_active')->default(true);
+            $table->string('name');
+            $table->integer('value');
+            $table->foreignId('created_by_id');
+            $table->foreignId('edit_by_id');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateMultipleDiscountDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('multiple_discount_details');
+        Schema::dropIfExists('stocks');
     }
 }

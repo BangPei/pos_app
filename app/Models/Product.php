@@ -12,14 +12,24 @@ class Product extends Model
     protected $guarded = ['id'];
     protected $hidden = [
         'category_id',
+        'uom_id',
+        'stock_id',
         'created_by_id',
         'edit_by_id',
     ];
-    protected $with = ['category', 'created_by', 'edit_by', 'itemsConvertion'];
+    protected $with = ['category', 'created_by', 'edit_by', 'uom', 'stock'];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function uom()
+    {
+        return $this->belongsTo(Uom::class);
+    }
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
     }
     public function created_by()
     {
@@ -28,9 +38,5 @@ class Product extends Model
     public function edit_by()
     {
         return $this->belongsTo(User::class);
-    }
-    public function itemsConvertion()
-    {
-        return $this->hasMany(ItemConvertion::class);
     }
 }

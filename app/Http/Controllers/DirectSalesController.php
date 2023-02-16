@@ -96,7 +96,7 @@ class DirectSalesController extends Controller
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new DirectSalesDetail();
             $detail->direct_sales_id = $ds["id"];
-            $detail->item_convertion_barcode = $request->details[$i]["product"]['barcode'];
+            $detail->product_barcode = $request->details[$i]["product"]['barcode'];
             $detail->price = $request->details[$i]["price"];
             $detail->qty = $request->details[$i]["qty"];
             $detail->product_name = $request->details[$i]["product_name"];
@@ -109,7 +109,7 @@ class DirectSalesController extends Controller
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
 
-        $connector = new WindowsPrintConnector("cashier_pos");
+        $connector = new WindowsPrintConnector("cashier_dev");
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");

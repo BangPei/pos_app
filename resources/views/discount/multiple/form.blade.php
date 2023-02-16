@@ -174,7 +174,7 @@
                 serverSide:true,
                 ordering:false,
                 ajax:{
-                    url:"{{URL::to('item-convertion/dataTable')}}",
+                    url:"{{URL::to('product/dataTable')}}",
                     type:"GET",
                 },
                 columns:[
@@ -190,11 +190,8 @@
                         defaultContent:"--",
                     },
                     {
-                        data:"product.name",
+                        data:"name",
                         defaultContent:"--",
-                        mRender:function(data,type,full){
-                            return `${data} - ${full.name}`
-                        }
                     },
                     {
                         data:"uom.name",

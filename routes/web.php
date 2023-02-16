@@ -15,6 +15,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SearchTaskController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
@@ -41,7 +42,10 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
     Route::resource('user', UserController::class)->middleware('auth');
 
+    Route::put('product/price', [ProductController::class, 'updatePrice'])->middleware('auth');
     Route::put('product/status', [ProductController::class, 'changeStatus'])->middleware('auth');
+    Route::get('product/barcode/{barcode}', [ProductController::class, 'barcode'])->middleware('auth');
+    Route::get('product/dataTable', [ProductController::class, 'dataTable'])->middleware('auth');
     Route::resource('product', ProductController::class)->middleware('auth');
 
     Route::put('category/status', [CategoryController::class, 'changeStatus'])->middleware('auth');
@@ -59,6 +63,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('payment', PaymentTypeController::class)->middleware('auth');
 
     Route::resource('supplier', SupplierController::class)->middleware('auth');
+
+    Route::resource('stock', StockController::class)->middleware('auth');
 
     Route::resource('setting', SettingController::class)->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
