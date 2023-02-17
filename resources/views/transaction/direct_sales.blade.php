@@ -695,6 +695,8 @@
     $('input[name="bank"]').prop('checked',false)
     $('#customer-name').val('')
     $('#discount-2').val('')
+    $('#total').html('0')
+    $('#change').html('0')
     $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);

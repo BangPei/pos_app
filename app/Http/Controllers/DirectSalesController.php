@@ -126,6 +126,9 @@ class DirectSalesController extends Controller
         $timestamp = strtotime($ds->date);
         $printer->text("Tanggal : " . date('d-m-Y H:i:s', $timestamp) . "\n");
         $printer->text("Kasir : " . auth()->user()->name . "\n");
+        if (isset($ds->customer_name)) {
+            $printer->text("Pembeli : " . $ds->customer_name . "\n");
+        }
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }
