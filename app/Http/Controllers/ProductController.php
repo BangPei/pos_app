@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Stock;
 use App\Models\Uom;
-use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -22,18 +20,31 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::latest();
+        $stock = Stock::orderBy('name', 'asc')->with('products');
         if (request('search')) {
-            $product->where('barcode', request('search'))
-                ->orWhere('name', 'like', '%' . request('search') . '%');
+            if (request('search-type') == "name") {
+                $stock->where('name', 'like', '%' . request('search') . '%');
+            } else {
+                $product = Product::where('barcode', request('search'))->first();
+                if (isset($product->stock_id)) {
+                    $stock->where('id', $product->stock_id);
+                } else {
+                    $stock->where('name', request('search'));
+                }
+            }
         }
+        // $product = Product::orderBy('name', 'asc');
+        // if (request('search')) {
+        //     $product->where('barcode', request('search'))
+        //         ->orWhere('name', 'like', '%' . request('search') . '%');
+        // }
 
         return view('master/product/product', [
             "title" => "Product",
             "menu" => "Master",
             "search" => request('search'),
-            "count" => count($product->get()),
-            "products" => $product->paginate(20)->withQueryString()
+            "count" => count($stock->get()),
+            "stocks" => $stock->paginate(20)->withQueryString()
         ]);
     }
     public function dataTable(UtilitiesRequest $request)
