@@ -61,7 +61,7 @@
             <hr style="margin:10px">
             @foreach ($s->products as $pr)
               <h6>
-                <div class="row text-center pl-5 pr-5">
+                <div class="row text-center pl-4 pr-4">
                   <div class="col">
                     @if ((!isset($pr->image))|| ($pr->image==""))
                     <img width="60" src="{{ asset('image/logo/logo.png') }}" class="rounded float-left img-thumbnail" alt="{{ $pr->name }}">

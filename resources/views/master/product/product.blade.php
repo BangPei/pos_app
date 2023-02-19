@@ -75,7 +75,7 @@
                 </div>
                 <div class="col-3">
                     <p class="m-0 p-0">Stock</p>
-                    <p class="m-0 p-0"> <label>{{ isset($pr->stock)? number_format($pr->stock?->value??0 / $pr->convertion??0, 0, ',', ','):"Belum Setting"}}</label></p>
+                    <p class="m-0 p-0"> <label>{{ isset($pr->stock)? floor($pr->stock?->value / $pr->convertion):"Belum Setting"}}</label></p>
                     <form method="post" action="/product/stock" class="form-stock-{{ $pr->stock?->id??'' }} d-none">
                     <input type="text" name="id" class="d-none" value="{{ $pr->stock?->value??'0' }}">
                     @method('put')
