@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\MultipleDiscount;
-use App\Models\ItemConvertion;
 use App\Models\MultipleDiscountDetail;
 use Exception;
 use Illuminate\Http\Request;
@@ -60,9 +59,8 @@ class MultipleDiscountController extends Controller
         for ($i = 0; $i < count($request->details); $i++) {
             $detail = new MultipleDiscountDetail();
             $detail->multiple_discount_id = $md["id"];
-            $detail->item_convertion_barcode = $request->details[$i]["item_convertion"]['barcode'];
+            $detail->product_id = $request->details[$i]["product"]['id'];
             $detail->is_active = $request->details[$i]['is_active'] ? 1 : 0;
-            $detail->product_name = $request->details[$i]['product_name'];
             array_push($details, $detail);
         }
         $md->details()->saveMany($details);
@@ -116,7 +114,7 @@ class MultipleDiscountController extends Controller
             for ($i = 0; $i < count($multipleDiscount->details); $i++) {
                 $detail = new MultipleDiscountDetail();
                 $detail->multiple_discount_id =  $multipleDiscount['id'];
-                $detail->item_convertion_barcode =  $multipleDiscount->details[$i]["item_convertion"]['barcode'];
+                $detail->product_id =  $multipleDiscount->details[$i]["product"]['id'];
                 $detail->is_active =  $multipleDiscount->details[$i]["is_active"] ? 1 : 0;
                 $detail->save();
                 array_push($details, $details);

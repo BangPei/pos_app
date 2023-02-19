@@ -7,12 +7,13 @@
         <title>POS App | {{ $title }}</title>
 
         <!-- Google Font: Source Sans Pro -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+        <link rel="stylesheet" href="/font.css">
         <!-- Font Awesome -->
         <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
         <!-- Ionicons -->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
+        <link rel="stylesheet" href="/plugins/jquery-ui/jquery-ui.min.css">
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
         <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
@@ -99,7 +100,7 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ (Request::is('supplier*')|| Request::is('bank*')||Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
+                        <li class="nav-item {{ (Request::is('supplier*')|| Request::is('stock*')|| Request::is('bank*')||Request::is('payment*')||Request::is('product*')||Request::is('category*')||Request::is('uom*'))?'menu-open':'' }}">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
@@ -107,11 +108,17 @@
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
+                            <ul class="nav nav-treeview pl-2">
                                 <li class="nav-item">
                                     <a href="/product" class="nav-link {{Request::is('product*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Barang</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/stock" class="nav-link {{Request::is('stock*')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Group Stok</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -154,7 +161,7 @@
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
+                            <ul class="nav nav-treeview pl-2">
                                 <li class="nav-item">
                                     <a href="/transaction/create" class="nav-link {{Request::is('transaction/create')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -177,7 +184,7 @@
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
+                            <ul class="nav nav-treeview pl-2">
                                 <li class="nav-item">
                                     <a href="/purchase-order/create" class="nav-link {{Request::is('purchase-order/create')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -200,7 +207,7 @@
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
+                            <ul class="nav nav-treeview pl-2">
                                 <li class="nav-item">
                                     <a href="/multiple-discount" class="nav-link {{Request::is('multiple-discount*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -322,6 +329,7 @@
 
         <!-- jQuery -->
         <script src="/plugins/jquery/jquery.min.js"></script>
+        <script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
         <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script> 
         <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="/plugins/jquery-validation/additional-methods.min.js"></script>

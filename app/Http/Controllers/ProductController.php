@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Stock;
 use App\Models\Uom;
-use Exception;
 use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
@@ -21,7 +20,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::latest()->where('stock_id',"");
+        $product = Product::orderBy('name', 'asc');
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');
@@ -37,10 +36,26 @@ class ProductController extends Controller
     }
     public function dataTable(UtilitiesRequest $request)
     {
-        $product = Product::all();
+        $product = Product::where('is_active', 1)->with(['program' => function ($query) {
+            $query->with('multipleDiscount');
+        }]);
         if ($request->ajax()) {
             return datatables()->of($product)->make(true);
         }
+    }
+
+    public function mapping()
+    {
+        $products = Product::where('stock_id', "")->orWhere('stock_id', 0)->get();
+        foreach ($products as $pr) {
+            $stock = Stock::where('name', $pr->name)->first();
+            if (isset($stock)) {
+                Product::where('id', $pr->id)->update([
+                    'stock_id' => $stock->id,
+                ]);
+            }
+        }
+        // return Redirect::to('product');
     }
 
     /**
