@@ -20,31 +20,18 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $stock = Stock::orderBy('name', 'asc')->with('products');
+        $product = Product::orderBy('name', 'asc');
         if (request('search')) {
-            if (request('search-type') == "name") {
-                $stock->where('name', 'like', '%' . request('search') . '%');
-            } else {
-                $product = Product::where('barcode', request('search'))->first();
-                if (isset($product->stock_id)) {
-                    $stock->where('id', $product->stock_id);
-                } else {
-                    $stock->where('name', request('search'));
-                }
-            }
+            $product->where('barcode', request('search'))
+                ->orWhere('name', 'like', '%' . request('search') . '%');
         }
-        // $product = Product::orderBy('name', 'asc');
-        // if (request('search')) {
-        //     $product->where('barcode', request('search'))
-        //         ->orWhere('name', 'like', '%' . request('search') . '%');
-        // }
 
         return view('master/product/product', [
             "title" => "Product",
             "menu" => "Master",
             "search" => request('search'),
-            "count" => count($stock->get()),
-            "stocks" => $stock->paginate(20)->withQueryString()
+            "count" => count($product->get()),
+            "products" => $product->paginate(20)->withQueryString()
         ]);
     }
     public function dataTable(UtilitiesRequest $request)
@@ -55,6 +42,20 @@ class ProductController extends Controller
         if ($request->ajax()) {
             return datatables()->of($product)->make(true);
         }
+    }
+
+    public function mapping()
+    {
+        $products = Product::where('stock_id', "")->orWhere('stock_id', 0)->get();
+        foreach ($products as $pr) {
+            $stock = Stock::where('name', $pr->name)->first();
+            if (isset($stock)) {
+                Product::where('id', $pr->id)->update([
+                    'stock_id' => $stock->id,
+                ]);
+            }
+        }
+        // return Redirect::to('product');
     }
 
     /**
