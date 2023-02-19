@@ -17,7 +17,7 @@ class Product extends Model
         'created_by_id',
         'edit_by_id',
     ];
-    protected $with = ['category', 'created_by', 'edit_by', 'uom', 'stock'];
+    protected $with = ['category', 'created_by', 'edit_by', 'uom'];
 
     public function category()
     {
@@ -38,5 +38,9 @@ class Product extends Model
     public function edit_by()
     {
         return $this->belongsTo(User::class);
+    }
+    public function program()
+    {
+        return $this->hasOne(MultipleDiscountDetail::class);
     }
 }

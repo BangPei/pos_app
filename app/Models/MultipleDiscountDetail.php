@@ -9,15 +9,15 @@ class MultipleDiscountDetail extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $hidden = ['item_convertion_barcode', 'multiple_discount_id'];
-    protected $with = ['item_convertion'];
+    protected $hidden = ['product_id', 'multiple_discount_id'];
+    protected $with = ['product'];
 
     public function multipleDiscount()
     {
         return $this->belongsTo(MultipleDiscount::class);
     }
-    public function item_convertion()
+    public function product()
     {
-        return $this->belongsTo(ItemConvertion::class, 'item_convertion_barcode', 'barcode');
+        return $this->belongsTo(Product::class);
     }
 }

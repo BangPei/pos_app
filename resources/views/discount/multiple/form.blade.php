@@ -116,18 +116,15 @@
             data: multipleDiscount.details,
             columns:[
                 {
-                    data:"item_convertion.barcode",
+                    data:"product.barcode",
                     defaultContent:"--",
                 },
                 {
-                    data:"item_convertion.name",
+                    data:"product.name",
                     defaultContent:"--",
-                    mRender:function(data,type,full){
-                        return `${full.product_name} ${data}`
-                    }
                 },
                 {
-                    data:"item_convertion.price",
+                    data:"product.price",
                     defaultContent:"0",
                     className: "text-right",
                     mRender:function(data,type,full){
@@ -140,13 +137,13 @@
                     mRender:function(data,type,full){
                         // return `<div class="badge badge-${data==1?'success':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</div>`
                         return `<div class="custom-control custom-switch">
-                                <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.item_convertion.barcode}">
-                                <label class="custom-control-label" for="switch-${full.item_convertion.barcode}"></label>
+                                <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.product.barcode}">
+                                <label class="custom-control-label" for="switch-${full.product.barcode}"></label>
                                 </div>`
                     }
                 },
                 {
-                    data:"item_convertion.id",
+                    data:"product.barcode",
                     mRender:function(data,type,full){
                         return `<a title="Hapus" class="btn btn-sm bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>`
                     }
@@ -182,7 +179,7 @@
                         data:"id",
                         defaultContent:"--",
                         mRender:function(data,type,full){
-                            return `<input type="checkbox" class="input-check" data-id="${data}">`
+                            return `<input ${full.program?"disabled":""} type="checkbox" class="input-check" data-id="${data}">`
                         }
                     },
                     {
@@ -192,6 +189,13 @@
                     {
                         data:"name",
                         defaultContent:"--",
+                        mRender:function(data,type,full){
+                            if (full.program) {
+                                return `${data}<br> <small><i>(${full.program.multiple_discount.name})</i></small>`
+                            }else{
+                                return data
+                            }
+                        }
                     },
                     {
                         data:"uom.name",
@@ -217,7 +221,7 @@
                     var node = api.rows().nodes()
                     for (var i = 0; i < node.length; i++) {
                         let dataId = $(node[i]).find('input').attr('data-id')
-                        let isExist = multipleDiscount.details.some(item => item.item_convertion.id == dataId)
+                        let isExist = multipleDiscount.details.some(item => item.product.id == dataId)
                         if (isExist) {
                             $(node[i]).find('input').prop('checked',true)
                         }
@@ -227,12 +231,11 @@
         })
 
         $('#table-product').on('change','td input[type="checkbox"]',function() {
-            let item_convertion = tblProduct.row($(this).parents('tr')).data();
+            let product = tblProduct.row($(this).parents('tr')).data();
             let val = $(this).prop('checked');
             let detail = {
-                product_name:item_convertion.product.name,
-                item_convertion_id:item_convertion.id,
-                item_convertion:item_convertion,
+                product_id:product.id,
+                product:product,
                 is_active:true,
             }
             if (val == true) {

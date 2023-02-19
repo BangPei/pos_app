@@ -109,7 +109,7 @@ class DirectSalesController extends Controller
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
 
-        $connector = new WindowsPrintConnector("cashier_dev");
+        $connector = new WindowsPrintConnector("cashier_pos");
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
@@ -126,6 +126,9 @@ class DirectSalesController extends Controller
         $timestamp = strtotime($ds->date);
         $printer->text("Tanggal : " . date('d-m-Y H:i:s', $timestamp) . "\n");
         $printer->text("Kasir : " . auth()->user()->name . "\n");
+        if (isset($ds->customer_name)) {
+            $printer->text("Pembeli : " . $ds->customer_name . "\n");
+        }
         for ($i = 1; $i < 33; $i++) {
             $printer->text("_");
         }

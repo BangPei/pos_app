@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stock;
-use App\Http\Requests\StoreStockRequest;
 use App\Http\Requests\UpdateStockRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
 class StockController extends Controller
 {
@@ -17,7 +16,26 @@ class StockController extends Controller
      */
     public function index()
     {
-        //
+        $stock = Stock::orderBy('name', 'asc')->with('products');
+        if (request('search')) {
+            if (request('search-type') == "name") {
+                $stock->where('name', 'like', '%' . request('search') . '%');
+            } else {
+                $product = Product::where('barcode', request('search'))->first();
+                if (isset($product->stock_id)) {
+                    $stock->where('id', $product->stock_id);
+                } else {
+                    $stock->where('name', request('search'));
+                }
+            }
+        }
+        return view('master/product/product-stock', [
+            "title" => "Stock",
+            "menu" => "Master",
+            "search" => request('search'),
+            "count" => count($stock->get()),
+            "stocks" => $stock->paginate(20)->withQueryString()
+        ]);
     }
 
     /**

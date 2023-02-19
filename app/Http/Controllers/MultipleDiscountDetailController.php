@@ -52,7 +52,7 @@ class MultipleDiscountDetailController extends Controller
         if ($request->ajax()) {
             $detail = MultipleDiscountDetail::where([
                 ['is_active', 1],
-                ['product_id', $request->product_id]
+                ['product_id', $request->product]
             ])->first();
             if (isset($detail)) {
                 $multiple = MultipleDiscount::where('id', $detail->multiple_discount_id)->first();
