@@ -14,8 +14,8 @@ class TiktokApiController extends Controller
     public $apiKey = "67eui64gqqriu";
     public $shopId = "7494670387281169228";
     public $apiSecret = "da24ac38ba6931114cd43e7b49f1bd0a7ae2f2e1";
-    public $refreshToken = "ROW_NjQ4ODAxNjE4NDMyYjEzNTZmNzQzZjg4YzQwZDlhZThiNzU4ZTM1YjY0YWJlYQ";
-    public $access_token = "ROW_u8lgPQAAAADn98JTwrilby-8D5Me_l6_WV9JToX4oyAfx3LgVGMcXzyADN4FVmPdxXSXVHKyiJCLJqcR30Hyty7aZtgOD4UALU9SLbBnXOwoypd20iF6Rg";
+    public $refreshToken = "ROW_MTQ3ZmYwYTExZmQwOTE4NDM3ZTYzNGMyMDcyMTY5MWJiMWExOWRkZjliY2MzZg";
+    public $access_token = "ROW_RfcMCAAAAADn98JTwrilby-8D5Me_l6_wowlEDjCT-BsBkKLoza_hzcFf6EERaYqlEeB4o-s1YtPGOI9zbb3lcLBRVivwFM1_D1s8yGZwfWYVotnDtgGEg";
     /**
      * Display a listing of the resource.
      *
@@ -169,7 +169,7 @@ class TiktokApiController extends Controller
         $fixData = null;
         $fixData["create_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['create_time']);
         $fixData["update_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['update_time']);
-        $fixData["message_to_seller"] = null;
+        $fixData["message_to_seller"] = $headerObject['buyer_message'];
         $fixData["order_no"] = $headerObject['order_id'];
         $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'])['status'];
         $fixData["show_request"] = $this->getOrderStatus($headerObject['order_status'])['show_request'];
