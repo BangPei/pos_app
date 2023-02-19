@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::latest();
+        $product = Product::latest()->where('stock_id',"");
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');

@@ -109,7 +109,7 @@ class DirectSalesController extends Controller
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
 
-        $connector = new WindowsPrintConnector("cashier_dev");
+        $connector = new WindowsPrintConnector("cashier_pos");
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
