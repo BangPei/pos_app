@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Stock;
 use App\Http\Requests\UpdateStockRequest;
 use App\Models\Product;
+use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class StockController extends Controller
 {
@@ -107,8 +109,30 @@ class StockController extends Controller
      * @param  \App\Models\Stock  $stock
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Stock $stock)
+    public function destroy(Request $request)
     {
-        //
+        $stock = Stock::find($request->input('stock-id'));
+        $stock->delete();
+        return Redirect::to('/stock');
+    }
+    public function delete(Request $request)
+    {
+        $stock = Stock::find($request->input('stock-id'));
+        $stock->delete();
+        return back();
+    }
+
+    public function updateStock(Request $request)
+    {
+        $stock = $request->validate(
+            [
+                'value' => 'required',
+            ]
+        );
+        $stock['id'] = $request->input('id');
+        Stock::where('id', $stock['id'])->update([
+            'value' => (int)$stock['value'] * $request->input('convertion'),
+        ]);
+        // return back();
     }
 }

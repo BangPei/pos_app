@@ -59,7 +59,10 @@
                 </div>
                 <div class="col-3">
                     <p class="m-0 p-0">Harga Jual</p>
-                    <p  class="m-0 p-0 p-price-{{ $pr->id }}"><label ondblclick="priceClick({{ $pr->id }})" for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label></p>
+                    <p  class="m-0 p-0 p-price-{{ $pr->id }}">
+                      <label for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label>
+                      <i onclick="editPrice({{ $pr->id }})" class="fa fa-edit text-primary"></i>
+                    </p>
                     <form method="post" action="/product/price" class="form-price-{{ $pr->id }} d-none">
                         <input type="text" name="id" class="d-none" value="{{ $pr->id }}">
                         @method('put')
@@ -67,29 +70,41 @@
                         <div class="input-group mb-3">
                             <input required  type="number" value="{{ old('price',$pr->price??'') }}" class="form-control @error('price') is-invalid @enderror" name="price">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
-                                <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                                <a onclick="closePrice({{ $pr->id }})" class="btn btn-sm btn-danger cancel-{{ $pr->id }}"><i class="fa fa-times"></i></a>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="col-3">
                     <p class="m-0 p-0">Stock</p>
-                    <p class="m-0 p-0"> <label>{{ isset($pr->stock)? floor($pr->stock?->value / $pr->convertion):"Belum Setting"}}</label></p>
-                    <form method="post" action="/product/stock" class="form-stock-{{ $pr->stock?->id??'' }} d-none">
-                    <input type="text" name="id" class="d-none" value="{{ $pr->stock?->value??'0' }}">
-                    @method('put')
-                    @csrf
-                        <div class="input-group mb-3">
-                        <input required  type="number" value="{{ old('stock',$pr->stock->value??'0') }}" class="form-control @error('price') is-invalid @enderror" name="value">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
-                        </div>
-                        <div class="input-group-append">
-                            <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                    </form>
+                    <p class="m-0 p-0 p-stock-{{ $pr->stock?->id??"" }}">
+                      @if (isset($pr->stock))
+                        <label>{{ floor($pr->stock?->value / $pr->convertion)}}
+                          <i onclick="editStock({{ $pr->id }})" class="fa fa-edit text-primary"></i>
+                        </label>
+                      @else
+                        <label>Belum Setting</label>
+                      @endif
+                      
+                    </p>
+                    @if ($pr->convertion =="" || $pr->convertion==0)
+                      <i class="text-danger">Konversi Qty Belum Di setting</i>
+                    @else
+                      <form method="post" action="/stock/value" class="form-stock-{{ $pr->stock?->id??'' }} d-none">
+                        <input type="text" name="id" class="d-none" value="{{ $pr->stock?->id }}">
+                        @method('put')
+                        @csrf
+                            <div class="input-group mb-3">
+                                <input value="{{ old('stock',$pr->convertion??'') }}" class="d-none" name="convertion">
+                                <input required  type="number" value="{{ old('stock',floor($pr->stock?->value / $pr->convertion)) }}" class="form-control @error('price') is-invalid @enderror" name="value">
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                                    <button onclick="cancelStock({{ $pr->stock?->id }})" class="btn btn-sm btn-danger cancel-{{ $pr->stock?->id }}" type="button"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                      </form>
+                    @endif
                 </div>
                 <div class="col">
                     <p class="m-0 p-0">
@@ -118,16 +133,28 @@
 
 @section('content-script')
 <script>
-  function priceClick(id){
-    $(`.p-price-${id}`).dblclick(function(){
+  function editPrice(id){
+    $(`.p-price-${id}`).on('click',function(){
       $(`.p-price-${id}`).addClass('d-none')
       $(`.form-price-${id}`).removeClass('d-none')
     })
   }
-  function stockClick(id){
-    $(`.p-stock-${id}`).dblclick(function(){
+  function closePrice(id){
+    $(`.cancel-${id}`).on('click',function(){
+      $(`.form-price-${id}`).addClass('d-none')
+      $(`.p-price-${id}`).removeClass('d-none')
+    })
+  }
+  function editStock(id){
+    $(`.p-stock-${id}`).on('click',function(){
       $(`.p-stock-${id}`).addClass('d-none')
       $(`.form-stock-${id}`).removeClass('d-none')
+    })
+  }
+  function cancelStock(id){
+    $(`.cancel-${id}`).on('click',function(){
+      $(`.p-stock-${id}`).removeClass('d-none')
+      $(`.form-stock-${id}`).addClass('d-none')
     })
   }
 </script>

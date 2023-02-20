@@ -55,8 +55,20 @@
           </div>
           <div class="col-4">
             <label class="m-0 p-0" for="">Stock : {{ $s->value }}</label>
+          </div>
+          @if (count($s->products)==0)
+            <div class="col text-right">
+              
+              <form method="POST" action="/stock/remove">
+                @csrf
+                @method("delete")
+                <input type="text" class="d-none" name="stock-id" value="{{ $s->id }}">
+                <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i> Hapus</button>
+              </form>
             </div>
+          @endif
         </div>
+
         @if (count($s->products)!=0)
             <hr style="margin:10px">
             @foreach ($s->products as $pr)
@@ -72,7 +84,7 @@
                   <div class="col-3 text-left">
                     <label class="m-0 p-0" for="">{{ Str::upper($pr->name) }}</label>
                     <p class="m-0 p-0">SKU : <label class="m-0 p-0" for="">{{ $pr->barcode }}</label></p>
-                    {{-- <p class="m-0 p-0">Satuan : <label class="m-0 p-0" for="">{{$pr->convertion."/".$pr->uom?->name??"" }}</label></p> --}}
+                    <p class="m-0 p-0">Satuan : <label class="m-0 p-0" for="">{{$pr->convertion."/".$pr->uom?->name??"" }}</label></p>
                     <p class="m-0 p-0">Kategori : <label class="m-0 p-0" for="">{{ $pr->category?->name??"" }}</label></p>
                   </div>
                   <div class="col-3">
@@ -127,6 +139,7 @@
               </h6>
             @endforeach
         @endif
+        
       </div>
   @endforeach
 

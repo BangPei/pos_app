@@ -87,14 +87,13 @@ class ProductController extends Controller
                 'barcode' => 'required',
                 'name' => 'required',
                 'price' => 'required',
-                'convertion' => 'required',
+                'convertion' => 'required|numeric|min:1',
                 'stock_id' => 'required',
                 'category_id' => 'required',
                 'uom_id' => 'required',
                 'image' => 'image|file',
             ]
         );
-
         $product['is_active'] = true;
         if (isset($product['image'])) {
             $product['image'] = $request->file('image')->store('product');
@@ -154,7 +153,7 @@ class ProductController extends Controller
                 'barcode' => 'required',
                 'name' => 'required',
                 'price' => 'required',
-                'convertion' => 'required',
+                'convertion' => 'required|numeric|min:1',
                 'stock_id' => 'required',
                 'category_id' => 'required',
                 'uom_id' => 'required',
