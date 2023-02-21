@@ -18,9 +18,9 @@
         </div>
         <div class="col-4 text-right">
           <div class="btn-group" role="group" aria-label="Basic example">
-            <a class="btn btn-success" href="/product/mapping">
+            {{-- <a class="btn btn-success" href="/product/mapping">
               <i class="fas fa-plus-circle"></i> Mapping Stock
-            </a>
+            </a> --}}
             <a class="btn btn-primary" href="/product/create">
               <i class="fas fa-plus-circle"></i> Tambah
             </a>
@@ -29,6 +29,27 @@
       </div>
     </div>
   </div>
+  {{-- <div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0">
+      <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">
+            Semua <span class="right badge badge-danger">{{ number_format($count) }}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">
+            Aktif <span class="right badge badge-danger">{{ number_format($active) }}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-messages" role="tab" aria-controls="custom-tabs-one-messages" aria-selected="false">
+            Non Aktif <span class="right badge badge-danger">{{ number_format($disactive) }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div> --}}
 
     @if (count($products) == 0)
         <div class="card">
@@ -110,7 +131,7 @@
                     <p class="m-0 p-0">
                     status
                     <div class="custom-control custom-switch">
-                        <input type="checkbox" {{ $pr->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $pr->id }}">
+                        <input type="checkbox" {{ $pr->is_active?'checked':'' }} name="my-switch" class="custom-control-input" data-id="{{ $pr->id }}" id="switch-{{ $pr->id }}">
                         <label class="custom-control-label" for="switch-{{ $pr->id }}"></label>
                     </div>
                     </p>
@@ -126,13 +147,27 @@
   <div class="d-flex justify-content-center">
     {{ $products->links() }}
     <br>
-    <p>{{ $count }}</p>
   </div>
 </div>
 @endsection
 
 @section('content-script')
 <script>
+
+  $(document).ready(function(){
+    $('.custom-switch').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      console.log(bool)
+      let data = {
+        id:$(this).attr('data-id'),
+        is_active:bool?1:0
+      }
+      ajax(data, `{{URL::to('/product/status')}}`, "PUT",
+          function(json) {
+            console.log(json)
+      })
+    })
+  })
   function editPrice(id){
     $(`.p-price-${id}`).on('click',function(){
       $(`.p-price-${id}`).addClass('d-none')

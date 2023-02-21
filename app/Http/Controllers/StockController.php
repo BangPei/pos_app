@@ -75,9 +75,13 @@ class StockController extends Controller
      * @param  \App\Models\Stock  $stock
      * @return \Illuminate\Http\Response
      */
-    public function show(Stock $stock)
+    public function show(Request $request)
     {
-        //
+        $stock = new Stock();
+        if ($request->ajax()) {
+            $stock = Stock::where('id', $request->id)->with('products')->first();
+        }
+        return response()->json($stock);
     }
 
     /**
@@ -88,7 +92,12 @@ class StockController extends Controller
      */
     public function edit(Stock $stock)
     {
-        //
+        $stock = Stock::where('id', $stock->id)->with('products')->first();
+        return view('master/product/form-stock', [
+            "title" => "Form Stock",
+            "menu" => "Master",
+            "stock" => $stock
+        ]);
     }
 
     /**
@@ -98,9 +107,26 @@ class StockController extends Controller
      * @param  \App\Models\Stock  $stock
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateStockRequest $request, Stock $stock)
+    public function update(Request $request)
     {
-        //
+        $stock = $request;
+        Stock::where('id', $request->id)->update([
+            'name' => $request->name,
+            'value' => $request->value,
+            'edit_by_id' => auth()->user()->id,
+        ]);
+        Product::where('stock_id', $stock['id'])->update([
+            'stock_id' => null
+        ]);
+        $products = [];
+        for ($i = 0; $i < count($stock->products); $i++) {
+            $Product = Product::where('id', $stock->products[$i]['id'])->update([
+                'stock_id' => $stock['id']
+            ]);
+            array_push($products, $Product);
+        }
+        $stock['products'] = $products;
+        return response()->json($stock);
     }
 
     /**
@@ -130,9 +156,16 @@ class StockController extends Controller
             ]
         );
         $stock['id'] = $request->input('id');
-        Stock::where('id', $stock['id'])->update([
-            'value' => (int)$stock['value'] * $request->input('convertion'),
-        ]);
-        // return back();
+        $convertion = $request->input('convertion');
+        if ($convertion != NULL) {
+            Stock::where('id', $stock['id'])->update([
+                'value' => (int)$stock['value'] * $request->input('convertion'),
+            ]);
+        } else {
+            Stock::where('id', $stock['id'])->update([
+                'value' => (int)$stock['value'],
+            ]);
+        }
+        return back();
     }
 }

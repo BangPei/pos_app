@@ -30,13 +30,15 @@ class ProductController extends Controller
             "title" => "Product",
             "menu" => "Master",
             "search" => request('search'),
-            "count" => count($product->get()),
-            "products" => $product->paginate(20)->withQueryString()
+            "products" => $product->paginate(20)->withQueryString(),
+            // "count" => count($product->get()),
+            // "active" => count($product->where('is_active', true)->get()),
+            // "disactive" => count($product->where('is_active', false)->get()),
         ]);
     }
     public function dataTable(UtilitiesRequest $request)
     {
-        $product = Product::where('is_active', 1)->with(['program' => function ($query) {
+        $product = Product::with(['program' => function ($query) {
             $query->with('multipleDiscount');
         }]);
         if ($request->ajax()) {
@@ -176,16 +178,14 @@ class ProductController extends Controller
         ]);
         session()->flash('message', 'Berhasil merubah satuan ' . $request['name']);
         // return Redirect::to("/product/" . $product['id'] . "/edit");
-        return Redirect::to('product');
+        return back();
     }
     public function changeStatus(Request $request)
     {
         $product = $request;
         if ($request->ajax()) {
             Product::where('id', $product['id'])->update([
-                'name' => $product['name'],
-                'is_active' => $product['is_active'] ? 1 : 0,
-                'category_id' => $product['category_id'],
+                'is_active' => $product['is_active'],
                 'edit_by_id' => auth()->user()->id,
             ]);
         }

@@ -49,12 +49,27 @@
       <div class="card p-2">
         <div class="row pl-2 pr-2">
           <div class="col">
-            <a href="">
+            <a href="/stock/{{ $s->id }}/edit">
               <label class="m-0 p-0" for="">{{ Str::upper($s->name) }}</label>
             </a>
           </div>
           <div class="col-4">
-            <label class="m-0 p-0" for="">Stock : {{ $s->value }}</label>
+            <label class="m-0 p-0 p-stock-{{ $s->id??"" }}">
+              Stock : {{ number_format($s->value) }} 
+              <i onclick="editStock({{ $s->id }})" class="fa fa-edit text-primary"></i>
+            </label>
+            <form method="post" action="/stock/value" class="form-stock-{{ $s->id }} d-none">
+              @method('put')
+              @csrf
+              <input type="text" name="id" class="d-none" value="{{ $s->id }}">
+                  <div class="input-group mb-3">
+                      <input required  type="number" value="{{ old('stock',floor($s->value)) }}" class="form-control @error('price') is-invalid @enderror" name="value">
+                      <div class="input-group-append">
+                          <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                          <button onclick="cancelStock({{ $s->id }})" class="btn btn-sm btn-danger cancel-{{ $s->id }}" type="button"><i class="fa fa-times"></i></button>
+                      </div>
+                  </div>
+            </form>
           </div>
           @if (count($s->products)==0)
             <div class="col text-right">
@@ -89,7 +104,10 @@
                   </div>
                   <div class="col-3">
                     <p class="m-0 p-0">Harga Jual</p>
-                    <p  class="m-0 p-0 p-price-{{ $pr->id }}"><label ondblclick="priceClick({{ $pr->id }})" for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label></p>
+                    <p  class="m-0 p-0 p-price-{{ $pr->id }}">
+                      <label for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label>
+                      <i onclick="editPrice({{ $pr->id }})" class="fa fa-edit text-primary"></i>
+                    </p>
                     <form method="post" action="/product/price" class="form-price-{{ $pr->id }} d-none">
                       <input type="text" name="id" class="d-none" value="{{ $pr->id }}">
                       @method('put')
@@ -97,8 +115,8 @@
                         <div class="input-group mb-3">
                           <input required  type="number" value="{{ old('price',$pr->price??'') }}" class="form-control @error('price') is-invalid @enderror" name="price">
                           <div class="input-group-append">
-                              <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
-                              <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
+                              <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-save"></i></button>
+                              <a onclick="closePrice({{ $pr->id }})" class="btn btn-sm btn-danger cancel-{{ $pr->id }}"><i class="fa fa-times"></i></a>
                           </div>
                       </div>
                     </form>
@@ -163,6 +181,19 @@
     $(`.p-stock-${id}`).dblclick(function(){
       $(`.p-stock-${id}`).addClass('d-none')
       $(`.form-stock-${id}`).removeClass('d-none')
+    })
+  }
+
+  function editStock(id){
+    $(`.p-stock-${id}`).on('click',function(){
+      $(`.p-stock-${id}`).addClass('d-none')
+      $(`.form-stock-${id}`).removeClass('d-none')
+    })
+  }
+  function cancelStock(id){
+    $(`.cancel-${id}`).on('click',function(){
+      $(`.p-stock-${id}`).removeClass('d-none')
+      $(`.form-stock-${id}`).addClass('d-none')
     })
   }
 </script>
