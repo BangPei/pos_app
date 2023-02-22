@@ -9,17 +9,22 @@
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Form Penjualan <em id="edit-area"></em></h2>
-      <div class="card-tools">
+      <div class="card-tools d-inline">
         <div class="row text-right">
-          <div class="col-7">
+          <div class="col-6">
             <div class="form-group">
               <input type="text" class="form-control datetimepicker-input" id="trans-date" data-toggle="datetimepicker" data-target="#trans-date"/>
             </div>
           </div>
-          <div class="col-5">
-            <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-              <i class="fas fa-eye"></i> List Produk
-            </a>
+          <div class="col-6">
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+                <i class="fas fa-eye"></i> <small>Produk</small>
+              </a>
+              <a class="btn btn-warning text-white" data-toggle="modal" data-target="#modal-price" data-backdrop="static" data-keyboard="false">
+                <i class="fas fa-print"></i> <small>Harga Jual</small>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -190,6 +195,47 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-price" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Form Harga</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <input type="text" id="modal-barcode" class="form-control" placeholder="Masukan Kode Barang" >
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-8">
+            <div class="form-group">
+              <label for="">Produk</label>
+              <input type="text" readonly class="form-control" id="product-name">
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="">Harga</label>
+              <input type="text" readonly class="form-control" id="product-price">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-right">
+            <button onclick="printPrice()" type="button" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('content-script')
@@ -346,7 +392,6 @@
           {
             data:"convertion",
             defaultContent:"0",
-            className:"text-center",
             mRender:function(data,type,full){
               if (full.stock) {
                 return formatNumber(Math.floor(full.stock.value/data))
@@ -365,7 +410,7 @@
         columnDefs: [
             { 
               className: "text-center",
-              targets: [2,4]
+              targets: [2,4,5]
             },
             {
               width: '12%',
@@ -373,7 +418,7 @@
             },
             {
               width: '10%',
-              targets: [2,3,4],
+              targets: [2,3,4,5],
             },
           ],
       })
@@ -467,14 +512,30 @@
       if(e.keyCode == 13){
         let val = $(this).val();
         if (val !="") {
-          ajax(null, `{{URL::to('/product/barcode/${val}')}}`, "GET",
-              function(item) {
-                if (Object.keys(item).length != 0) {
+          getProductByBarcode(val,function(item){
+            if (Object.keys(item).length != 0) {
                   addProduct(item);
                   $("#barcode").val("")
                 }else{
                   $("#barcode").val(val.toLowerCase())
                 }
+          })
+          
+        }
+      }
+    })
+    $('#modal-barcode').on('keypress',function(e){
+      if(e.keyCode == 13){
+        let val = $(this).val();
+        if (val !="") {
+          getProductByBarcode(val,function(item){
+            if (Object.keys(item).length != 0)
+              {
+                $('#product-name').val(item.name)
+                $('#product-price').val(formatNumber(item.price))
+              }else{
+                $("#modal-barcode").val(val.toLowerCase())
+              }
           })
           
         }
@@ -549,6 +610,24 @@
 
     dsCode!=""?getDirectSales():null;
   })
+
+  function printPrice() {
+    let data = {
+      name:$('#product-name').val(),
+      price:$('#product-price').val(),
+    }
+    ajax(data, `{{URL::to('/transaction/price')}}`, "POST",
+          function(item) {
+      },
+    )
+  }
+  function getProductByBarcode(barcode,callback) {
+    ajax(null, `{{URL::to('/product/barcode/${barcode}')}}`, "GET",
+              function(item) {
+               callback(item)
+          },
+        )
+  }
 
   function getPayments() {
     ajax(null, `{{URL::to('payment/get')}}`, "GET",

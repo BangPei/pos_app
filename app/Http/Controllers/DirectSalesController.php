@@ -19,6 +19,8 @@ class DirectSalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public $printer = "cashier_dev";
     public function index(UtilitiesRequest $request)
     {
         $directSales = DirectSales::all();
@@ -109,7 +111,7 @@ class DirectSalesController extends Controller
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
 
-        $connector = new WindowsPrintConnector("cashier_pos");
+        $connector = new WindowsPrintConnector($this->printer);
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
@@ -171,6 +173,32 @@ class DirectSalesController extends Controller
         $printer->cut();
         $printer->close();
         return response()->json($ds);
+    }
+
+    public function printPrice(Request $request)
+    {
+        $connector = new WindowsPrintConnector($this->printer);
+        $printer = new Printer($connector);
+        $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT);
+        $printer->text("Toko SS Bumi Indah\n");
+        $printer->selectPrintMode();
+        for ($i = 1; $i < 33; $i++) {
+            $printer->text("_");
+        }
+        $printer->feed();
+        $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT | Printer::MODE_DOUBLE_WIDTH);
+        $printer->setJustification(Printer::JUSTIFY_RIGHT);
+        $printer->text("RP. " . $request->price);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->feed();
+        $printer->initialize();
+        $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT | Printer::MODE_DOUBLE_WIDTH);
+        $printer->text($request->name);
+        $printer->setTextSize(8, 4);
+        $printer->feed(5);
+        $printer->cut();
+        $printer->close();
+        return response()->json($request);
     }
 
     function textPos($leftStr, $rightStr, $fontSize = 1)
