@@ -727,6 +727,7 @@
   }
 
   function addProduct(params) {
+    console.log(params);
     getMultipleDiscount(params.id,params,
       function(json){
         if (directSales.details.some(item => item.product.id === params.id)) {
