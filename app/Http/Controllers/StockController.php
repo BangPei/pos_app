@@ -47,7 +47,10 @@ class StockController extends Controller
      */
     public function create()
     {
-        //
+        return view('master/product/form-stock', [
+            "title" => "Form Stock",
+            "menu" => "Master",
+        ]);
     }
 
     /**
@@ -64,9 +67,18 @@ class StockController extends Controller
         ]);
         $stock['created_by_id'] = auth()->user()->id;
         $stock['edit_by_id'] = auth()->user()->id;
-        Stock::Create($stock);
-        session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
-        return back();
+        $stock =  Stock::Create($stock);
+        $products = [];
+        for ($i = 0; $i < count($request->products); $i++) {
+            $Product = Product::where('id', $request->products[$i]['id'])->update([
+                'stock_id' => $stock['id']
+            ]);
+            array_push($products, $Product);
+        }
+        $stock['products'] = $products;
+        return response()->json($stock);
+        // session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
+        // return back();
     }
 
     /**

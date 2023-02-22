@@ -24,9 +24,9 @@
         </div>
         <div class="col-4 text-right">
           <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-danger"><i class="fa fa-upload"></i> Import</button>
-            <button type="button" class="btn btn-success"><i class="fa fa-download"></i> Download</button>
-            <a class="btn btn-primary" href="/product/create">
+            {{-- <button type="button" class="btn btn-danger"><i class="fa fa-upload"></i> Import</button>
+            <button type="button" class="btn btn-success"><i class="fa fa-download"></i> Download</button> --}}
+            <a class="btn btn-primary" href="/stock/create">
               <i class="fas fa-plus-circle"></i> Tambah
           </a>
           </div>
@@ -124,20 +124,6 @@
                   <div class="col-3">
                     <p class="m-0 p-0">Tersedia</p>
                     <p class="m-0 p-0"> <label>{{ number_format($s->value / $pr->convertion??0, 0, ',', ',')}}</label></p>
-                    <form method="post" action="/product/stock" class="form-stock-{{ $pr->stock?->id??'' }} d-none">
-                      <input type="text" name="id" class="d-none" value="{{ $pr->stock?->value??'0' }}">
-                      @method('put')
-                      @csrf
-                        <div class="input-group mb-3">
-                          <input required  type="number" value="{{ old('stock',$pr->stock->value??'0') }}" class="form-control @error('price') is-invalid @enderror" name="value">
-                          <div class="input-group-append">
-                              <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i></button>
-                          </div>
-                          <div class="input-group-append">
-                              <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
-                          </div>
-                      </div>
-                    </form>
                   </div>
                   <div class="col">
                     <p class="m-0 p-0">
