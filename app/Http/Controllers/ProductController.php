@@ -38,7 +38,7 @@ class ProductController extends Controller
     }
     public function dataTable(UtilitiesRequest $request)
     {
-        $product = Product::with(['program' => function ($query) {
+        $product = Product::with(['stock', 'program' => function ($query) {
             $query->with('multipleDiscount');
         }]);
         if ($request->ajax()) {

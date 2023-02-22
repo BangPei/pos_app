@@ -178,6 +178,7 @@
                   <th>Nama</th>
                   <th>Satuan</th>
                   <th>Harga</th>
+                  <th>Stock</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -332,7 +333,7 @@
           },
           {
             data:"uom.name",
-            defaultContent:"--"
+            defaultContent:"--",
           },
           {
             data:"price",
@@ -340,6 +341,18 @@
             className:"text-right",
             mRender:function(data,type,full){
               return `Rp. ${formatNumber(data)}`
+            }
+          },
+          {
+            data:"convertion",
+            defaultContent:"0",
+            className:"text-center",
+            mRender:function(data,type,full){
+              if (full.stock) {
+                return formatNumber(Math.floor(full.stock.value/data))
+              }else{
+                return `Stock Belum Di Atur`
+              }
             }
           },
           {
