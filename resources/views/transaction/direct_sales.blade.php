@@ -727,52 +727,49 @@
   }
 
   function addProduct(params) {
-    console.log(params);
-    getMultipleDiscount(params.id,params,
-      function(json){
-        if (directSales.details.some(item => item.product.id === params.id)) {
-          directSales.details.forEach(data => {
-            if (data.product_id == params.id) {
-              data.qty = data.qty+1;
-              data.subtotal = parseFloat(data.price)*parseInt(data.qty);
-              data.program = 0;
-              if (Object.keys(json).length != 0){
-                let mod = 0;
-                for (let i = 1; i <= data.qty; i++) {
-                  if(i%json.program.min_qty==0){
-                      mod = mod+1
-                  }
-                }
-                data.program = mod*json.program.discount;
-              }
-            }
-          });
-        }else{
-          let detail = {
-            product:params,
-            product_name:params.name,
-            product_id:params.id,
-            qty:1,
-            price:parseFloat(params.price),
-            discount:0,
-            subtotal:parseFloat(params.price)*1,
-            program:0,
-          }
-          if (Object.keys(json).length != 0){
+    let stock = params.stock.value;
+    if (directSales.details.some(item => item.product.id === params.id)) {
+      directSales.details.forEach(data => {
+        if (data.product_id == params.id) {
+          data.qty = data.qty+1;
+          data.subtotal = parseFloat(data.price)*parseInt(data.qty);
+          data.program = 0;
+          if (params.program!= null){
             let mod = 0;
-            for (let i = 1; i <= detail.qty; i++) {
-              if(i%json.program.min_qty==0){
+            for (let i = 1; i <= data.qty; i++) {
+              let minQty = params.program.multiple_discount.min_qty;
+              if(i%minQty){
                   mod = mod+1
               }
             }
-            detail.program = mod*json.program.discount;
+            data.program = mod*params.program.multiple_discount.discount;
           }
-          directSales.details.push(detail);
         }
-        reloadJsonDataTable(tblOrder,directSales.details);
-        countTotality();
+      });
+    } else {
+      let detail = {
+        product:params,
+        product_name:params.name,
+        product_id:params.id,
+        qty:1,
+        price:parseFloat(params.price),
+        discount:0,
+        subtotal:parseFloat(params.price)*1,
+        program:0,
       }
-    )
+      if (params.program != null){
+        let mod = 0;
+        for (let i = 1; i <= detail.qty; i++) {
+          if(i%params.program.multiple_discount.min_qty==0){
+              mod = mod+1
+          }
+        }
+        detail.program = mod*params.program.multiple_discount.discount;
+      }
+      directSales.details.push(detail);
+    }
+    reloadJsonDataTable(tblOrder,directSales.details);
+    countTotality();
   }
 
   function getMultipleDiscount(barcode,product,callback) {

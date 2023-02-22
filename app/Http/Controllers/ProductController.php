@@ -207,7 +207,9 @@ class ProductController extends Controller
     public function barcode($barcode)
     {
         $product = new Product();
-        $product = Product::where('barcode', $barcode)->with('stock')->first();
+        $product = Product::where('barcode', $barcode)->with(['stock', 'program' => function ($query) {
+            $query->with('multipleDiscount');
+        }])->first();
         return response()->json($product);
     }
 
