@@ -71,6 +71,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::resource('stock', StockController::class)->middleware('auth');
 
+    Route::post('transaction/stock', [DirectSalesController::class, 'stock'])->middleware('auth');
     Route::post('transaction/price', [DirectSalesController::class, 'printPrice'])->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 

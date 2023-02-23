@@ -438,30 +438,64 @@
 
     $('#table-order').on('click', '.delete-product', function() {
         let data = tblOrder.row($(this).parents('tr')).index();
-        directSales.details.splice(data, 1);
-        countTotality();
-        reloadJsonDataTable(tblOrder, directSales.details);
+        let detail = tblOrder.row($(this).parents('tr')).data();
+        let paramStock = {
+          stock_id :detail.product.stock.id,
+          qty:detail.qty,
+          convertion:detail.convertion,
+          param:"add",
+        }
+        postStock(paramStock,function(json){
+          directSales.details.splice(data, 1);
+          countTotality();
+          reloadJsonDataTable(tblOrder, directSales.details);
+        })
     });
     $('#table-order').on('change', '.qty-order', function() {
         let data = tblOrder.row($(this).parents('tr')).data();
+        let oldValue = data.qty;
         let val = $(this).val() ==""?"1":$(this).val()
-        data.qty =parseInt(val.replace(/,/g, ""));
-      
-        getMultipleDiscount(data.product.id,data.product,
-          function(json){
-            if (Object.keys(json).length != 0){
-              let mod = 0;
-              for (let i = 1; i <= data.qty; i++) {
-                if(i%json.program.min_qty==0){
-                    mod = mod+1
+        let newValue = parseInt(val.replace(/,/g, ""));
+        let fixValue = oldValue-newValue;
+
+        let paramStock = {
+          stock_id :data.product.stock.id,
+          qty:0,
+          convertion:data.convertion,
+          param:null,
+        }
+        if (fixValue<0) {
+          paramStock.param = "min"
+          paramStock.qty = -1*fixValue
+          // Kurangi Stock
+        }else{
+          paramStock.param = "add"
+          paramStock.qty = fixValue
+          // tambah stock
+        }
+        postStock(paramStock,function(json){
+          data.qty =newValue;
+          getMultipleDiscount(data.product.id,data.product,
+            function(json){
+              if (Object.keys(json).length != 0){
+                let mod = 0;
+                for (let i = 1; i <= data.qty; i++) {
+                  if(i%json.program.min_qty==0){
+                      mod = mod+1
+                  }
                 }
+                data.program = mod*json.program.discount;
               }
-              data.program = mod*json.program.discount;
+              countTotality();
+              reloadJsonDataTable(tblOrder, directSales.details);
             }
-            countTotality();
-            reloadJsonDataTable(tblOrder, directSales.details);
-          }
-        )
+          )
+        },function(json){
+          toastr.error(`${json.message} untuk ${data.product.name}`)
+          $('#table-order .qty-order').val(oldValue)
+          countTotality();
+          reloadJsonDataTable(tblOrder, directSales.details);
+        })
     });
     $('#discount-2').on('change', function() {
         let value = $(this).val().replace(/,/g, "");
@@ -507,7 +541,7 @@
       $("#cash").val(formatNumber(directSales.cash))
       $("#change").html(formatNumber(directSales.change))
     })
- 
+
     $('#barcode').on('keypress',function(e){
       if(e.keyCode == 13){
         let val = $(this).val();
@@ -545,6 +579,8 @@
     $(window).bind('beforeunload', function(){
       if (directSales.details.length!=0) {
         return "Do you want to exit this page?";
+      }else{
+        alert('ok')
       }
     });
 
@@ -727,55 +763,76 @@
   }
 
   function addProduct(params) {
-    let stock = params.stock.value;
-    if (directSales.details.some(item => item.product.id === params.id)) {
-      directSales.details.forEach(data => {
-        if (data.product_id == params.id) {
-          data.qty = data.qty+1;
-          data.subtotal = parseFloat(data.price)*parseInt(data.qty);
-          data.program = 0;
-          if (params.program!= null){
-            let mod = 0;
-            for (let i = 1; i <= data.qty; i++) {
-              let minQty = params.program.multiple_discount.min_qty;
-              if(i%minQty){
-                  mod = mod+1
-              }
-            }
-            data.program = mod*params.program.multiple_discount.discount;
-          }
-        }
-      });
-    } else {
-      let detail = {
-        product:params,
-        product_name:params.name,
-        product_id:params.id,
-        qty:1,
-        price:parseFloat(params.price),
-        discount:0,
-        subtotal:parseFloat(params.price)*1,
-        program:0,
-      }
-      if (params.program != null){
-        let mod = 0;
-        for (let i = 1; i <= detail.qty; i++) {
-          if(i%params.program.multiple_discount.min_qty==0){
-              mod = mod+1
-          }
-        }
-        detail.program = mod*params.program.multiple_discount.discount;
-      }
-      directSales.details.push(detail);
+    let data = {
+      stock_id:params.stock.id,
+      qty:1,
+      convertion:params.convertion,
+      param:"min",
     }
-    reloadJsonDataTable(tblOrder,directSales.details);
-    countTotality();
+    postStock(data,function(json){
+      if (directSales.details.some(item => item.product.id === params.id)) {
+        directSales.details.forEach(data => {
+          if (data.product_id == params.id) {
+            data.qty = data.qty+1;
+            data.subtotal = parseFloat(data.price)*parseInt(data.qty);
+            data.program = 0;
+            if (params.program!= null){
+              let mod = 0;
+              for (let i = 1; i <= data.qty; i++) {
+                let minQty = params.program.multiple_discount.min_qty;
+                if(i%minQty){
+                    mod = mod+1
+                }
+              }
+              data.program = mod*params.program.multiple_discount.discount;
+            }
+          }
+        });
+      } else {
+        let detail = {
+          product:params,
+          product_name:params.name,
+          product_id:params.id,
+          convertion:params.convertion,
+          uom:params.uom?.name??"--",
+          category:params.category?.name??"--",
+          qty:1,
+          price:parseFloat(params.price),
+          discount:0,
+          subtotal:parseFloat(params.price)*1,
+          program:0,
+        }
+        if (params.program != null){
+          let mod = 0;
+          for (let i = 1; i <= detail.qty; i++) {
+            if(i%params.program.multiple_discount.min_qty==0){
+                mod = mod+1
+            }
+          }
+          detail.program = mod*params.program.multiple_discount.discount;
+        }
+        directSales.details.push(detail);
+      }
+      reloadJsonDataTable(tblOrder,directSales.details);
+      countTotality();
+    },function(json){
+      toastr.error(`${json.message} untuk ${params.name}`)
+    });
   }
 
+  function postStock(data,callback,error = null) {
+    ajax(data, `{{URL::to('transaction/stock')}}`, "POST",
+        function(json) {
+            callback(json)
+    },function(res){
+      json = res.responseJSON;
+      error?error(json):null;
+    })
+  }
   function getMultipleDiscount(barcode,product,callback) {
     ajax({"product":barcode}, `{{URL::to('multiple-discount-detail/show')}}`, "GET",
         function(json) {
-            callback(json)
+          callback(json)
     })
   }
 

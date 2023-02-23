@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateDirectSalesRequest;
 use App\Models\Atm;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
@@ -265,5 +266,24 @@ class DirectSalesController extends Controller
     public function destroy(DirectSales $directSales)
     {
         //
+    }
+
+    public function stock(Request $request)
+    {
+        $stock = Stock::where('id', $request['stock_id'])->first();
+        if ($request->param == "min") {
+            $value = $stock->value - ($request->qty * $request->convertion);
+        } else {
+            $value = $stock->value + ($request->qty * $request->convertion);
+        }
+        if ($value < 0) {
+            return response()->json(['message' => "Stock Tidak Cukup"], 500);
+        } else {
+            $stock->value = $value;
+            $stock = Stock::where('id', $stock['id'])->update([
+                'value' => (int)$stock['value'],
+            ]);
+            return response()->json($stock);
+        }
     }
 }

@@ -101,7 +101,7 @@
                     <p class="m-0 p-0">Stock</p>
                     <p class="m-0 p-0 p-stock-{{ $pr->stock?->id??"" }}">
                       @if (isset($pr->stock))
-                        <label>{{ floor($pr->stock?->value / $pr->convertion)}}
+                        <label>{{ number_format(floor($pr->stock?->value / $pr->convertion), 0, ',', ',')}}
                           <i onclick="editStock({{ $pr->id }})" class="fa fa-edit text-primary"></i>
                         </label>
                       @else

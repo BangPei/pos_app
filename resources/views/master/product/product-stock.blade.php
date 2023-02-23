@@ -123,7 +123,7 @@
                   </div>
                   <div class="col-3">
                     <p class="m-0 p-0">Tersedia</p>
-                    <p class="m-0 p-0"> <label>{{ number_format($s->value / $pr->convertion??0, 0, ',', ',')}}</label></p>
+                    <p class="m-0 p-0"> <label>{{ number_format(floor($s->value / $pr->convertion??0), 0, ',', ',')}}</label></p>
                   </div>
                   <div class="col">
                     <p class="m-0 p-0">
