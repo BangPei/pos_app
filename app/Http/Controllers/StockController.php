@@ -68,17 +68,18 @@ class StockController extends Controller
         $stock['created_by_id'] = auth()->user()->id;
         $stock['edit_by_id'] = auth()->user()->id;
         $stock =  Stock::Create($stock);
-        $products = [];
-        for ($i = 0; $i < count($request->products); $i++) {
-            $Product = Product::where('id', $request->products[$i]['id'])->update([
-                'stock_id' => $stock['id']
-            ]);
-            array_push($products, $Product);
+        if (isset($request->products)) {
+            $products = [];
+            for ($i = 0; $i < count($request->products); $i++) {
+                $Product = Product::where('id', $request->products[$i]['id'])->update([
+                    'stock_id' => $stock['id']
+                ]);
+                array_push($products, $Product);
+            }
+            $stock['products'] = $products;
         }
-        $stock['products'] = $products;
-        return response()->json($stock);
-        // session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
-        // return back();
+        session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
+        return back();
     }
 
     /**

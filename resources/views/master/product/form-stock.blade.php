@@ -277,11 +277,12 @@
 
     function saveStock(){
         stock.name = $('#name').val();
-        stock.value = parseFloat($('#value').val().replace(/,/g, ""));;
-        if (stock.name == "" || stock.value =="") {
-            alert('Nama Group dan Stok tidak boleh kosong');
+        let value = $('#value').val();
+        if (stock.name == "" || value =="") {
+            toastr.error('Nama Group dan Stok tidak boleh kosong');
             return false;
         }
+        stock.value = parseFloat(value.replace(/,/g, ""));
         let method = stockId == ""?"POST":"PUT";
         let url = stockId == ""?"{{ route('stock.store') }}":"{{URL::to('stock/update')}}"
         
