@@ -14,8 +14,8 @@ class TiktokApiController extends Controller
     public $apiKey = "67eui64gqqriu";
     public $shopId = "7494670387281169228";
     public $apiSecret = "da24ac38ba6931114cd43e7b49f1bd0a7ae2f2e1";
-    public $refreshToken = "ROW_MTQ3ZmYwYTExZmQwOTE4NDM3ZTYzNGMyMDcyMTY5MWJiMWExOWRkZjliY2MzZg";
-    public $access_token = "ROW_RfcMCAAAAADn98JTwrilby-8D5Me_l6_wowlEDjCT-BsBkKLoza_hzcFf6EERaYqlEeB4o-s1YtPGOI9zbb3lcLBRVivwFM1_D1s8yGZwfWYVotnDtgGEg";
+    public $refreshToken = "ROW_OTlkZDk1YmQ1OWU0NjgxY2ZjN2FiYzE4YjRkNTEyMzZjY2MyMDE5OGM5MWY3Ng";
+    public $access_token = "ROW_ofTJDgAAAADn98JTwrilby-8D5Me_l6_iou2z2_GhEsi-c7c0cVRR1vRwUd7b4SVWsAYm3z7cwuZbMC-Qt69Y8vLyxq1PzdHTLmQHkibpxnIJ498mYdugg";
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +24,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        // return $this->getOrders();
+        return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
