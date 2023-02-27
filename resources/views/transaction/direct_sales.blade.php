@@ -356,9 +356,6 @@
     $('#trans-date').datetimepicker({
       format:"DD MMMM YYYY",
     });
-    $('#btnPrint').on('click',function(){
-      window.print();
-    })
 
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
@@ -579,8 +576,6 @@
     $(window).bind('beforeunload', function(){
       if (directSales.details.length!=0) {
         return "Do you want to exit this page?";
-      }else{
-        alert('ok')
       }
     });
 

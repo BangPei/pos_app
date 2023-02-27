@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TempTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,7 @@ class LoginController extends Controller
 
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
-
+                TempTransaction::where('user_id', auth()->user()->id)->delete();
                 return redirect()->intended('/');
             }
             return back()->with('LoginError', 'Username atau Password Tidak Valid');
@@ -37,6 +38,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        TempTransaction::where('user_id', auth()->user()->id)->delete();
         Auth::logout();
 
         $request->session()->invalidate();

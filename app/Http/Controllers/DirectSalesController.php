@@ -275,34 +275,37 @@ class DirectSalesController extends Controller
         $tempTrans = TempTransaction::where(
             [
                 ['stock_id', $request['stock_id']],
-                ['user_id', auth()->user()->id]
+                // ['user_id', auth()->user()->id]
             ]
-        )->first();
-        if (isset($tempTrans)) {
-            $outValue = ($request->qty * $request->convertion) + ($tempTrans->qty * $tempTrans->convertion);
+        )->get();
+        if (count($tempTrans) > 0) {
+            $tmpVal = 0;
+            foreach ($tempTrans as $trans) {
+                $tmpVal = $tmpVal + ($trans->qty * $trans->convertion);
+            }
+
+            $outValue = ($request->qty * $request->convertion) + $tmpVal;
             $value = $stock->value - $outValue;
             if ($value < 0) {
                 return response()->json(['message' => "Stock Tidak Cukup"], 500);
             } else {
-                $tempTrans->qty = $request->qty + $tempTrans->qty;
-                $tempTrans->update();
+                if ($this->myArrayContainsWord($tempTrans, $request['product_id'])) {
+                    $trans = TempTransaction::where(
+                        [
+                            ['stock_id', $request['stock_id']],
+                            ['product_id', $request['product_id']],
+                            ['user_id', auth()->user()->id]
+                        ]
+                    )->first();
+                    $trans->qty = $request->qty + $trans->qty;
+                    $trans->update();
+                } else {
+                    $this->postNewStock($stock, $request);
+                }
                 return response()->json($tempTrans);
             }
         } else {
-            $outValue = $request->qty * $request->convertion;
-            $value = $stock->value - $outValue;
-            if ($value < 0) {
-                return response()->json(['message' => "Stock Tidak Cukup"], 500);
-            } else {
-                $tempTrans = new TempTransaction();
-                $tempTrans->qty = $request->qty??1;
-                $tempTrans->convertion = $request->convertion;
-                $tempTrans->stock_id = $request->stock_id;
-                $tempTrans->product_id = $request->product_id;
-                $tempTrans->user_id = auth()->user()->id;
-                $tempTrans->save();
-                return response()->json($tempTrans);
-            }
+            $this->postNewStock($stock, $request);
         }
         // return response()->json($tempTrans);
         // $stock = Stock::where('id', $request['stock_id'])->first();
@@ -320,5 +323,35 @@ class DirectSalesController extends Controller
         //     ]);
         //     return response()->json($stock);
         // }
+    }
+
+    private function myArrayContainsWord($myArray, $word)
+    {
+        foreach ($myArray as $element) {
+            if (
+                $element->product_id == $word ||
+                (!empty($myArray['product_id']) && $this->myArrayContainsWord($myArray['product_id'], $word))
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private function postNewStock($stock, $request)
+    {
+        $outValue = $request->qty * $request->convertion;
+        $value = $stock->value - $outValue;
+        if ($value < 0) {
+            return response()->json(['message' => "Stock Tidak Cukup"], 500);
+        } else {
+            $tempTran = new TempTransaction();
+            $tempTran->qty = $request->qty;
+            $tempTran->convertion = $request->convertion;
+            $tempTran->stock_id = $request->stock_id;
+            $tempTran->product_id = $request->product_id;
+            $tempTran->user_id = auth()->user()->id;
+            $tempTran->save();
+            return response()->json($tempTran);
+        }
     }
 }

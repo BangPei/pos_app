@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Stock;
 use App\Http\Requests\UpdateStockRequest;
 use App\Models\Product;
+use App\Models\TempTransaction;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use SebastianBergmann\Template\Template;
 
 class StockController extends Controller
 {
@@ -154,11 +156,9 @@ class StockController extends Controller
         $stock->delete();
         return Redirect::to('/stock');
     }
-    public function delete(Request $request)
+    public function delete()
     {
-        $stock = Stock::find($request->input('stock-id'));
-        $stock->delete();
-        return back();
+        TempTransaction::where('user_id', auth()->user()->id)->delete();
     }
 
     public function updateStock(Request $request)
