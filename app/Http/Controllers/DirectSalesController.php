@@ -8,6 +8,7 @@ use App\Models\Atm;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use App\Models\Stock;
+use App\Models\TempTransaction;
 use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
@@ -271,19 +272,51 @@ class DirectSalesController extends Controller
     public function stock(Request $request)
     {
         $stock = Stock::where('id', $request['stock_id'])->first();
-        if ($request->param == "min") {
-            $value = $stock->value - ($request->qty * $request->convertion);
+        $tempTrans = TempTransaction::where(
+            [
+                ['stock_id', $request['stock_id']],
+                ['user_id', auth()->user()->id]
+            ]
+        )->first();
+        if (isset($tempTrans)) {
+            $outValue = ($request->qty * $request->convertion) + ($tempTrans->qty * $tempTrans->convertion);
+            $value = $stock->value - $outValue;
+            if ($value < 0) {
+                return response()->json(['message' => "Stock Tidak Cukup"], 500);
+            } else {
+                $tempTrans->qty = $request->qty + $tempTrans->qty;
+                $tempTrans->update();
+                return response()->json($tempTrans);
+            }
         } else {
-            $value = $stock->value + ($request->qty * $request->convertion);
+            $outValue = $request->qty * $request->convertion;
+            $value = $stock->value - $outValue;
+            if ($value < 0) {
+                return response()->json(['message' => "Stock Tidak Cukup"], 500);
+            } else {
+                $tempTrans->qty = $request->qty;
+                $tempTrans->convertion = $request->convertion;
+                $tempTrans->stock_id = $request->stock_id;
+                $tempTrans->user_id = auth()->user()->id;
+                $tempTrans->save();
+                return response()->json($tempTrans);
+            }
         }
-        if ($value < 0) {
-            return response()->json(['message' => "Stock Tidak Cukup"], 500);
-        } else {
-            $stock->value = $value;
-            $stock = Stock::where('id', $stock['id'])->update([
-                'value' => (int)$stock['value'],
-            ]);
-            return response()->json($stock);
-        }
+        // return response()->json($tempTrans);
+        // $stock = Stock::where('id', $request['stock_id'])->first();
+        // if ($request->param == "min") {
+        //     $value = $stock->value - ($request->qty * $request->convertion);
+        // } else {
+        //     $value = $stock->value + ($request->qty * $request->convertion);
+        // }
+        // if ($value < 0) {
+        //     return response()->json(['message' => "Stock Tidak Cukup"], 500);
+        // } else {
+        //     $stock->value = $value;
+        //     $stock = Stock::where('id', $stock['id'])->update([
+        //         'value' => (int)$stock['value'],
+        //     ]);
+        //     return response()->json($stock);
+        // }
     }
 }
