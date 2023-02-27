@@ -294,9 +294,11 @@ class DirectSalesController extends Controller
             if ($value < 0) {
                 return response()->json(['message' => "Stock Tidak Cukup"], 500);
             } else {
-                $tempTrans->qty = $request->qty;
+                $tempTrans = new TempTransaction();
+                $tempTrans->qty = $request->qty??1;
                 $tempTrans->convertion = $request->convertion;
                 $tempTrans->stock_id = $request->stock_id;
+                $tempTrans->product_id = $request->product_id;
                 $tempTrans->user_id = auth()->user()->id;
                 $tempTrans->save();
                 return response()->json($tempTrans);

@@ -765,6 +765,7 @@
   function addProduct(params) {
     let data = {
       stock_id:params.stock.id,
+      product_id:params.id,
       qty:1,
       convertion:params.convertion,
       param:"min",
