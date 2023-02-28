@@ -107,6 +107,9 @@ class DirectSalesController extends Controller
             $detail->discount = $request->details[$i]["discount"];
             $detail->program = $request->details[$i]["program"];
             $detail->subtotal = $request->details[$i]["subtotal"];
+            $detail->convertion = $request->details[$i]["convertion"];
+            $detail->uom = $request->details[$i]["uom"];
+            $detail->category = $request->details[$i]["category"];
             $detail->save();
             array_push($details, $detail);
         }
@@ -171,7 +174,7 @@ class DirectSalesController extends Controller
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Terimakasih !!!\n");
         $printer->text("Selamat Berbelanja Kembali !!!\n");
-        $printer->feed(5);
+        $printer->feed(3);
         $printer->cut();
         $printer->close();
         return response()->json($ds);
