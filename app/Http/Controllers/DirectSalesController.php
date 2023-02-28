@@ -23,6 +23,7 @@ class DirectSalesController extends Controller
      */
 
     public $printer = "cashier_dev";
+
     public function index(UtilitiesRequest $request)
     {
         $directSales = DirectSales::all();
@@ -43,8 +44,9 @@ class DirectSalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(UtilitiesRequest $request)
+    public function create()
     {
+
         $paymentType = PaymentType::where('is_active', 1)->get();
         $banks = Atm::where('is_active', 1)->get();
         return view('transaction/direct_sales', [
@@ -98,6 +100,7 @@ class DirectSalesController extends Controller
 
         $details = [];
         for ($i = 0; $i < count($request->details); $i++) {
+            $stock = Stock::where('id', $request->details[$i]["product"]['stock']['id'])->first();
             $detail = new DirectSalesDetail();
             $detail->direct_sales_id = $ds["id"];
             $detail->product_barcode = $request->details[$i]["product"]['barcode'];
@@ -111,10 +114,14 @@ class DirectSalesController extends Controller
             $detail->uom = $request->details[$i]["uom"];
             $detail->category = $request->details[$i]["category"];
             $detail->save();
+            Stock::where('id', $request->details[$i]["product"]['stock']['id'])->update([
+                'value' => $stock->value - ($detail->convertion * $detail->qty),
+            ]);
             array_push($details, $detail);
         }
         // $ds->details = $details;
         $ds = DirectSales::where('id', $ds->id)->first();
+        TempTransaction::where('user_id', auth()->user()->id)->delete();
 
         $connector = new WindowsPrintConnector($this->printer);
         $printer = new Printer($connector);
@@ -274,41 +281,60 @@ class DirectSalesController extends Controller
 
     public function stock(Request $request)
     {
-        $stock = Stock::where('id', $request['stock_id'])->first();
-        $tempTrans = TempTransaction::where(
-            [
-                ['stock_id', $request['stock_id']],
-                // ['user_id', auth()->user()->id]
-            ]
-        )->get();
-        if (count($tempTrans) > 0) {
-            $tmpVal = 0;
-            foreach ($tempTrans as $trans) {
-                $tmpVal = $tmpVal + ($trans->qty * $trans->convertion);
-            }
 
-            $outValue = ($request->qty * $request->convertion) + $tmpVal;
-            $value = $stock->value - $outValue;
-            if ($value < 0) {
-                return response()->json(['message' => "Stock Tidak Cukup"], 500);
-            } else {
-                if ($this->myArrayContainsWord($tempTrans, $request['product_id'])) {
-                    $trans = TempTransaction::where(
-                        [
-                            ['stock_id', $request['stock_id']],
-                            ['product_id', $request['product_id']],
-                            ['user_id', auth()->user()->id]
-                        ]
-                    )->first();
-                    $trans->qty = $request->qty + $trans->qty;
-                    $trans->update();
-                } else {
-                    $this->postNewStock($stock, $request);
-                }
-                return response()->json($tempTrans);
-            }
+        if ($request->param == "remove") {
+            $tempTrans = TempTransaction::where(
+                [
+                    ['stock_id', $request['stock_id']],
+                    ['user_id', auth()->user()->id],
+                    ['product_id', $request['product_id']],
+                ]
+            )->delete();
         } else {
-            $this->postNewStock($stock, $request);
+            $stock = Stock::where('id', $request['stock_id'])->first();
+            $tempTrans = TempTransaction::where(
+                [
+                    ['stock_id', $request['stock_id']],
+                    // ['user_id', auth()->user()->id]
+                ]
+            )->get();
+            if (count($tempTrans) !== 0) {
+                $tmpVal = 0;
+                foreach ($tempTrans as $trans) {
+                    if (($trans->product_id == $request['product_id']) && ($trans->user_id == auth()->user()->id)) {
+                        if ($request->param == "min") {
+                            $trans->qty = $trans->qty + $request['qty'];
+                        } else {
+                            $trans->qty = $trans->qty - $request['qty'];
+                        }
+                        $tmpVal = $tmpVal + ($trans->qty * $trans->convertion);
+                    } else {
+                        $tmpVal = $tmpVal + ($trans->qty * $trans->convertion);
+                    }
+                }
+                $value = $stock->value - $tmpVal;
+                if ($value <= 0) {
+                    return response()->json(['message' => "Stock Tidak Cukup"], 500);
+                } else {
+                    if ($this->myArrayContainsWord($tempTrans, $request['product_id'], auth()->user()->id)) {
+                        $trans = TempTransaction::where(
+                            [
+                                ['stock_id', $request['stock_id']],
+                                ['product_id', $request['product_id']],
+                                ['user_id', auth()->user()->id]
+                            ]
+                        )->first();
+                        $trans->qty = $request->param == "min" ? ($trans->qty + $request['qty']) : ($trans->qty - $request['qty']);
+                        $trans->update();
+                    } else {
+                        $this->postNewStock($stock, $request);
+                    }
+                    // return response()->json($value);
+                }
+                // return response()->json($tmpVal);
+            } else {
+                $this->postNewStock($stock, $request);
+            }
         }
         // return response()->json($tempTrans);
         // $stock = Stock::where('id', $request['stock_id'])->first();
@@ -328,12 +354,14 @@ class DirectSalesController extends Controller
         // }
     }
 
-    private function myArrayContainsWord($myArray, $word)
+    private function myArrayContainsWord($myArray, $productId, $userId)
     {
         foreach ($myArray as $element) {
             if (
-                $element->product_id == $word ||
-                (!empty($myArray['product_id']) && $this->myArrayContainsWord($myArray['product_id'], $word))
+                ($element->product_id == $productId ||
+                    (!empty($myArray['product_id']) && $this->myArrayContainsWord($myArray['product_id'], $productId, $userId)))
+                && ($element->user_id == $userId ||
+                    (!empty($myArray['user_id']) && $this->myArrayContainsWord($myArray['user_id'], $userId, $userId)))
             ) {
                 return true;
             }

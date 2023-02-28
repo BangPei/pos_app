@@ -438,9 +438,10 @@
         let detail = tblOrder.row($(this).parents('tr')).data();
         let paramStock = {
           stock_id :detail.product.stock.id,
+          product_id :detail.product.id,
           qty:detail.qty,
           convertion:detail.convertion,
-          param:"add",
+          param:"remove",
         }
         postStock(paramStock,function(json){
           directSales.details.splice(data, 1);
@@ -457,6 +458,7 @@
 
         let paramStock = {
           stock_id :data.product.stock.id,
+          product_id :data.product.id,
           qty:0,
           convertion:data.convertion,
           param:null,
