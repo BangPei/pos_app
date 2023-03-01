@@ -102,7 +102,7 @@
                     <p class="m-0 p-0 p-stock-{{ $pr->stock?->id??"" }}">
                       @if (isset($pr->stock))
                         <label>{{ number_format(floor($pr->stock?->value / $pr->convertion), 0, ',', ',')}}
-                          <i onclick="editStock({{ $pr->id }})" class="fa fa-edit text-primary"></i>
+                          <i onclick="editStock({{ $pr->stock->id }})" class="fa fa-edit text-primary"></i>
                         </label>
                       @else
                         <label>Belum Setting</label>

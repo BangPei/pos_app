@@ -443,7 +443,7 @@
           convertion:detail.convertion,
           param:"remove",
         }
-        postStock(paramStock,function(json){
+        deleteStock(paramStock,function(json){
           directSales.details.splice(data, 1);
           countTotality();
           reloadJsonDataTable(tblOrder, directSales.details);
@@ -454,25 +454,15 @@
         let oldValue = data.qty;
         let val = $(this).val() ==""?"1":$(this).val()
         let newValue = parseInt(val.replace(/,/g, ""));
-        let fixValue = oldValue-newValue;
 
         let paramStock = {
           stock_id :data.product.stock.id,
           product_id :data.product.id,
-          qty:0,
+          qty:newValue,
           convertion:data.convertion,
           param:null,
         }
-        if (fixValue<0) {
-          paramStock.param = "min"
-          paramStock.qty = -1*fixValue
-          // Kurangi Stock
-        }else{
-          paramStock.param = "add"
-          paramStock.qty = fixValue
-          // tambah stock
-        }
-        postStock(paramStock,function(json){
+        updateStock(paramStock,function(json){
           data.qty =newValue;
           getMultipleDiscount(data.product.id,data.product,
             function(json){
@@ -819,7 +809,7 @@
   }
 
   function postStock(data,callback,error = null) {
-    ajax(data, `{{URL::to('transaction/stock')}}`, "POST",
+    ajax(data, `{{URL::to('temp-stock/post-stock')}}`, "POST",
         function(json) {
             callback(json)
     },function(res){
@@ -827,6 +817,27 @@
       error?error(json):null;
     })
   }
+
+  function updateStock(data,callback,error = null) {
+    ajax(data, `{{URL::to('temp-stock/update-stock')}}`, "PUT",
+        function(json) {
+            callback(json)
+    },function(res){
+      json = res.responseJSON;
+      error?error(json):null;
+    })
+  }
+
+  function deleteStock(data,callback,error = null) {
+    ajax(data, `{{URL::to('temp-stock/delete-stock')}}`, "DELETE",
+        function(json) {
+            callback(json)
+    },function(res){
+      json = res.responseJSON;
+      error?error(json):null;
+    })
+  }
+
   function getMultipleDiscount(barcode,product,callback) {
     ajax({"product":barcode}, `{{URL::to('multiple-discount-detail/show')}}`, "GET",
         function(json) {

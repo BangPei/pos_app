@@ -6,7 +6,6 @@ use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\ExpeditionController;
-use App\Http\Controllers\ItemConvertionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
 use App\Http\Controllers\MultipleDiscountDetailController;
@@ -17,10 +16,9 @@ use App\Http\Controllers\SearchTaskController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TempTransactionController;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
-use App\Models\DailyTask;
-use App\Models\ItemConvertion;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -71,7 +69,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::resource('stock', StockController::class)->middleware('auth');
 
-    Route::post('transaction/stock', [DirectSalesController::class, 'stock'])->middleware('auth');
     Route::post('transaction/price', [DirectSalesController::class, 'printPrice'])->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 
@@ -82,10 +79,12 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('multiple-discount', MultipleDiscountController::class)->middleware('auth');
     Route::resource('multiple-discount-detail', MultipleDiscountDetailController::class)->middleware('auth');
 
-    Route::get('item-convertion/dataTable', [ItemConvertionController::class, 'dataTable'])->middleware('auth');
-    Route::resource('item-convertion', ItemConvertionController::class)->middleware('auth');
-
     Route::resource('expedition', ExpeditionController::class)->middleware('auth');
     Route::resource('daily-task', DailyTaskController::class)->middleware('auth');
     Route::resource('search-task', SearchTaskController::class)->middleware('auth');
+
+    Route::post('temp-stock/post-stock', [TempTransactionController::class, 'postStockByUser'])->middleware('auth');
+    Route::put('temp-stock/update-stock', [TempTransactionController::class, 'updateStockByUser'])->middleware('auth');
+    Route::delete('temp-stock/delete-stock', [TempTransactionController::class, 'deleteStockByUser'])->middleware('auth');
+    Route::resource('temp-stock', TempTransactionController::class)->middleware('auth');
 });
