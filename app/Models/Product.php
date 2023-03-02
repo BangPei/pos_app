@@ -17,7 +17,7 @@ class Product extends Model
         'created_by_id',
         'edit_by_id',
     ];
-    protected $with = ['category', 'created_by', 'edit_by', 'uom'];
+    protected $with = ['category', 'created_by', 'edit_by', 'uom', 'stock'];
 
     public function category()
     {

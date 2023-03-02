@@ -22,7 +22,7 @@ class DirectSalesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public $printer = "cashier_pos";
+    public $printer = "cashier_dev";
 
     public function index(UtilitiesRequest $request)
     {
@@ -111,8 +111,8 @@ class DirectSalesController extends Controller
             $detail->program = $request->details[$i]["program"];
             $detail->subtotal = $request->details[$i]["subtotal"];
             $detail->convertion = $request->details[$i]["convertion"];
-            $detail->uom = $request->details[$i]["uom"];
-            $detail->category = $request->details[$i]["category"];
+            $detail->uom = $request->details[$i]["uom"] ?? "";
+            $detail->category = $request->details[$i]["category"] ?? "";
             $detail->save();
             Stock::where('id', $request->details[$i]["product"]['stock']['id'])->update([
                 'value' => $stock->value - ($detail->convertion * $detail->qty),
