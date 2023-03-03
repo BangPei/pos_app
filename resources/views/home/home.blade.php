@@ -5,9 +5,22 @@
   <!-- small box -->
   <div class="small-box bg-info">
     <div class="inner">
-      <h3>{{ number_format($subtotal) }}</h3>
+      <h3>Rp. {{ number_format($subtotal) }}</h3>
+      <p>Pendapatan</p>
+    </div>
+    <div class="icon">
+      <i class="fa fa-dollar-sign"></i>
+    </div>
+    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+  </div>
+</div>
+<div class="col-lg-3 col-6">
+  <!-- small box -->
+  <div class="small-box bg-success">
+    <div class="inner">
+      <h3>{{ number_format($totalOrder) }}</h3>
 
-      <p>New Orders</p>
+      <p>Total Transaksi</p>
     </div>
     <div class="icon">
       <i class="ion ion-bag"></i>
@@ -17,11 +30,11 @@
 </div>
 <div class="col-lg-3 col-6">
   <!-- small box -->
-  <div class="small-box bg-info">
+  <div class="small-box bg-warning">
     <div class="inner">
-      <h3>150</h3>
+      <h3>{{ number_format($totalProduct) }}</h3>
 
-      <p>New Orders</p>
+      <p>Total Produk</p>
     </div>
     <div class="icon">
       <i class="ion ion-bag"></i>
@@ -31,25 +44,11 @@
 </div>
 <div class="col-lg-3 col-6">
   <!-- small box -->
-  <div class="small-box bg-info">
+  <div class="small-box bg-danger">
     <div class="inner">
-      <h3>150</h3>
+      <h3>{{ number_format($stock) }}</h3>
 
-      <p>New Orders</p>
-    </div>
-    <div class="icon">
-      <i class="ion ion-bag"></i>
-    </div>
-    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-  </div>
-</div>
-<div class="col-lg-3 col-6">
-  <!-- small box -->
-  <div class="small-box bg-info">
-    <div class="inner">
-      <h3>150</h3>
-
-      <p>New Orders</p>
+      <p>Stok Habis</p>
     </div>
     <div class="icon">
       <i class="ion ion-bag"></i>
