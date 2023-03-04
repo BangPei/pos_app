@@ -271,9 +271,13 @@
       data:directSales.details,
       columns:[
         {
-          data:"product.name",
+          data:"product",
           bSortable: false,
           defaultContent:"--",
+          mRender:function(data,type,full){
+            let discount = data.program.multiple_discount;
+            return `${data.name}</br> <small class="badge badge-info">Beli ${discount.min_qty} Diskon Rp.${formatNumber(discount.discount)}</small>`
+          }
         },
         {
           data:"product.uom.name",
@@ -768,7 +772,7 @@
               let mod = 0;
               for (let i = 1; i <= data.qty; i++) {
                 let minQty = params.program.multiple_discount.min_qty;
-                if(i%minQty){
+                if((i%minQty)==0){
                     mod = mod+1
                 }
               }
