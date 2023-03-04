@@ -275,8 +275,16 @@
           bSortable: false,
           defaultContent:"--",
           mRender:function(data,type,full){
-            let discount = data.program.multiple_discount;
-            return `${data.name}</br> <small class="badge badge-info">Beli ${discount.min_qty} Diskon Rp.${formatNumber(discount.discount)}</small>`
+            if (data.program) {
+              if (data.program.is_active) {
+                let discount = data.program.multiple_discount;
+                return `${data.name}</br> <small class="badge badge-info">Beli ${discount.min_qty} Diskon Rp.${formatNumber(discount.discount)}</small>`
+              }else{
+                return data.name
+              }
+            }else{
+              return data.name
+            }
           }
         },
         {
@@ -768,7 +776,7 @@
             data.qty = data.qty+1;
             data.subtotal = parseFloat(data.price)*parseInt(data.qty);
             data.program = 0;
-            if (params.program!= null){
+            if ((params.program!= null) && (params.program.is_active)){
               let mod = 0;
               for (let i = 1; i <= data.qty; i++) {
                 let minQty = params.program.multiple_discount.min_qty;
