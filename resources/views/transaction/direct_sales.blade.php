@@ -865,6 +865,13 @@
     $('#discount-2').val('')
     $('#total').html('0')
     $('#change').html('0')
+    let payId;
+    $("#payment-type > option").each(function() {
+      if ($(this).attr('selected')) {
+        payId = $(this).val();
+      }
+    });
+    $("#payment-type").val(payId).trigger('change');
     $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
     directSales.details = [];
     reloadJsonDataTable(tblOrder,directSales.details);
