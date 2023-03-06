@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\OnlineShop;
+use App\Models\TiktokAccessToken;
 use Illuminate\Http\Request;
 use NVuln\TiktokShop\Client;
 
@@ -25,7 +26,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        // return $this->getOrders();
+        return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
@@ -75,11 +76,15 @@ class TiktokApiController extends Controller
         //
     }
 
-    public function getOrderDetail($listOrder)
+    public function getOrderDetail($listOrder, $auth = null)
     {
-        $client = new Client($this->apiKey, $this->apiSecret);
-        $client->setAccessToken($this->access_token);
-        $client->setShopId($this->shopId);
+        if ($auth == null) {
+            $auth = $this->getRefreshToken();
+        }
+
+        $client = new Client($auth->api_key, $auth->api_secret);
+        $client->setAccessToken($auth->access_token);
+        $client->setShopId($auth->shopId);
         $orders = $client->Order->getOrderDetail($listOrder);
         $orderList = $orders['order_list'];
         $validOrders = [];
@@ -100,9 +105,10 @@ class TiktokApiController extends Controller
 
     public function getOrders()
     {
-        $client = new Client($this->apiKey, $this->apiSecret);
-        $client->setAccessToken($this->access_token);
-        $client->setShopId($this->shopId);
+        $auth = $this->getRefreshToken();
+        $client = new Client($auth->api_key, $auth->api_secret);
+        $client->setAccessToken($auth->access_token);
+        $client->setShopId($auth->shopId);
         $more = true;
         $nextCursor = null;
         $fullOrder = [];
@@ -117,7 +123,7 @@ class TiktokApiController extends Controller
         foreach ($orders['order_list'] as $order) {
             array_push($listOrder, $order['order_id']);
         }
-        $orderFull = $this->getOrderDetail($listOrder);
+        $orderFull = $this->getOrderDetail($listOrder, $auth);
         foreach ($orderFull as $order) {
             array_push($fullOrder, $order);
         }
@@ -135,7 +141,7 @@ class TiktokApiController extends Controller
             foreach ($orders['order_list'] as $order) {
                 array_push($listOrder, $order['order_id']);
             }
-            $orderFull = $this->getOrderDetail($listOrder);
+            $orderFull = $this->getOrderDetail($listOrder, $auth);
             foreach ($orderFull as $order) {
                 array_push($fullOrder, $order);
             }
@@ -261,10 +267,18 @@ class TiktokApiController extends Controller
     }
     public function getRefreshToken()
     {
+        $accessAuth = TiktokAccessToken::all()->first();
         $host = "https://auth.tiktok-shops.com";
         $path = "/api/v2/token/refresh";
-        $url = $host . $path . '?app_key=' . $this->apiKey . '&app_secret=' . $this->apiSecret . '&refresh_token=' . $this->refreshToken . '&grant_type=refresh_token';
-        return $this->curlRequest($url, "GET");
+        $url = $host . $path . '?app_key=' . $accessAuth->api_key . '&app_secret=' . $accessAuth->api_secret . '&refresh_token=' . $accessAuth->refresh_token . '&grant_type=refresh_token';
+        $response = $this->curlRequest($url, "GET");
+        $auth = json_decode($response)->data;
+        TiktokAccessToken::where('id', $accessAuth->id)->update([
+            "refresh_token" => $auth->refresh_token,
+            "access_token" => $auth->access_token,
+            "expired_in" => $auth->access_token_expire_in,
+        ]);
+        return TiktokAccessToken::all()->first();
     }
 
     public function curlRequest($url, $method, $fieldRequest = null)
