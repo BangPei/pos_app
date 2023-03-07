@@ -35,7 +35,7 @@
           <div class="row">
             <div class="col-12">
               <div class="form-group">
-                <input type="text" id="barcode" name="barcode" autocomplete="off" autofocus placeholder="Scann Barcode" class="form-control">
+                <input type="text" id="barcode" name="barcode" autocomplete="off" placeholder="Scann Barcode" class="form-control">
               </div>
             </div>
           </div>
@@ -243,6 +243,7 @@
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/plugins/onscan/onscan.js"></script>
 <script>
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
@@ -262,7 +263,12 @@
     details:[]
   };
   $(document).ready(function(){
-    // var getTime = currentTime();
+
+    initScanJs()
+
+    $('#barcode').on('focus',function(){
+      onScan.simulate(document, [48,49,50]);
+    })
     $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
@@ -441,7 +447,7 @@
       $("#modal-product").modal('hide');
     })
     $('#modal-product').on('hidden.bs.modal', function (e) {
-      $('#barcode').focus()
+      // $('#barcode').focus()
       $('#table-product').DataTable().destroy();
     })
 
@@ -508,10 +514,15 @@
         $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
     });
+    $('#cash,#customer-name').focus(function() {
+      onScan.detachFrom(document);
+    })
+    $('#cash,#customer-name').focusout(function() {
+      initScanJs();
+    })
     $('#cash').on('keyup', function() {
         let value = $(this).val().replace(/,/g, "");
         directSales.cash = parseFloat(value===""?0:value);
-        
         directSales.change = directSales.cash-directSales.amount;
         $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
@@ -549,13 +560,15 @@
         if (val !="") {
           getProductByBarcode(val,function(item){
             if (Object.keys(item).length != 0) {
-                  addProduct(item);
-                  $("#barcode").val("")
-                }else{
-                  $("#barcode").val(val.toLowerCase())
-                }
+              addProduct(item);
+              $("#barcode").val("")
+              // $('#barcode').focusout(function(){
+              //   initScanJs();
+              // })
+            }else{
+              $("#barcode").val(val.toLowerCase())
+            }
           })
-          
         }
       }
     })
@@ -646,6 +659,20 @@
     dsCode!=""?getDirectSales():null;
   })
 
+  function initScanJs() {
+    onScan.attachTo(document, {
+        suffixKeyCodes: [13], // enter-key expected at the end of a scan
+        reactToPaste: true, // Compatibility to built-in scanners in paste-mode (as opposed to keyboard-mode)
+        onScan: function(sCode, iQty) { // Alternative to document.addEventListener('scan')
+          getProductByBarcode(sCode,function(item){
+            if (Object.keys(item).length != 0) {
+              addProduct(item);
+            }
+          })
+        },
+    });
+  }
+
   function printPrice() {
     let data = {
       name:$('#product-name').val(),
@@ -691,6 +718,7 @@
             $('#discount-1').html(formatNumber(json.discount))
             $('#total-qty').html(formatNumber(json.total_item))
             $('#total').html(formatNumber(json.amount))
+            $('#trans-date').val(moment(json.date).format("DD MMMM YYYY"))
             $("#customer-name").val(json.customer_name??"")
             $('#edit-area').append(`<u>
               - ${json.code} / ${json.created_by.name} / 
@@ -726,10 +754,12 @@
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
     $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
-    ajax(directSales, "{{ route('transaction.store') }}", "POST",
+    let method = dsCode==""?"POST":"PUT";
+    let url = dsCode==""?"{{ route('transaction.store') }}":"{{URL::to('transaction/update')}}"
+    ajax(directSales, url, method,
         function(json) {
           toastr.success('Transaksi Berhasil Disimpan')
-          cancelTransaction();
+          dsCode==""?clearTransaction():null;
           $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
     },function(json){
       $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
@@ -758,7 +788,7 @@
     $('#total-qty').html(formatNumber(directSales.total_item))
     $('#total').html(formatNumber(directSales.amount))
     $('#barcode').animate({left:0,duration:'slow'});
-    $('#barcode').focus();
+    // $('#barcode').focus();
   }
 
   function addProduct(params) {
@@ -815,6 +845,7 @@
       }
       reloadJsonDataTable(tblOrder,directSales.details);
       countTotality();
+      $('#barcode').val("");
     },function(json){
       toastr.error(`${json.message} untuk ${params.name}`)
     });
@@ -856,8 +887,16 @@
           callback(json)
     })
   }
+  
+  function cancelTransaction(){
+    
+    ajax(null, `{{URL::to('temp-stock/delete-transaction')}}`, "DELETE",
+        function(json) {
+          clearTransaction();
+    })
+  }
 
-  function cancelTransaction() {
+  function clearTransaction() {
     $('#cash').val('');
     $('#is-cash').prop('checked',false);
     $('input[name="bank"]').prop('checked',false)

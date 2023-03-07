@@ -105,6 +105,10 @@ class TempTransactionController extends Controller
             ['user_id', auth()->user()->id],
         ])->delete();
     }
+    public function deleteTransaction()
+    {
+        TempTransaction::where('user_id', auth()->user()->id)->delete();
+    }
 
     public function postStockByUser(Request $request)
     {

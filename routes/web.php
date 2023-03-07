@@ -86,5 +86,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::post('temp-stock/post-stock', [TempTransactionController::class, 'postStockByUser'])->middleware('auth');
     Route::put('temp-stock/update-stock', [TempTransactionController::class, 'updateStockByUser'])->middleware('auth');
     Route::delete('temp-stock/delete-stock', [TempTransactionController::class, 'deleteStockByUser'])->middleware('auth');
+    Route::delete('temp-stock/delete-transaction', [TempTransactionController::class, 'deleteTransaction'])->middleware('auth');
     Route::resource('temp-stock', TempTransactionController::class)->middleware('auth');
 });

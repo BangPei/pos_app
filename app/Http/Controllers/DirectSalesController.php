@@ -123,6 +123,12 @@ class DirectSalesController extends Controller
         $ds = DirectSales::where('id', $ds->id)->first();
         TempTransaction::where('user_id', auth()->user()->id)->delete();
 
+        $this->printReceipt($ds);
+        return response()->json($ds);
+    }
+
+    public function printReceipt(DirectSales $ds)
+    {
         $connector = new WindowsPrintConnector($this->printer);
         $printer = new Printer($connector);
 
@@ -184,7 +190,6 @@ class DirectSalesController extends Controller
         $printer->feed(3);
         $printer->cut();
         $printer->close();
-        return response()->json($ds);
     }
 
     public function printPrice(Request $request)
@@ -263,9 +268,11 @@ class DirectSalesController extends Controller
      * @param  \App\Models\DirectSales  $directSales
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateDirectSalesRequest $request, DirectSales $directSales)
+    public function update(Request $request)
     {
-        //
+        $ds = DirectSales::where('code', $request->code)->first();
+        $this->printReceipt($ds);
+        return response()->json($ds);
     }
 
     /**
