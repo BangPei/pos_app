@@ -82,7 +82,7 @@
             <div class="col-4 font-weight-bold">Tipe Pembayaran</div>
             <div class="col-2 font-weight-bold">:</div>
             <div class="col-6 text-right">
-              <select name="payment-type" id="payment-type" class="form-control">
+              <select name="payment-type" id="payment-type" class="form-control select2 text" style="width: 100%">
                 @foreach ($payment as $pt)
                   <option value="{{$pt->id}}" data-reduce="{{$pt->reduce->reduce??0 }}" show-cash="{{ $pt->show_cash }}"  data-atm="{{ $pt->show_atm }}" {{ $pt->is_default?'selected':""}} data-id="{{$pt->id}}">{{$pt->name}}</option>
                 @endforeach
@@ -244,6 +244,7 @@
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="/plugins/onscan/onscan.js"></script>
+<script src="/plugins/jquery.hotkeys/jquery.hotkeys.js"></script>
 <script>
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let directSales= {
@@ -603,6 +604,16 @@
         return "Do you want to exit this page?";
       }
     });
+    $(document).bind('keydown', 'alt+a', function(){
+      if ($("#payment-type").find(':selected').attr('show-cash')=="1") {
+        $('#cash').focus();
+      }
+    })
+    $(document).bind('keydown', 'alt+w', function(){
+      let value = $('#is-cash').prop('checked');
+      $('#is-cash').prop('checked',!value).trigger('change');
+    })
+    $(document).bind('keydown', 'alt+q', function(){$('#payment-type').select2('open')})
 
     $('#payment-type').on('change',function(){
       let showAtm = $(this).find(':selected').attr('data-atm');
