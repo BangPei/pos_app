@@ -376,6 +376,7 @@
     });
 
     $('#modal-product').on('show.bs.modal', function (e) {
+      onScan.detachFrom(document);
       tblProduct = $('#table-product').DataTable({
         processing:true,
         serverSide:true,
@@ -448,7 +449,14 @@
     })
     $('#modal-product').on('hidden.bs.modal', function (e) {
       // $('#barcode').focus()
+      initScanJs()
       $('#table-product').DataTable().destroy();
+    })
+    $('#modal-price').on('hidden.bs.modal', function (e) {
+      initScanJs()
+    })
+    $('#modal-price').on('show.bs.modal', function (e) {
+      onScan.detachFrom(document);
     })
 
     $('#table-order').on('click', '.delete-product', function() {
@@ -514,10 +522,10 @@
         $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
     });
-    $('#cash,#customer-name').focus(function() {
+    $('#cash,#customer-name,#discount-2,#trans-date').focus(function() {
       onScan.detachFrom(document);
     })
-    $('#cash,#customer-name').focusout(function() {
+    $('#cash,#customer-name,#discount-2,#trans-date').focusout(function() {
       initScanJs();
     })
     $('#cash').on('keyup', function() {

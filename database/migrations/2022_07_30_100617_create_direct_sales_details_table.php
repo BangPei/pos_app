@@ -20,7 +20,7 @@ class CreateDirectSalesDetailsTable extends Migration
             $table->float('price');
             $table->integer('qty');
             $table->float('discount');
-            $table->float('subtotal');
+            $table->decimal('subtotal', 10, 2);
             $table->float('program');
             $table->timestamps();
         });

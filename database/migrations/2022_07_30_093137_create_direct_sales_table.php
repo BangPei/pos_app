@@ -17,12 +17,12 @@ class CreateDirectSalesTable extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('customer_name')->nullable();
-            $table->float('amount');
+            $table->decimal('amount', 10, 2);
             $table->float('discount');
             $table->float('additional_discount');
-            $table->float('cash');
+            $table->decimal('cash', 10, 2);
             $table->float('change');
-            $table->float('subtotal');
+            $table->decimal('subtotal', 10, 2);
             $table->integer('reduce');
             $table->integer('total_item');
             $table->foreignId('payment_type_id');

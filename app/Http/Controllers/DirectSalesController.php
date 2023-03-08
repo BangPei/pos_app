@@ -155,7 +155,14 @@ class DirectSalesController extends Controller
         foreach ($ds['details'] as $detail) {
             $printer->text($detail->product_name . "\n");
             $printer->setJustification(Printer::JUSTIFY_RIGHT);
-            $printer->text(number_format($detail->price, 0, ',', ',') . " x " . number_format($detail->qty, 0, ',', ',') . " = " . number_format($detail->subtotal, 0, ',', ',') . "\n");
+            $printer->text(number_format($detail->price, 0, ',', ',') . " x " . number_format($detail->qty, 0, ',', ',') . " = Rp." . number_format($detail->subtotal, 0, ',', ',') . "\n");
+            if ($detail->program > 0) {
+                $printer->text("Rp.-" . number_format($detail->program, 0, ',', ',') . "\n");
+            }
+            if ($detail->discount > 0) {
+                $totalDiscount = $detail->discount * $detail->qty;
+                $printer->text(number_format($detail->discount, 0, ',', ',') . " x " . number_format($detail->qty, 0, ',', ',') . " = Rp." . number_format($totalDiscount, 0, ',', ',') . "\n");
+            }
             $printer->setJustification(Printer::JUSTIFY_LEFT);
         }
         for ($i = 1; $i < 33; $i++) {
@@ -165,7 +172,7 @@ class DirectSalesController extends Controller
         $printer->initialize();
         $printer->text($this->textPos("Total Qty", "(" . number_format($ds->total_item, 0, ',', ',') . ")"));
         $printer->text($this->textPos("Subtotal", number_format($ds->subtotal, 0, ',', ',')));
-        $printer->text($this->textPos("Diskon 1", number_format($ds->discount, 0, ',', ',')));
+        $printer->text($this->textPos("Program", number_format($ds->discount, 0, ',', ',')));
         $printer->text($this->textPos("Diskon 2", number_format($ds->additional_discount, 0, ',', ',')));
         if ($ds->reduce !== 0) {
             $printer->text($this->textPos("Biaya Kartu (" . $ds->reduce . "%)", number_format($ds->reduce_value, 0, ',', ',')));
