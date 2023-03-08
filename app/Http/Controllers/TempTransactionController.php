@@ -124,10 +124,10 @@ class TempTransactionController extends Controller
             if (($trans->product_id == $request['product_id']) && ($trans->user_id == auth()->user()->id)) {
                 $trans->qty = $trans->qty + $request['qty'];
             }
-            $tmpVal = $tmpVal + ($trans->qty * $trans->convertion);
+            $tmpVal = $trans->qty * $trans->convertion;
         }
-        $newData = $tmpVal + ($request->qty * $request->convertion);
-        $value = $stock->value - $newData;
+        // $newData = $tmpVal + ($request->qty * $request->convertion);
+        $value = $stock->value - $tmpVal;
         if ($value < 0) {
             return response()->json(['message' => "Stock Tidak Cukup"], 500);
         } else {
