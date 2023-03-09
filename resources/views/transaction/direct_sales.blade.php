@@ -533,6 +533,8 @@
         let value = $(this).val().replace(/,/g, "");
         directSales.cash = parseFloat(value===""?0:value);
         directSales.change = directSales.cash-directSales.amount;
+        
+        $("#is-cash").prop('checked',directSales.cash!=directSales.amount?false:true)
         $("#cash").val(formatNumber(directSales.cash))
         $("#change").html(formatNumber(directSales.change))
     });
