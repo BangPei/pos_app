@@ -181,8 +181,8 @@ class TiktokApiController extends Controller
         $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'])['status'];
         $fixData["show_request"] = $this->getOrderStatus($headerObject['order_status'])['show_request'];
         $fixData["tracking_number"] = $headerObject['tracking_number'] ?? "";
-        $fixData["delivery_by"] = $headerObject['shipping_provider'];
-        $fixData["pickup_by"] = $headerObject['shipping_provider'];
+        $fixData["delivery_by"] = $headerObject['shipping_provider']??"";
+        $fixData["pickup_by"] = $headerObject['shipping_provider']??"";
         $fixData["total_amount"] = 0;
         $fixData["total_qty"] = count($headerObject['order_line_list']);
         $fixData["items"] = $headerObject['order_line_list'];
