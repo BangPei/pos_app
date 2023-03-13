@@ -29,28 +29,6 @@
       </div>
     </div>
   </div>
-  {{-- <div class="card card-primary card-outline card-outline-tabs">
-    <div class="card-header p-0 border-bottom-0">
-      <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">
-            Semua <span class="right badge badge-danger">{{ number_format($count) }}</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">
-            Aktif <span class="right badge badge-danger">{{ number_format($active) }}</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-messages" role="tab" aria-controls="custom-tabs-one-messages" aria-selected="false">
-            Non Aktif <span class="right badge badge-danger">{{ number_format($disactive) }}</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div> --}}
-
     @if (count($products) == 0)
         <div class="card">
             <div class="row">

@@ -14,6 +14,7 @@ class SettingController extends Controller
      */
     public function index()
     {
+
         $reduce = Reduce::all();
         return view('setting/index', ["title" => "Pengaturan", "menu" => "Setting", "reduce" => $reduce,]);
     }
