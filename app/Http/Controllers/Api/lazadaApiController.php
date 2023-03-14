@@ -15,9 +15,9 @@ class lazadaApiController extends Controller
     public $lazadaUrl = "https://api.lazada.co.id/rest";
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-    public $code = "0_112922_Mw1P6t4KQ1U0jFLPIyGCisx9194653";
-    public $accessToken = "500000000242jUbwUvEeqKiV6jAPWsx9g6iw14ee017bDpqcVxHYhdRdm16rJQhl"; // 12 Feb 2023
-    public $refresh_token = "50001000124c57yTphFtLdvlhBoXNvh86nwf1f5907e8IxauSlBdgsfKt3puH640";
+    public $code = "0_112922_q9upyiQQwaQY7qy2l8BymZNS23850";
+    public $accessToken = "500000016281pSfirhWsdWgFp5lTUinDRoygR0Af1b7c7128aHTqgMQVrvzAZrCg"; // 14 Maret 2023
+    public $refresh_token = "50001001928frOcsqkBfbp8PrvdHEPoVlyvCD49r1dedf974Sjyq1sNMx5H3F3yk";
 
     // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
