@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reduce;
-use Illuminate\Http\Request;
+use App\Models\ShopInfo;
+use App\Http\Requests\StoreShopInfoRequest;
+use App\Http\Requests\UpdateShopInfoRequest;
 
-class SettingController extends Controller
+class ShopInfoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,19 +15,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        if (request('tab') == "" || request('tab') == "info") {
-            # code...
-        } elseif (request('tab') == "deduction") {
-            # code...
-        } else {
-            // request('tab') == "users"
-        }
-        $reduce = Reduce::all();
-        return view('setting/index', [
-            "title" => "Pengaturan",
-            "menu" => "Setting", "reduce" => $reduce,
-            "tab" => request('tab') == "" ? "Info" : request('tab')
-        ]);
+        //
     }
 
     /**
@@ -42,10 +31,10 @@ class SettingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreShopInfoRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreShopInfoRequest $request)
     {
         //
     }
@@ -53,10 +42,10 @@ class SettingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\ShopInfo  $shopInfo
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ShopInfo $shopInfo)
     {
         //
     }
@@ -64,10 +53,10 @@ class SettingController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\ShopInfo  $shopInfo
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(ShopInfo $shopInfo)
     {
         //
     }
@@ -75,11 +64,11 @@ class SettingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\UpdateShopInfoRequest  $request
+     * @param  \App\Models\ShopInfo  $shopInfo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateShopInfoRequest $request, ShopInfo $shopInfo)
     {
         //
     }
@@ -87,10 +76,10 @@ class SettingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\ShopInfo  $shopInfo
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ShopInfo $shopInfo)
     {
         //
     }

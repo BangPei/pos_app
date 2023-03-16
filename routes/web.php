@@ -48,7 +48,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('product', ProductController::class)->middleware('auth');
 
     Route::put('stock/value', [StockController::class, 'updateStock'])->middleware('auth');
-    Route::delete('stock/remove', [StockController::class, 'delete'])->middleware('auth');
+    Route::delete('stock/remove', [StockController::class, 'destroy'])->middleware('auth');
     Route::resource('stock', StockController::class)->middleware('auth');
 
     Route::put('category/status', [CategoryController::class, 'changeStatus'])->middleware('auth');
@@ -66,8 +66,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('payment', PaymentTypeController::class)->middleware('auth');
 
     Route::resource('supplier', SupplierController::class)->middleware('auth');
-
-    Route::resource('stock', StockController::class)->middleware('auth');
 
     Route::post('transaction/price', [DirectSalesController::class, 'printPrice'])->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');

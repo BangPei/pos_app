@@ -26,7 +26,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        // return $this->getOrders();
+        return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
@@ -174,7 +174,7 @@ class TiktokApiController extends Controller
     {
         $platform = OnlineShop::where('name', 'TikTok')->first();
         $fixData = null;
-        $fixData["create_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['create_time']);
+        $fixData["create_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['create_time'] / 1000);
         $fixData["update_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['update_time']);
         $fixData["message_to_seller"] = $headerObject['buyer_message'];
         $fixData["order_no"] = $headerObject['order_id'];

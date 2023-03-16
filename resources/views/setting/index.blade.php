@@ -4,16 +4,16 @@
 
 @section('content-child')
 <div class="col-12">
-    <div class="card">
+    <div class="card p-2">
         <nav class="w-100">
             <div class="nav nav-tabs" id="product-tab" role="tablist">
-                <a class="nav-item nav-link {{Request::query('tab')=='info'?'active':''}}" id="product-desc-tab" href="/setting?tab=info"><i class="fa fa-home"></i> Informasi Toko</a>
-                <a class="nav-item nav-link {{Request::query('tab')=='deduction'?'active':''}}" id="product-comments-tab" href="setting?tab=deduction"><i class="fa fa-dollar-sign"></i> Potongan</a>
-                <a class="nav-item nav-link" id="product-rating-tab" data-toggle="tab" href="#product-rating" role="tab" aria-controls="product-rating" aria-selected="false"><i class="fa fa-star"></i> Rating</a>
+                <a class="nav-item nav-link {{(Request::query('tab') == null||Request::query('tab')=='info')?'active':''}}" href="/setting?tab=info"><i class="fa fa-home"></i> Informasi Toko</a>
+                <a class="nav-item nav-link {{Request::query('tab')=='deduction'?'active':''}}" href="setting?tab=deduction"><i class="fa fa-dollar-sign"></i> Potongan</a>
+                <a class="nav-item nav-link {{Request::query('tab')=='users'?'active':''}}" href="/setting?tab=users"><i class="fa fa-users"></i> User</a>
             </div>
         </nav>
         <div class="tab-content p-3" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">Tab1</div>
+            <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">{{ $tab }}</div>
             <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
                 <div class="row">
                     <div class="col-12">

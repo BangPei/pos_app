@@ -31,9 +31,6 @@ class ProductController extends Controller
             "menu" => "Master",
             "search" => request('search'),
             "products" => $product->paginate(20)->withQueryString(),
-            // "count" => count($product->get()),
-            // "active" => count($product->where('is_active', true)->get()),
-            // "disactive" => count($product->where('is_active', false)->get()),
         ]);
     }
     public function dataTable(UtilitiesRequest $request)
