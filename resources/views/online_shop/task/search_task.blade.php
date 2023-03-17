@@ -11,7 +11,7 @@
             <h2 class="card-title">Form Pencarian</h2>
         </div>
         <div class="card-body ">
-            <form action="" method="">
+            <form>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -37,7 +37,7 @@
             </form>
         </div>
     </div>
-    <div class="card {{ $display }}">
+    <div class="card">
         <div class="card-body table-responsive">
           <table class="table table-striped table-bordered table-sm "style="width: 100% !important" id="table-daily-task">
             <thead>

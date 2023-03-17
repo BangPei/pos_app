@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DailyTask;
 use App\Models\Expedition;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
+use Yajra\DataTables\Facades\DataTables;
 
 class SearchTaskController extends Controller
 {
@@ -14,31 +14,30 @@ class SearchTaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UtilitiesRequest $request)
+    public function index(Request $request)
     {
-        $display = "";
         if ($request->ajax()) {
             $dailyTask = DailyTask::select('*');
-            return datatables()->of($dailyTask)
+            return DataTables::of($dailyTask)
                 ->filter(function ($data) use ($request) {
-                    if ($request->get('expedition')) {
-                        if ($request->get('date') == "") {
-                            $data->where('expedition_id', (int)$request->get('expedition'))->get();
-                        } else {
-                            $date = date('Y-m-d', $request->get('date'));
-                            $data->where('date', $date)->where('expedition_id', (int)$request->get('expedition'))->get();
-                        }
-                    } else {
-                        $date = date('Y-m-d', $request->get('date'));
-                        $data->where('date', $date)->get();
-                    }
+                    // if (request('expedition') != "") {
+                    //     if (request('date') == "") {
+                    //         $data->where('expedition_id', (int)request('expedition'))->get();
+                    //     } else {
+                    //         $date = date('Y-m-d', request('date'));
+                    //         $data->where('date', $date)->where('expedition_id', (int)request('expedition'))->get();
+                    //     }
+                    // } else {
+                    //     $date = date('Y-m-d', request('date'));
+                    //     $data->where('date', $date)->get();
+                    // }
+                    $data->where('expedition_id', $request->input('expedition'));
                 })->make(true);
         }
         return view('online_shop/task/search_task', [
             "title" => "Pencarian",
             "menu" => "Online Shop",
             "expeditions" => Expedition::all(),
-            "display" => $display,
         ]);
     }
 
