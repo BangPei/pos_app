@@ -79,6 +79,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::resource('expedition', ExpeditionController::class)->middleware('auth');
     Route::resource('daily-task', DailyTaskController::class)->middleware('auth');
+    Route::post('search-task/get', [SearchTaskController::class, 'get'])->middleware('auth');
     Route::resource('search-task', SearchTaskController::class)->middleware('auth');
 
     Route::post('temp-stock/post-stock', [TempTransactionController::class, 'postStockByUser'])->middleware('auth');

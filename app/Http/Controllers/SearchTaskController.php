@@ -16,29 +16,40 @@ class SearchTaskController extends Controller
      */
     public function index(Request $request)
     {
+        $dailyTask = DailyTask::all();
         if ($request->ajax()) {
-            $dailyTask = DailyTask::select('*');
-            return DataTables::of($dailyTask)
-                ->filter(function ($data) use ($request) {
-                    // if (request('expedition') != "") {
-                    //     if (request('date') == "") {
-                    //         $data->where('expedition_id', (int)request('expedition'))->get();
-                    //     } else {
-                    //         $date = date('Y-m-d', request('date'));
-                    //         $data->where('date', $date)->where('expedition_id', (int)request('expedition'))->get();
-                    //     }
-                    // } else {
-                    //     $date = date('Y-m-d', request('date'));
-                    //     $data->where('date', $date)->get();
-                    // }
-                    $data->where('expedition_id', $request->input('expedition'));
-                })->make(true);
+            return DataTables::of($dailyTask)->make(true);
         }
         return view('online_shop/task/search_task', [
             "title" => "Pencarian",
             "menu" => "Online Shop",
             "expeditions" => Expedition::all(),
         ]);
+    }
+
+    public function get(Request $request)
+    {
+        $data = $request->validate([
+            'date' => '',
+            'expedition' => ''
+        ]);
+        if ($data['expedition'] != "") {
+            if ($data['date'] != "") {
+                $dailyTask = DailyTask::where('expedition_id', $data['expedition'])
+                    ->where('date', $data['date'])->get();
+            } else {
+                $dailyTask = DailyTask::where('expedition_id', $data['expedition'])->get();
+            }
+        } else {
+            if ($data['date'] != "") {
+                $dailyTask = DailyTask::where('date', $data['date'])->get();
+            } else {
+                $dailyTask = DailyTask::all();
+            }
+        }
+        if ($request->ajax()) {
+            return DataTables::of($dailyTask)->make(true);
+        }
     }
 
     /**

@@ -11,30 +11,33 @@
             <h2 class="card-title">Form Pencarian</h2>
         </div>
         <div class="card-body ">
-            <form>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="expedition">Expedisi</label>
-                            <select name="expedition" id="expedition" class="form-control select2">
-                                <option value="" selected>Semua Expedisi</option>
-                                @foreach ($expeditions as $e)
-                                    <option {{ Request::query('expedition')==$e->id?'selected':'' }} value="{{$e->id}}">{{$e->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="date">Tanggal</label>
-                            <input value="{{ Request::query('date')}}" readonly type="text" class="form-control" id="date" name="date">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-primary" style="margin-top: 32px !important"><i class="fa fa-search"></i> Submit</button>
+          <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="expedition">Expedisi</label>
+                    <select name="expedition" id="expedition" class="form-control select2">
+                        <option value="" selected>Semua Expedisi</option>
+                        @foreach ($expeditions as $e)
+                            <option {{ Request::query('expedition')==$e->id?'selected':'' }} value="{{$e->id}}">{{$e->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="date">Tanggal</label>
+                    <div class="input-group mb-3">
+                      <input value="{{ Request::query('date')}}" readonly type="text" class="form-control" id="date" name="date">
+                      <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2"><i class="fa fa-home"></i></span>
+                      </div>
                     </div>
                 </div>
-            </form>
+            </div>
+            <div class="col-md-4">
+                <a href="javascript:void(0)" onclick="getData()" class="btn btn-primary" style="margin-top: 32px !important"><i class="fa fa-search"></i> Submit</a>
+            </div>
+          </div>
         </div>
     </div>
     <div class="card">
@@ -67,12 +70,33 @@
 
 <script>
     $(document).ready(function(){
-        tblDailyTask = $('#table-daily-task').DataTable({
+
+        initDataTable("{{ route('search-task.index') }}","GET")
+        $('#date').datepicker({
+            uiLibrary: 'bootstrap',
+            format:"dd mmmm yyyy",
+            // value:moment().format("DD MMMM YYYY")
+        })
+    })
+
+    
+    function getData(){
+      let data = {
+        _token:'{{ csrf_token() }}',
+        expedition:$('#expedition').val(),
+        date:moment($('#date').val(),"DD MMMM YYYY").format('YYYY-MM-DD')
+      }
+      const u = new URLSearchParams(data).toString();
+      $('#table-daily-task').DataTable().destroy();
+      initDataTable(`${baseUrl}/search-task/get?${u}`,"POST")
+    }
+    function initDataTable(url,method) {
+      tblDailyTask = $('#table-daily-task').DataTable({
           processing:true,
           serverSide:true,
           ajax:{
-            url:"{{ route('search-task.index') }}",
-            type:"GET",
+            url:url,
+            type:method,
           },
           columns:[
             {
@@ -138,11 +162,6 @@
             }
           ]
         })
-        $('#date').datepicker({
-            uiLibrary: 'bootstrap',
-            format:"dd mmmm yyyy",
-            // value:moment().format("DD MMMM YYYY")
-        })
-    })
+    }
 </script>
 @endsection
