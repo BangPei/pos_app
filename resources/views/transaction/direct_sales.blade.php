@@ -267,9 +267,9 @@
 
     initScanJs()
 
-    $('#barcode').on('focus',function(){
-      onScan.simulate(document, [48,49,50]);
-    })
+    // $('#barcode').on('focus',function(){
+    //   onScan.simulate(document, [48,49,50]);
+    // })
     $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
@@ -449,7 +449,6 @@
       $("#modal-product").modal('hide');
     })
     $('#modal-product').on('hidden.bs.modal', function (e) {
-      // $('#barcode').focus()
       initScanJs()
       $('#table-product').DataTable().destroy();
     })
@@ -479,7 +478,7 @@
     $('#table-order').on('change', '.qty-order', function() {
         let data = tblOrder.row($(this).parents('tr')).data();
         let oldValue = data.qty;
-        let val = $(this).val() ==""?"1":$(this).val()
+        let val = ($(this).val() ==""||$(this).val()=="0")?"1":$(this).val()
         let newValue = parseInt(val.replace(/,/g, ""));
 
         let paramStock = {
@@ -606,16 +605,6 @@
         return "Do you want to exit this page?";
       }
     });
-    $(document).bind('keydown', 'alt+a', function(){
-      if ($("#payment-type").find(':selected').attr('show-cash')=="1") {
-        $('#cash').focus();
-      }
-    })
-    $(document).bind('keydown', 'alt+w', function(){
-      let value = $('#is-cash').prop('checked');
-      $('#is-cash').prop('checked',!value).trigger('change');
-    })
-    $(document).bind('keydown', 'alt+q', function(){$('#payment-type').select2('open')})
 
     $('#payment-type').on('change',function(){
       let showAtm = $(this).find(':selected').attr('data-atm');
@@ -809,7 +798,7 @@
     $('#total-qty').html(formatNumber(directSales.total_item))
     $('#total').html(formatNumber(directSales.amount))
     $('#barcode').animate({left:0,duration:'slow'});
-    // $('#barcode').focus();
+    $('#barcode').focus();
   }
 
   function addProduct(params) {

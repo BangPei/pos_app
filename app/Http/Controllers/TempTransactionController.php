@@ -113,43 +113,43 @@ class TempTransactionController extends Controller
     public function postStockByUser(Request $request)
     {
         $stock = Stock::where('id', $request['stock_id'])->first();
-        $tempTrans = TempTransaction::where(
-            [
-                ['stock_id', $request['stock_id']],
-            ]
-        )->get();
-
-        $tmpVal = 0;
-        foreach ($tempTrans as $trans) {
-            if (($trans->product_id == $request['product_id']) && ($trans->user_id == auth()->user()->id)) {
-                $trans->qty = $trans->qty + $request['qty'];
-            }
-            $tmpVal = $trans->qty * $trans->convertion;
-        }
-        // $newData = $tmpVal + ($request->qty * $request->convertion);
-        $value = $stock->value - $tmpVal;
-        if ($value < 0) {
+        if ($stock->value < 1) {
             return response()->json(['message' => "Stock Tidak Cukup"], 500);
         } else {
-            if ($this->myArrayContainsWord($tempTrans, $request['product_id'], auth()->user()->id)) {
-                $trans = TempTransaction::where(
-                    [
-                        ['stock_id', $request['stock_id']],
-                        ['product_id', $request['product_id']],
-                        ['user_id', auth()->user()->id]
-                    ]
-                )->first();
-                $trans->qty =  $trans->qty + $request['qty'];
-                $trans->update();
+            $tempTrans = TempTransaction::where('stock_id', $request['stock_id'])->get();
+
+            $tmpVal = 0;
+            foreach ($tempTrans as $trans) {
+                if (($trans->product_id == $request['product_id']) && ($trans->user_id == auth()->user()->id)) {
+                    $trans->qty = $trans->qty + $request['qty'];
+                }
+                $tmpVal = $trans->qty * $trans->convertion;
+            }
+            // $newData = $tmpVal + ($request->qty * $request->convertion);
+            $value = $stock->value - $tmpVal;
+            if ($value < 0) {
+                return response()->json(['message' => "Stock Tidak Cukup"], 500);
             } else {
-                $tempTran = new TempTransaction();
-                $tempTran->qty = $request->qty;
-                $tempTran->convertion = $request->convertion;
-                $tempTran->stock_id = $request->stock_id;
-                $tempTran->product_id = $request->product_id;
-                $tempTran->user_id = auth()->user()->id;
-                $tempTran->save();
-                return response()->json($tempTran);
+                if ($this->myArrayContainsWord($tempTrans, $request['product_id'], auth()->user()->id)) {
+                    $trans = TempTransaction::where(
+                        [
+                            ['stock_id', $request['stock_id']],
+                            ['product_id', $request['product_id']],
+                            ['user_id', auth()->user()->id]
+                        ]
+                    )->first();
+                    $trans->qty =  $trans->qty + $request['qty'];
+                    $trans->update();
+                } else {
+                    $tempTran = new TempTransaction();
+                    $tempTran->qty = $request->qty;
+                    $tempTran->convertion = $request->convertion;
+                    $tempTran->stock_id = $request->stock_id;
+                    $tempTran->product_id = $request->product_id;
+                    $tempTran->user_id = auth()->user()->id;
+                    $tempTran->save();
+                    return response()->json($tempTran);
+                }
             }
         }
     }
