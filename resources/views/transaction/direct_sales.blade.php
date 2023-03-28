@@ -800,7 +800,6 @@
     $('#barcode').animate({left:0,duration:'slow'});
     $('#barcode').focus();
   }
-
   function addProduct(params) {
     let data = {
       stock_id:params.stock.id,
@@ -914,6 +913,7 @@
     $('#discount-2').val('')
     $('#total').html('0')
     $('#change').html('0')
+    directSales.additional_discount = 0;
     let payId;
     $("#payment-type > option").each(function() {
       if ($(this).attr('selected')) {
