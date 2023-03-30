@@ -22,7 +22,7 @@ class DirectSalesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public $printer = "cashier_dev";
+    public $printer = "cashier_belakang";
 
     public function index(UtilitiesRequest $request)
     {

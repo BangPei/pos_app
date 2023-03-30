@@ -263,10 +263,12 @@
     is_cash:0,
     details:[]
   };
+
+
   $(document).ready(function(){
-
+    
     initScanJs()
-
+    shortcutKey()
     // $('#barcode').on('focus',function(){
     //   onScan.simulate(document, [48,49,50]);
     // })
@@ -671,9 +673,9 @@
 
   function initScanJs() {
     onScan.attachTo(document, {
-        suffixKeyCodes: [13], // enter-key expected at the end of a scan
-        reactToPaste: true, // Compatibility to built-in scanners in paste-mode (as opposed to keyboard-mode)
-        onScan: function(sCode, iQty) { // Alternative to document.addEventListener('scan')
+        suffixKeyCodes: [13],
+        reactToPaste: true,
+        onScan: function(sCode, iQty) {
           getProductByBarcode(sCode,function(item){
             if (Object.keys(item).length != 0) {
               addProduct(item);
@@ -928,19 +930,36 @@
   }
 
   function currentTime(selectDate = new Date()) {
-  let date = selectDate; 
-  let hh = date.getHours();
-  let mm = date.getMinutes();
-  let ss = date.getSeconds();
+    let date = selectDate; 
+    let hh = date.getHours();
+    let mm = date.getMinutes();
+    let ss = date.getSeconds();
 
-   hh = (hh < 10) ? "0" + hh : hh;
-   mm = (mm < 10) ? "0" + mm : mm;
-   ss = (ss < 10) ? "0" + ss : ss;
-    
-   let time = hh + ":" + mm + ":" + ss + " ";
+    hh = (hh < 10) ? "0" + hh : hh;
+    mm = (mm < 10) ? "0" + mm : mm;
+    ss = (ss < 10) ? "0" + ss : ss;
+      
+    let time = hh + ":" + mm + ":" + ss + " ";
 
-   $('#trans-date').val(`${moment(date).format("DD MMM YYYY")} ${time}`); 
-  let t = setTimeout(function(){ currentTime() }, 1000);
-}
+    $('#trans-date').val(`${moment(date).format("DD MMM YYYY")} ${time}`); 
+    let t = setTimeout(function(){ currentTime() }, 1000);
+  }
+
+  function shortcutKey() {
+    if ($('#barcode').is(':focus')) {
+      $('#barcode').focusout();
+      $(document).bind('keydown', 'alt+a', function(){
+      if ($("#payment-type").find(':selected').attr('show-cash')=="1") {
+        $('#cash').focus();
+      }
+    })
+    $(document).bind('keydown', 'alt+w', function(){
+      let value = $('#is-cash').prop('checked');
+      if ($("#payment-type").find(':selected').attr('show-cash')=="1") {
+        $('#is-cash').prop('checked',!value).trigger('change');
+      }
+    })
+    }
+  }
 </script>
 @endsection
