@@ -236,6 +236,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-error" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 text-center">
+            <i class="fa fa-times text-danger fa-5x"></i>
+            <p><h2>Oppss !</h2></p>
+            <p id="label-error"></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-center">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('content-script')
@@ -266,7 +287,7 @@
 
 
   $(document).ready(function(){
-    
+
     initScanJs()
     shortcutKey()
     // $('#barcode').on('focus',function(){
@@ -454,10 +475,10 @@
       initScanJs()
       $('#table-product').DataTable().destroy();
     })
-    $('#modal-price').on('hidden.bs.modal', function (e) {
+    $('#modal-price,#modal-error').on('hidden.bs.modal', function (e) {
       initScanJs()
     })
-    $('#modal-price').on('show.bs.modal', function (e) {
+    $('#modal-price,#modal-error').on('show.bs.modal', function (e) {
       onScan.detachFrom(document);
     })
 
@@ -508,7 +529,8 @@
             }
           )
         },function(json){
-          toastr.error(`${json.message} untuk ${data.product.name}`)
+          $('#label-error').html(`${json.message} untuk ${data.product.name}`);
+          $('#modal-error').modal({backdrop: 'static', keyboard: false});
           $('#table-order .qty-order').val(oldValue)
           countTotality();
           reloadJsonDataTable(tblOrder, directSales.details);
@@ -571,15 +593,8 @@
         let val = $(this).val();
         if (val !="") {
           getProductByBarcode(val,function(item){
-            if (Object.keys(item).length != 0) {
-              addProduct(item);
-              $("#barcode").val("")
-              // $('#barcode').focusout(function(){
-              //   initScanJs();
-              // })
-            }else{
-              $("#barcode").val(val.toLowerCase())
-            }
+            addProduct(item);
+            $("#barcode").val("")
           })
         }
       }
@@ -589,15 +604,9 @@
         let val = $(this).val();
         if (val !="") {
           getProductByBarcode(val,function(item){
-            if (Object.keys(item).length != 0)
-              {
-                $('#product-name').val(item.name)
-                $('#product-price').val(formatNumber(item.price))
-              }else{
-                $("#modal-barcode").val(val.toLowerCase())
-              }
+            $('#product-name').val(item.name)
+            $('#product-price').val(formatNumber(item.price))
           })
-          
         }
       }
     })
@@ -677,9 +686,7 @@
         reactToPaste: true,
         onScan: function(sCode, iQty) {
           getProductByBarcode(sCode,function(item){
-            if (Object.keys(item).length != 0) {
-              addProduct(item);
-            }
+            addProduct(item);
           })
         },
     });
@@ -697,10 +704,15 @@
   }
   function getProductByBarcode(barcode,callback) {
     ajax(null, `{{URL::to('/product/barcode/${barcode}')}}`, "GET",
-              function(item) {
-               callback(item)
-          },
-        )
+      function(item) {
+        if (Object.keys(item).length==0){
+          $('#label-error').html(`Produk dengan code <strong>"${barcode}"</strong> tidak tersedia atau tidak aktif.`);
+          $('#modal-error').modal({backdrop: 'static', keyboard: false});
+        }else{
+          callback(item)
+        }
+      },
+    )
   }
 
   function getPayments() {
@@ -858,7 +870,8 @@
       countTotality();
       $('#barcode').val("");
     },function(json){
-      toastr.error(`${json.message} untuk ${params.name}`)
+      $('#label-error').html(`${json.message} untuk ${params.name}`);
+      $('#modal-error').modal({backdrop: 'static', keyboard: false});
     });
   }
 
