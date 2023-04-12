@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\DirectSales;
-use App\Http\Requests\UpdateDirectSalesRequest;
 use App\Models\Atm;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
@@ -22,7 +21,7 @@ class DirectSalesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public $printer = "cashier_belakang";
+    public $printer = "cashier_pos";
 
     public function index(UtilitiesRequest $request)
     {

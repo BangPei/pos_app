@@ -9,6 +9,7 @@ use App\Http\Controllers\ExpeditionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
 use App\Http\Controllers\MultipleDiscountDetailController;
+use App\Http\Controllers\OnlineShopController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -81,6 +82,9 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('daily-task', DailyTaskController::class)->middleware('auth');
     Route::post('search-task/get', [SearchTaskController::class, 'get'])->middleware('auth');
     Route::resource('search-task', SearchTaskController::class)->middleware('auth');
+
+    Route::resource('platform', OnlineShopController::class)->middleware('auth');
+    Route::put('platform/status', [OnlineShopController::class, 'changeStatus'])->middleware('auth');
 
     Route::post('temp-stock/post-stock', [TempTransactionController::class, 'postStockByUser'])->middleware('auth');
     Route::put('temp-stock/update-stock', [TempTransactionController::class, 'updateStockByUser'])->middleware('auth');

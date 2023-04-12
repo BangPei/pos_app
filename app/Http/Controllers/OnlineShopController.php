@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\OnlineShop;
 use App\Http\Requests\StoreOnlineShopRequest;
 use App\Http\Requests\UpdateOnlineShopRequest;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class OnlineShopController extends Controller
 {
@@ -13,9 +15,13 @@ class OnlineShopController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
-        //
+        $platform  = OnlineShop::all();
+        if ($request->ajax()) {
+            return datatables()->of($platform)->make(true);
+        }
+        return view('online_shop/platform/index', ["title" => "Platform", "menu" => "Online Shop",]);
     }
 
     /**
@@ -82,5 +88,18 @@ class OnlineShopController extends Controller
     public function destroy(OnlineShop $onlineShop)
     {
         //
+    }
+
+    public function changeStatus(Request $request)
+    {
+        try {
+            OnlineShop::where('id', $request['id'])->update([
+                'is_active' => $request['is_active'],
+                'name' => $request['name'],
+                'logo' => $request['logo'],
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 }

@@ -135,7 +135,6 @@
   $(document).ready(function(){
     $('.custom-switch').on('click','.custom-control-input',function() {
       let bool = $(this).prop('checked');
-      console.log(bool)
       let data = {
         id:$(this).attr('data-id'),
         is_active:bool?1:0

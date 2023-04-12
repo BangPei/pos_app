@@ -238,9 +238,15 @@
                         </li>
                         <li class="nav-header">Online Shop</li>
                         <li class="nav-item">
+                            <a href="/platform" class="nav-link">
+                                <i class="nav-icon fa fa-shopping-bag"></i>
+                                <p>Platform</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/expedition" class="nav-link">
                                 <i class="nav-icon fa fa-truck"></i>
-                                <p>Master Expedisi</p>
+                                <p>Expedisi</p>
                             </a>
                         </li>
                         <li class="nav-item">
