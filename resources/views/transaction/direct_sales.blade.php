@@ -34,8 +34,11 @@
         <div class="col-md-4 col-sm-12">
           <div class="row">
             <div class="col-12">
-              <div class="form-group">
+              <div class="input-group mb-3">
                 <input type="text" id="barcode" name="barcode" autocomplete="off" placeholder="Scann Barcode" class="form-control">
+                  <div class="input-group-append">
+                      <button class="btn btn-primary" type="button" id="btn-multi-qty" data-toggle="modal" data-target="#modal-multi-qty" data-backdrop="static" data-keyboard="false">Multi Qty</button>
+                  </div>
               </div>
             </div>
           </div>
@@ -205,32 +208,80 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="input-group">
-          <input type="text" id="modal-barcode" class="form-control" placeholder="Masukan Kode Barang" >
-          <div class="input-group-append">
-            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-          <div class="col-8">
-            <div class="form-group">
-              <label for="">Produk</label>
-              <input type="text" readonly class="form-control" id="product-name">
+        <form>
+          <div class="input-group">
+            <input onfocus="this.select();" type="text" id="modal-barcode" class="form-control barcode" placeholder="Masukan Kode Barang" >
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
             </div>
           </div>
-          <div class="col-4">
-            <div class="form-group">
-              <label for="">Harga</label>
-              <input type="text" readonly class="form-control" id="product-price">
+          <hr>
+          <div class="row">
+            <div class="col-8">
+              <div class="form-group">
+                <label for="">Produk</label>
+                <input type="text" readonly class="form-control" id="product-name">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="">Harga</label>
+                <input type="text" readonly class="form-control" id="product-price">
+              </div>
             </div>
           </div>
-        </div>
+        </form>
         <div class="row">
           <div class="col-12 text-right">
             <button onclick="printPrice()" type="button" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-multi-qty" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Form Qty</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group">
+            <input onfocus="this.select();" type="text" id="input-multi-barcode" class="form-control barcode" placeholder="Masukan Kode Barang" >
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="">Produk</label>
+                <input tabindex="-1" type="text" readonly class="form-control" id="product-name-multi">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="">Harga</label>
+                <input tabindex="-1" type="text" readonly class="form-control" id="product-price-multi">
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-group">
+                <label for="">Qty</label>
+                <input id="product-qty-multi" onfocus="this.select();" placeholder="0" onkeypress="return IsNumeric(event);" class="number2 form-control text-right" placeholder="0" />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-right">
+              <button id="submit-multi-qty" type="button" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -268,6 +319,7 @@
 <script src="/plugins/jquery.hotkeys/jquery.hotkeys.js"></script>
 <script>
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
+  let tempProduct=null;
   let directSales= {
     code:null,
     date:moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
@@ -284,7 +336,6 @@
     is_cash:0,
     details:[]
   };
-
 
   $(document).ready(function(){
 
@@ -327,7 +378,7 @@
           bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
-            return `<input value="${data?formatNumber(data):0}" onkeypress="return IsNumeric(event);" class="number2 text-right qty-order" style="width:100%" placeholder="0" />`
+            return `<input value="${data?formatNumber(data):0}" onfocus="this.select();" onkeypress="return IsNumeric(event);" class="number2 text-right qty-order" style="width:100%" placeholder="0" />`
             // return `Rp. ${formatNumber(data)}`
           }
         },
@@ -352,7 +403,7 @@
           bSortable: false,
           defaultContent:"0",
           mRender:function(data,type,full){
-            return `<input value="${formatNumber(data)}" placeholder="0" onkeypress="return IsNumeric(event);" class="number2 text-right discount-order" style="width:100%" placeholder="0" />`
+            return `<input onfocus="this.select();" value="${formatNumber(data)}" placeholder="0" onkeypress="return IsNumeric(event);" class="number2 text-right discount-order" style="width:100%" placeholder="0" />`
             // return `Rp. ${formatNumber(data)}`
           }
         },
@@ -399,7 +450,7 @@
       format:"DD MMMM YYYY",
     });
 
-    $('#modal-product').on('show.bs.modal', function (e) {
+    $('#modal-product').on('shown.bs.modal', function (e) {
       onScan.detachFrom(document);
       tblProduct = $('#table-product').DataTable({
         processing:true,
@@ -471,14 +522,21 @@
       addProduct(product);
       $("#modal-product").modal('hide');
     })
+
+    $('#modal-multi-qty,#modal-price').on('shown.bs.modal',function(){
+      onScan.detachFrom(document);
+      $('.barcode').trigger('focus')
+    })
+
     $('#modal-product').on('hidden.bs.modal', function (e) {
       initScanJs()
       $('#table-product').DataTable().destroy();
+      $('#barcode').trigger('focus')
     })
-    $('#modal-price,#modal-error').on('hidden.bs.modal', function (e) {
+    $('#modal-price,#modal-error,#modal-multi-qty').on('hidden.bs.modal', function (e) {
       initScanJs()
     })
-    $('#modal-price,#modal-error').on('show.bs.modal', function (e) {
+    $('#modal-error').on('shown.bs.modal', function (e) {
       onScan.detachFrom(document);
     })
 
@@ -610,6 +668,19 @@
         }
       }
     })
+    $('#input-multi-barcode').on('keypress',function(e){
+      if(e.keyCode == 13){
+        let val = $(this).val();
+        if (val !="") {
+          getProductByBarcode(val,function(item){
+            $('#product-name-multi').val(item.name)
+            $('#product-price-multi').val(formatNumber(item.price))
+            $('#product-qty-multi').val("1").trigger('focus')
+            tempProduct= item;
+          })
+        }
+      }
+    })
 
     $(window).bind('beforeunload', function(){
       if (directSales.details.length!=0) {
@@ -675,6 +746,13 @@
         $('#reduce-persentage').html("0")
       }
       countTotality()
+    })
+
+    $('#submit-multi-qty').on('click',function(){
+      if (tempProduct!=null) {
+        let qty = $('#product-qty-multi').val().replace(/,/g, "");
+        addProduct(tempProduct,parseInt(qty));
+      }
     })
 
     dsCode!=""?getDirectSales():null;
@@ -814,19 +892,20 @@
     $('#barcode').animate({left:0,duration:'slow'});
     $('#barcode').focus();
   }
-  function addProduct(params) {
+  function addProduct(params,manualQty=1) {
     let data = {
       stock_id:params.stock.id,
       product_id:params.id,
-      qty:1,
+      qty:manualQty,
       convertion:params.convertion,
       param:"min",
     }
     postStock(data,function(json){
-      if (directSales.details.some(item => item.product.id === params.id)) {
+      let isExist = directSales.details.some(item => item.product.id === params.id);
+      if (isExist) {
         directSales.details.forEach(data => {
           if (data.product_id == params.id) {
-            data.qty = data.qty+1;
+            data.qty = data.qty+manualQty;
             data.subtotal = parseFloat(data.price)*parseInt(data.qty);
             data.program = 0;
             if ((params.program!= null) && (params.program.is_active)){
@@ -849,7 +928,7 @@
           convertion:params.convertion,
           uom:params.uom?.name??"--",
           category:params.category?.name??"--",
-          qty:1,
+          qty:manualQty,
           price:parseFloat(params.price),
           discount:0,
           subtotal:parseFloat(params.price)*1,
@@ -869,7 +948,9 @@
       reloadJsonDataTable(tblOrder,directSales.details);
       countTotality();
       $('#barcode').val("");
+      $('#modal-multi-qty').modal('hide');
     },function(json){
+      $('#modal-multi-qty').modal('hide')
       $('#label-error').html(`${json.message} untuk ${params.name}`);
       $('#modal-error').modal({backdrop: 'static', keyboard: false});
     });
