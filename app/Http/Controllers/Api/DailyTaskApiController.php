@@ -192,6 +192,8 @@ class DailyTaskApiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DailyTask::where('id', $id)->delete();
+
+        return response()->json();
     }
 }
