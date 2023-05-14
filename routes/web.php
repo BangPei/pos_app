@@ -13,6 +13,7 @@ use App\Http\Controllers\OnlineShopController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchTaskController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockController;
@@ -91,4 +92,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::delete('temp-stock/delete-stock', [TempTransactionController::class, 'deleteStockByUser'])->middleware('auth');
     Route::delete('temp-stock/delete-transaction', [TempTransactionController::class, 'deleteTransaction'])->middleware('auth');
     Route::resource('temp-stock', TempTransactionController::class)->middleware('auth');
+
+    Route::get('report/daily', [ReportController::class, 'daily'])->middleware('auth');
 });

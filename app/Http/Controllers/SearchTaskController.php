@@ -18,7 +18,7 @@ class SearchTaskController extends Controller
     {
         $dailyTask = DailyTask::all();
         if ($request->ajax()) {
-            return DataTables::of($dailyTask)->make(true);
+            return datatables()->of($dailyTask)->make(true);
         }
         return view('online_shop/task/search_task', [
             "title" => "Pencarian",
@@ -48,7 +48,7 @@ class SearchTaskController extends Controller
             }
         }
         if ($request->ajax()) {
-            return DataTables::of($dailyTask)->make(true);
+            return datatables()->of($dailyTask)->make(true);
         }
     }
 
