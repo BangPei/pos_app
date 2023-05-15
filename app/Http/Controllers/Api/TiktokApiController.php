@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\DailyTask;
 use App\Models\OnlineShop;
 use App\Models\TiktokAccessToken;
 use Illuminate\Http\Request;
@@ -88,6 +89,15 @@ class TiktokApiController extends Controller
         $orders = $client->Order->getOrderDetail($listOrder);
         $orderList = $orders['order_list'];
         $validOrders = [];
+
+        $receipts = [];
+        $dailyTasks = DailyTask::where('status', 0)->get();
+        foreach ($dailyTasks as $daily) {
+            foreach ($daily->receipts as $receipt) {
+                array_push($receipts, $receipt);
+            }
+        }
+
         foreach ($orderList as $order) {
             (int)$order['create_time'];
             (int)$order['update_time'];
@@ -98,7 +108,7 @@ class TiktokApiController extends Controller
             }
             $order['order_line_list'] = $validItems;
 
-            array_push($validOrders, $this->mapingOrderHeader($order));
+            array_push($validOrders, $this->mapingOrderHeader($order, $receipts));
         }
         return $validOrders;
     }
@@ -113,6 +123,7 @@ class TiktokApiController extends Controller
         $nextCursor = null;
         $fullOrder = [];
         $listOrder = [];
+
         $orders = $client->Order->getOrderList([
             'order_status' => 112,
             'page_size' => 50,
@@ -170,7 +181,7 @@ class TiktokApiController extends Controller
         return $itemData;
     }
 
-    private function mapingOrderHeader($headerObject)
+    private function mapingOrderHeader($headerObject, $receipts = [])
     {
         $platform = OnlineShop::where('name', 'TikTok')->first();
         $fixData = null;
@@ -192,6 +203,7 @@ class TiktokApiController extends Controller
         $fixData["shipping_provider_type"] = $headerObject['delivery_option'] ?? "";
         $fixData["product_picture"] = null;
         $fixData["package_picture"] = null;
+        $fixData["scanned"] = in_array($fixData["tracking_number"], $receipts) ? true : false;
         return $fixData;
     }
 
