@@ -28,7 +28,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        return $this->getOrders();
+        // return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
