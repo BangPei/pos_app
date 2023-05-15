@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\DailyTask;
 use App\Models\OnlineShop;
+use App\Models\Receipt;
 use App\Models\TiktokAccessToken;
 use Illuminate\Http\Request;
 use NVuln\TiktokShop\Client;
@@ -27,7 +28,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        // return $this->getOrders();
+        return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
@@ -90,14 +91,6 @@ class TiktokApiController extends Controller
         $orderList = $orders['order_list'];
         $validOrders = [];
 
-        $receipts = [];
-        $dailyTasks = DailyTask::where('status', 0)->get();
-        foreach ($dailyTasks as $daily) {
-            foreach ($daily->receipts as $receipt) {
-                array_push($receipts, $receipt);
-            }
-        }
-
         foreach ($orderList as $order) {
             (int)$order['create_time'];
             (int)$order['update_time'];
@@ -108,7 +101,7 @@ class TiktokApiController extends Controller
             }
             $order['order_line_list'] = $validItems;
 
-            array_push($validOrders, $this->mapingOrderHeader($order, $receipts));
+            array_push($validOrders, $this->mapingOrderHeader($order));
         }
         return $validOrders;
     }
@@ -181,7 +174,7 @@ class TiktokApiController extends Controller
         return $itemData;
     }
 
-    private function mapingOrderHeader($headerObject, $receipts = [])
+    private function mapingOrderHeader($headerObject)
     {
         $platform = OnlineShop::where('name', 'TikTok')->first();
         $fixData = null;
@@ -203,7 +196,8 @@ class TiktokApiController extends Controller
         $fixData["shipping_provider_type"] = $headerObject['delivery_option'] ?? "";
         $fixData["product_picture"] = null;
         $fixData["package_picture"] = null;
-        $fixData["scanned"] = in_array($fixData["tracking_number"], $receipts) ? true : false;
+        $receipt = Receipt::where('number', $fixData["tracking_number"])->first();
+        $fixData["scanned"] = isset($receipt) ? true : false;
         return $fixData;
     }
 
