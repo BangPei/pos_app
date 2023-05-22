@@ -36,7 +36,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-12">
                     <div class="form-group">
-                        <label for="" id="total-scann"></label>
+                        <label id="total-scann"></label>
                         <input autofocus="true" type="text" name="scanner" id="scanner" class="form-control" >
                     </div>
                 </div>

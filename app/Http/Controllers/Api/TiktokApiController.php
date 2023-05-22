@@ -183,7 +183,6 @@ class TiktokApiController extends Controller
         $fixData["message_to_seller"] = $headerObject['buyer_message'];
         $fixData["order_no"] = $headerObject['order_id'];
         $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'])['status'];
-        $fixData["show_request"] = $this->getOrderStatus($headerObject['order_status'])['show_request'];
         $fixData["tracking_number"] = $headerObject['tracking_number'] ?? "";
         $fixData["delivery_by"] = $headerObject['shipping_provider'] ?? "";
         $fixData["pickup_by"] = $headerObject['shipping_provider'] ?? "";
@@ -198,6 +197,7 @@ class TiktokApiController extends Controller
         $fixData["package_picture"] = null;
         $receipt = Receipt::where('number', $fixData["tracking_number"])->first();
         $fixData["scanned"] = isset($receipt) ? true : false;
+        $fixData["show_request"] = isset($receipt) ? false : true;
         return $fixData;
     }
 
