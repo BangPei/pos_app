@@ -30,7 +30,7 @@ class lazadaApiController extends Controller
         // return $this->getFullOrder('ready_to_ship', "ASC");
         // return $this->getRefreshToken();
         // return $this->getToken();
-        // return $this->getSessionList();
+        // return $this->printAWB();
     }
 
     public function packed($sorting)
@@ -235,6 +235,20 @@ class lazadaApiController extends Controller
         $orders =  $c->execute($request, $this->accessToken);
         return $orders;
     }
+    public function printAWB()
+    {
+        $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
+        $request = new LazopRequest('/order/package/document/get');
+        $request->addApiParam('getDocumentReq', json_encode(
+            array(
+                'doc_type' => 'HTML',
+                'print_item_list' => true,
+                'packages' => [["package_id" => "FP040513068471942"]],
+            )
+        ));
+        $document =  $c->execute($request, $this->accessToken);
+        return json_decode($document)->result->data;
+    }
 
     /**
      * Display the specified resource.
@@ -254,7 +268,7 @@ class lazadaApiController extends Controller
             $order = $c->execute($request, $this->accessToken);
             $jsonObject = json_decode($order)->data;
 
-            // // get items order and tracking number
+            // get items order and tracking number
             $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
             $items = $c->execute($itemsUrl, $this->accessToken);
             $itemDecode = json_decode($items);
