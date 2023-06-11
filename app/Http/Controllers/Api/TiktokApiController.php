@@ -28,7 +28,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        return $this->getOrders();
+        // return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
@@ -158,7 +158,7 @@ class TiktokApiController extends Controller
         $itemData = null;
         $itemData['image_url'] = $detail['sku_image'];
         $itemData['item_name'] = $detail['product_name'];
-        $itemData['item_sku'] = $detail['seller_sku'];
+        $itemData['item_sku'] = $detail['seller_sku']??"";
         $itemData['variation'] = $detail['sku_name'];
         $itemData['order_item_id'] = null;
         $itemData['sku_id'] = $detail['sku_id'];
