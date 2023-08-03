@@ -16,7 +16,7 @@ class AtmController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $atm = Atm::all();
+        $atm = Atm::query();
         if ($request->ajax()) {
             return datatables()->of($atm)->make(true);
         }

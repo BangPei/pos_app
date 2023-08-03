@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $categories = Category::all();
+        $categories = Category::query();
         if ($request->ajax()) {
             return datatables()->of($categories)->make(true);
         }

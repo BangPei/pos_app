@@ -17,7 +17,7 @@ class OnlineShopController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $platform  = OnlineShop::all();
+        $platform  = OnlineShop::query();
         if ($request->ajax()) {
             return datatables()->of($platform)->make(true);
         }
