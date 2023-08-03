@@ -16,7 +16,7 @@ class SearchTaskController extends Controller
      */
     public function index(Request $request)
     {
-        $dailyTask = DailyTask::all();
+        $dailyTask = DailyTask::query();
         if ($request->ajax()) {
             return datatables()->of($dailyTask)->make(true);
         }
