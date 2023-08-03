@@ -28,7 +28,7 @@ class TiktokApiController extends Controller
     public function index()
     {
         // return $this->getOrderDetail("576947223578839163");
-        // return $this->getOrders();
+        return $this->getOrders();
         // return $this->getRefreshToken();
         // return $this->getAccessToken();
     }
@@ -114,12 +114,13 @@ class TiktokApiController extends Controller
         $client->setShopId($auth->shopId);
         $more = true;
         $nextCursor = null;
+        $page_sized = 20;
         $fullOrder = [];
         $listOrder = [];
 
         $orders = $client->Order->getOrderList([
             'order_status' => 112,
-            'page_size' => 50,
+            'page_size' => $page_sized,
             'sort_type' => 2
         ]);
         $more = $orders['more'];
@@ -136,7 +137,7 @@ class TiktokApiController extends Controller
             $listOrder = [];
             $orders = $client->Order->getOrderList([
                 'order_status' => 112,
-                'page_size' => 50,
+                'page_size' => $page_sized,
                 'sort_type' => 2,
                 'cursor' => $nextCursor,
             ]);

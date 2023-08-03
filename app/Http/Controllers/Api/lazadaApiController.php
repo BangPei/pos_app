@@ -16,8 +16,8 @@ class lazadaApiController extends Controller
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
     public $code = "0_112922_QfvRLHDF0nCrtun6A0vsosGP104183";
-    public $accessToken = "50000000104c57yT178cb104phFtLdvlhBoXNvh86nwfIxauSlBdgsfKt3puH640"; // 11 Juni 2023
-    public $refresh_token = "50001000904sUCt714125d31jHSznpeDyhuEIvhRwkZeBx4nV2HhjMIVf05OGjWt";
+    public $accessToken = "500000016111pSfirhWsdWg1f37a115Fp5lTUinDRoygR0AfaHTqgMQVrvzAZrCg"; // 11 July 2023
+    public $refresh_token = "50001001111ywOcZ0nYgipe1e03c4bdWoeXDBvBKz1fiERhyHzXBizkOqkW3Zc9r";
 
     // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
@@ -28,7 +28,7 @@ class lazadaApiController extends Controller
     public function index()
     {
         // return $this->getFullOrder('ready_to_ship', "ASC");
-        // return $this->getRefreshToken();
+        return $this->getRefreshToken();
         // return $this->getToken();
         // return $this->getSessionList();
     }
