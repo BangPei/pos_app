@@ -114,7 +114,7 @@ class TiktokApiController extends Controller
         $client->setShopId($auth->shopId);
         $more = true;
         $nextCursor = null;
-        $page_sized = 20;
+        $page_sized = 50;
         $fullOrder = [];
         $listOrder = [];
 
