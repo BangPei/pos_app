@@ -64,7 +64,7 @@
 <script src="js/script.js"></script>
 <script>
     $(document).ready(function(){
-        ajax(null, `${baseApi}/shopee-order`, "GET",
+        ajax(null, `${baseApi}/lazada-order`, "GET",
         function(json) {
             console.log(json)
           toastr.success('Berhasil')
