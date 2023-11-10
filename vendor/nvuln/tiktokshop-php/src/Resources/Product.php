@@ -16,15 +16,13 @@ use SplFileInfo;
 
 class Product extends Resource
 {
-    protected $prefix = 'products';
-
     public function uploadFile($file, $file_name = 'uploaded_file')
     {
         if ($file instanceof SplFileInfo) {
             $file_name = $file->getFilename();
         }
 
-        return $this->call('POST', 'upload_files', [
+        return $this->call('POST', 'products/upload_files', [
             RequestOptions::JSON => [
                 'file_name' => $file_name,
                 'file_data' => static::dataTypeCast('file', $file),
@@ -34,7 +32,7 @@ class Product extends Resource
 
     public function uploadImage($image, $scene = 1 /* PRODUCT_IMAGE */)
     {
-        return $this->call('POST', 'upload_imgs', [
+        return $this->call('POST', 'products/upload_imgs', [
             RequestOptions::JSON => [
                 'img_data' => static::dataTypeCast('image', $image),
                 'img_scene' => $scene,
@@ -44,14 +42,21 @@ class Product extends Resource
 
     public function createProduct($data = [])
     {
-        return $this->call('POST', '', [
+        return $this->call('POST', 'products', [
+            RequestOptions::JSON => $data
+        ]);
+    }
+
+    public function createDraftProduct($data = [])
+    {
+        return $this->call('POST', 'products/save_draft', [
             RequestOptions::JSON => $data
         ]);
     }
 
     public function deleteProduct($product_ids = [])
     {
-        return $this->call('DELETE', '/', [
+        return $this->call('DELETE', 'products', [
             RequestOptions::JSON => [
                 'product_ids' => static::dataTypeCast('array', $product_ids)
             ]
@@ -62,7 +67,7 @@ class Product extends Resource
     {
         $data['product_id'] = $product_id;
 
-        return $this->call('PUT', '/', [
+        return $this->call('PUT', 'products', [
             RequestOptions::JSON => $data
         ]);
     }
@@ -74,7 +79,7 @@ class Product extends Resource
             'skus' => $skus
         ];
 
-        return $this->call('PUT', 'stocks', [
+        return $this->call('PUT', 'products/stocks', [
             RequestOptions::JSON => $data
         ]);
     }
@@ -86,14 +91,14 @@ class Product extends Resource
             'page_size' => 20,
         ], $params);
 
-        return $this->call('POST', 'search', [
+        return $this->call('POST', 'products/search', [
             RequestOptions::JSON => $params
         ]);
     }
 
     public function getProductDetail($product_id, $need_audit_version = false)
     {
-        return $this->call('GET', 'details', [
+        return $this->call('GET', 'products/details', [
             RequestOptions::QUERY => [
                 'product_id' => $product_id,
                 'need_audit_version' => static::dataTypeCast('bool', $need_audit_version),
@@ -103,7 +108,7 @@ class Product extends Resource
 
     public function deactivateProduct($product_ids = [])
     {
-        return $this->call('POST', 'inactivated_products', [
+        return $this->call('POST', 'products/inactivated_products', [
             RequestOptions::JSON => [
                 'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
@@ -112,7 +117,7 @@ class Product extends Resource
 
     public function activateProduct($product_ids = [])
     {
-        return $this->call('POST', 'activate', [
+        return $this->call('POST', 'products/activate', [
             RequestOptions::JSON => [
                 'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
@@ -121,7 +126,7 @@ class Product extends Resource
 
     public function recoverDeletedProduct($product_ids = [])
     {
-        return $this->call('POST', 'recover', [
+        return $this->call('POST', 'products/recover', [
             RequestOptions::JSON => [
                 'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
@@ -135,26 +140,35 @@ class Product extends Resource
             'skus' => $skus
         ];
 
-        return $this->call('PUT', 'prices', [
+        return $this->call('PUT', 'products/prices', [
             RequestOptions::JSON => $data
         ]);
     }
 
     public function getCategories()
     {
-        return $this->call('GET', 'categories');
+        return $this->call('GET', 'products/categories');
     }
 
     public function getBrands(array $params)
     {
-        return $this->call('GET', 'brands', [
+        return $this->call('GET', 'products/brands', [
             RequestOptions::QUERY => $params
+        ]);
+    }
+
+    public function createBrand(string $brand_name)
+    {
+        return $this->call('POST', 'products/brand', [
+            RequestOptions::JSON => [
+                'brand_name' => $brand_name
+            ]
         ]);
     }
 
     public function getAttributes($category_id)
     {
-        return $this->call('GET', 'attributes', [
+        return $this->call('GET', 'products/attributes', [
             RequestOptions::QUERY => [
                 'category_id' => static::dataTypeCast('string', $category_id),
             ]
@@ -163,9 +177,42 @@ class Product extends Resource
 
     public function getCategoryRule($category_id)
     {
-        return $this->call('GET', 'categories/rules', [
+        return $this->call('GET', 'products/categories/rules', [
             RequestOptions::QUERY => [
                 'category_id' => $category_id
+            ]
+        ]);
+    }
+
+    public function getProductStock($product_ids = [], $sku_ids = [])
+    {
+        return $this->call('POST', 'products/stock/list', [
+            RequestOptions::QUERY => [
+                'version' => '202305',
+            ],
+            RequestOptions::JSON => [
+                'product_ids' => static::dataTypeCast('array', $product_ids),
+                'sku_ids' => static::dataTypeCast('array', $sku_ids),
+            ]
+        ]);
+    }
+
+    public function categoryRecommended(string $product_name, string $description = '', array $images = [])
+    {
+        return $this->call('POST', 'product/category_recommend', [
+            RequestOptions::JSON => [
+                'product_name' => $product_name,
+                'description' => $description,
+                'images' => $images,
+            ]
+        ]);
+    }
+
+    public function precheckForOperatingProduct()
+    {
+        return $this->call('POST', 'product/pre_check', [
+            RequestOptions::QUERY => [
+                'version' => '202306',
             ]
         ]);
     }

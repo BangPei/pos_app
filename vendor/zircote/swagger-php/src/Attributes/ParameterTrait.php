@@ -11,9 +11,11 @@ use OpenApi\Generator;
 trait ParameterTrait
 {
     /**
-     * @param array<string,Examples>   $examples
-     * @param array<string,mixed>|null $x
-     * @param Attachable[]|null        $attachables
+     * @param string|class-string|object|null                         $ref
+     * @param array<string,Examples>                                  $examples
+     * @param array<MediaType>|JsonContent|XmlContent|Attachable|null $content
+     * @param array<string,mixed>|null                                $x
+     * @param Attachable[]|null                                       $attachables
      */
     public function __construct(
         ?string $parameter = null,
@@ -27,6 +29,7 @@ trait ParameterTrait
         ?Schema $schema = null,
         mixed $example = Generator::UNDEFINED,
         ?array $examples = null,
+        array|JsonContent|XmlContent|Attachable|null $content = null,
         ?string $style = null,
         ?bool $explode = null,
         ?bool $allowReserved = null,
@@ -52,7 +55,7 @@ trait ParameterTrait
                 'spaceDelimited' => $spaceDelimited ?? Generator::UNDEFINED,
                 'pipeDelimited' => $pipeDelimited ?? Generator::UNDEFINED,
                 'x' => $x ?? Generator::UNDEFINED,
-                'value' => $this->combine($schema, $examples, $attachables),
+                'value' => $this->combine($schema, $examples, $content, $attachables),
             ]);
     }
 }

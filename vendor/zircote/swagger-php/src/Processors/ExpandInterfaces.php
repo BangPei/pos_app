@@ -7,8 +7,7 @@
 namespace OpenApi\Processors;
 
 use OpenApi\Analysis;
-use OpenApi\Annotations\Schema as AnnotationSchema;
-use OpenApi\Attributes\Schema as AttributeSchema;
+use OpenApi\Annotations as OA;
 use OpenApi\Generator;
 
 /**
@@ -18,12 +17,12 @@ use OpenApi\Generator;
  */
 class ExpandInterfaces
 {
-    use Concerns\MergeTrait;
+    use Concerns\MergePropertiesTrait;
 
     public function __invoke(Analysis $analysis)
     {
-        /** @var AnnotationSchema[] $schemas */
-        $schemas = $analysis->getAnnotationsOfType([AnnotationSchema::class, AttributeSchema::class], true);
+        /** @var OA\Schema[] $schemas */
+        $schemas = $analysis->getAnnotationsOfType(OA\Schema::class, true);
 
         foreach ($schemas as $schema) {
             if ($schema->_context->is('class')) {
@@ -47,7 +46,6 @@ class ExpandInterfaces
                         $refPath = !Generator::isDefault($interfaceSchema->schema) ? $interfaceSchema->schema : $interface['interface'];
                         $this->inheritFrom($analysis, $schema, $interfaceSchema, $refPath, $interface['context']);
                     } else {
-                        $this->mergeAnnotations($schema, $interface, $existing);
                         $this->mergeMethods($schema, $interface, $existing);
                     }
                 }

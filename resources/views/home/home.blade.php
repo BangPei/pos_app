@@ -56,6 +56,65 @@
     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
   </div>
 </div>
+<div class="col-12">
+  <div class="row">
+    <div class="col-lg-6 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Penjualan Tahun - {{ date('Y', time()) }}</h2>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Bulan</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($trans[(string)date('Y', time())] as $tran)
+               <tr>
+                <td>{{ $loop->index+1}}</td>
+                <td>{{ $tran['month'] }}</td>
+                <td>{{ number_format($tran['amount']) }}</td>
+               </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Penjualan Tahun - {{ date('Y', time())-1 }}</h2>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Bulan</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($trans[(string)(date('Y', time())-1)] as $tran)
+               <tr>
+                <td>{{ $loop->index+1}}</td>
+                <td>{{ $tran['month'] }}</td>
+                <td>{{ number_format($tran['amount']) }}</td>
+               </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{-- <p>{{ $trans[(string)date('Y', time())] }}</p> --}}
+</div>
 @include('component.base')
 @endsection
 

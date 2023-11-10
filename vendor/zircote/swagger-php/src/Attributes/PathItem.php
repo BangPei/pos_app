@@ -8,7 +8,7 @@ namespace OpenApi\Attributes;
 
 use OpenApi\Generator;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class PathItem extends \OpenApi\Annotations\PathItem
 {
     /**
@@ -20,6 +20,7 @@ class PathItem extends \OpenApi\Annotations\PathItem
     public function __construct(
         ?string $path = null,
         ?string $summary = null,
+        ?string $description = null,
         ?array $servers = null,
         ?array $parameters = null,
         // annotation
@@ -29,10 +30,9 @@ class PathItem extends \OpenApi\Annotations\PathItem
         parent::__construct([
                 'path' => $path ?? Generator::UNDEFINED,
                 'summary' => $summary ?? Generator::UNDEFINED,
+                'description' => $description ?? Generator::UNDEFINED,
                 'x' => $x ?? Generator::UNDEFINED,
                 'value' => $this->combine($servers, $parameters, $attachables),
             ]);
     }
 }
-
-// Missing parameters: get, put, post, delete, options, head, patch, trace, parameters

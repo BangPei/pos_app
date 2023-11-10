@@ -37,6 +37,14 @@ class DirectSalesController extends Controller
             ]
         );
     }
+    public function groupByMonth()
+    {
+        $year = date('Y', time());
+        return [
+            $year => $this->getDataByMonth($year),
+            ($year - 1) => $this->getDataByMonth($year - 1)
+        ];
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -290,5 +298,32 @@ class DirectSalesController extends Controller
     public function destroy(DirectSales $directSales)
     {
         //
+    }
+
+    private function getDataByMonth($year)
+    {
+        $month = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $directSales = DirectSales::selectRaw('year(date) year, monthname(date) month,MONTH(date) no, sum(amount) amount')
+            ->whereYear('date', $year)
+            ->groupBy('year', 'month', 'no')
+            ->orderBy('year', 'desc')
+            ->orderBy('no', 'asc')
+            ->get()
+            ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
+        for ($i = 0; $i < $month; $i++) {
+            $index = $i + 1;
+            $filter = $directSales->filter(function ($ds) use ($index) {
+                return $ds['month'] == $index;
+            });
+            if (count($filter) == 0) {
+                $directSales->push([
+                    'year' => $year,
+                    'month' => $month[$index - 1],
+                    'amount' => 0
+                ]);
+            }
+        }
+
+        return $directSales;
     }
 }

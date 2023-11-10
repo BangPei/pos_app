@@ -70,6 +70,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('supplier', SupplierController::class)->middleware('auth');
 
     Route::post('transaction/price', [DirectSalesController::class, 'printPrice'])->middleware('auth');
+    Route::get('transaction/month', [DirectSalesController::class, 'groupByMonth'])->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 
     Route::resource('setting', SettingController::class)->middleware('auth');

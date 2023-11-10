@@ -7,20 +7,16 @@
 namespace OpenApi\Processors;
 
 use OpenApi\Analysis;
-use OpenApi\Annotations\Operation;
+use OpenApi\Annotations as OA;
 use OpenApi\Generator;
 use OpenApi\Processors\Concerns\DocblockTrait;
 
-class AugmentParameters
+class AugmentParameters implements ProcessorInterface
 {
     use DocblockTrait;
 
     protected $augmentOperationParameters;
 
-    /**
-     * @param bool $augmentOperationParameters if `true` try to find operation parameter descriptions in the operation
-     *                                         docblock
-     */
     public function __construct(bool $augmentOperationParameters = true)
     {
         $this->augmentOperationParameters = $augmentOperationParameters;
@@ -31,6 +27,11 @@ class AugmentParameters
         return $this->augmentOperationParameters;
     }
 
+    /**
+     * If set to <code>true</code> try to find operation parameter descriptions in the operation docblock.
+     *
+     * @param bool $augmentOperationParameters
+     */
     public function setAugmentOperationParameters(bool $augmentOperationParameters): void
     {
         $this->augmentOperationParameters = $augmentOperationParameters;
@@ -71,8 +72,8 @@ class AugmentParameters
 
     protected function augmentOperationParameters(Analysis $analysis): void
     {
-        /** @var Operation[] $operations */
-        $operations = $analysis->getAnnotationsOfType(Operation::class);
+        /** @var OA\Operation[] $operations */
+        $operations = $analysis->getAnnotationsOfType(OA\Operation::class);
 
         foreach ($operations as $operation) {
             if (!Generator::isDefault($operation->parameters)) {
