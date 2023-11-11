@@ -216,7 +216,7 @@
       let labels = []
       let data = []
       JSON.parse(transWeek).forEach(e => {
-        labels.push(moment(e.transDate).format('dd MMM'));
+        labels.push(moment(e.transDate).format('DD MMM'));
         data.push(e.amount);
       });
 
