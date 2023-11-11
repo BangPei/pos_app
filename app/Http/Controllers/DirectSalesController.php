@@ -8,6 +8,7 @@ use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use App\Models\Stock;
 use App\Models\TempTransaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
@@ -40,9 +41,22 @@ class DirectSalesController extends Controller
     public function groupByMonth()
     {
         $year = date('Y', time());
+        $currDs  = $this->getDataByMonth($year);
+        $prevDs  = $this->getDataByMonth($year - 1);
+        $currTotal = 0;
+        $prevTotal = 0;
+        for ($i = 0; $i < count($currDs); $i++) {
+            $currTotal = $currDs[$i]['amount'] + $currTotal;
+        }
+        for ($i = 0; $i < count($prevDs); $i++) {
+            $ds = $prevDs[$i];
+            $prevTotal = $ds['amount']++;
+        }
         return [
-            $year => $this->getDataByMonth($year),
-            ($year - 1) => $this->getDataByMonth($year - 1)
+            $year => $currDs,
+            ($year - 1) => $prevDs,
+            'total' . $year => $currTotal,
+            'total' . ($year - 1) => $prevTotal
         ];
     }
 
@@ -302,27 +316,48 @@ class DirectSalesController extends Controller
 
     private function getDataByMonth($year)
     {
-        $month = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        $directSales = DirectSales::selectRaw('year(date) year, monthname(date) month,MONTH(date) no, sum(amount) amount')
+        $months = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $directSales = DirectSales::selectRaw('year(date) year, monthname(date) month,MONTH(date) no, sum(amount) amount,count(*) data')
             ->whereYear('date', $year)
             ->groupBy('year', 'month', 'no')
             ->orderBy('year', 'desc')
             ->orderBy('no', 'asc')
             ->get()
             ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
-        for ($i = 0; $i < $month; $i++) {
-            $index = $i + 1;
-            $filter = $directSales->filter(function ($ds) use ($index) {
-                return $ds['month'] == $index;
+
+        for ($i = 0; $i < count($months); $i++) {
+            $filter = $directSales->filter(function ($ds) use ($i) {
+                return (int)$ds['no'] === ($i + 1);
             });
             if (count($filter) == 0) {
                 $directSales->push([
                     'year' => $year,
-                    'month' => $month[$index - 1],
+                    'month' => $months[$i],
+                    'no' => $i + 1,
+                    'data' => 0,
                     'amount' => 0
                 ]);
             }
         }
+
+        return $directSales->sortBy(function ($ds) {
+            return $ds['no'];
+        });
+    }
+    public function getAWeekData($date = null)
+    {
+        if (!isset($date)) {
+            $date = Carbon::now()->toDateString();
+        }
+        $firstDate = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' 00:00:00')->subDays(6)->toDateTimeString();
+        $secondDate = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' 23:59:59')->toDateTimeString();
+        $directSales = DirectSales::selectRaw("DATE_FORMAT(date, '%Y-%m-%d') transDate, sum(amount) amount,count(*) data")
+            ->whereBetween('date', [$firstDate, $secondDate])
+            ->groupBy('transDate')
+            ->orderBy('transDate', 'desc')
+            ->get()
+            ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
+
 
         return $directSales;
     }
