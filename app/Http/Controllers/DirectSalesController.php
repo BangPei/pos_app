@@ -117,6 +117,7 @@ class DirectSalesController extends Controller
         $ds->is_cash = $request->is_cash;
         $ds->bank_id = $request->bank_id;
         $ds->reduce_value = $request->reduce_value;
+        $ds->isPrinted = $request->isPrinted;
         $ds->save();
 
         $details = [];
@@ -144,7 +145,9 @@ class DirectSalesController extends Controller
         $ds = DirectSales::where('id', $ds->id)->first();
         TempTransaction::where('user_id', auth()->user()->id)->delete();
 
-        $this->printReceipt($ds);
+        if ($ds->isPrinted) {
+            $this->printReceipt($ds);
+        }
         return response()->json($ds);
     }
 
