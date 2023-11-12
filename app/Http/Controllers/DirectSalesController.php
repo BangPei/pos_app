@@ -349,8 +349,13 @@ class DirectSalesController extends Controller
     }
     public function getAWeekData($date = null)
     {
+        $dates = [];
         if (!isset($date)) {
             $date = Carbon::now()->toDateString();
+        }
+        for ($i = 0; $i <= 6; $i++) {
+            $_date = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' 00:00:00')->subDays($i)->toDateString();
+            array_push($dates, $_date);
         }
         $firstDate = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' 00:00:00')->subDays(6)->toDateTimeString();
         $secondDate = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' 23:59:59')->toDateTimeString();
@@ -361,7 +366,18 @@ class DirectSalesController extends Controller
             ->get()
             ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
 
-
+        for ($i = 0; $i < count($dates); $i++) {
+            $filter = $directSales->filter(function ($ds) use ($i, $dates) {
+                return $ds['transDate'] === $dates[$i];
+            });
+            if (count($filter) == 0) {
+                $directSales->push([
+                    'transDate' => $dates[$i],
+                    'data' => 0,
+                    'amount' => 0
+                ]);
+            }
+        }
         return $directSales;
     }
 }

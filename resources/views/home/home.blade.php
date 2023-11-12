@@ -62,7 +62,7 @@
       <h2 class="card-title">Penjualan Perminggu</h2>
     </div>
     <div class="card-body">
-      <table class="table table-sm">
+      <table class="table table-sm table-bordered table-striped">
         <thead>
           <tr>
             <th>No</th>
@@ -72,6 +72,9 @@
           </tr>
         </thead>
         <tbody>
+          <?php $transWeek->sortBy(function ($ds) {
+            return $ds['transDate'];
+        })?>
           @foreach ($transWeek as $tran)
            <tr>
             <td>{{ $loop->index+1 }}</td>
@@ -96,7 +99,7 @@
     <div class="card-body">
 
       <div class="position-relative mb-4">
-        <canvas id="visitors-chart" height="230"></canvas>
+        <canvas id="visitors-chart" height="245"></canvas>
       </div>
 
       <div class="d-flex flex-row justify-content-end">
@@ -115,7 +118,7 @@
           <h2 class="card-title">Penjualan Tahun - {{ date('Y', time()) }}</h2>
         </div>
         <div class="card-body">
-          <table class="table table-sm">
+          <table class="table table-sm table-bordered table-striped">
             <thead>
               <tr>
                 <th>No</th>
@@ -149,7 +152,7 @@
           <h2 class="card-title">Penjualan Tahun - {{ date('Y', time())-1 }}</h2>
         </div>
         <div class="card-body">
-          <table class="table table-sm">
+          <table class="table table-sm table-bordered table-striped">
             <thead>
               <tr>
                 <th>No</th>
@@ -185,6 +188,7 @@
 
 @section('content-script')
 <script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/jquery-blockUI/js/jquery.blockUI.js"></script>
 <script src="js/script.js"></script>
 <script src="plugins/chart.js/Chart.min.js"></script>
@@ -198,6 +202,12 @@
   var intersect = true;
   let transWeek = `<?=isset($transWeek)?$transWeek:[]?>`;
     $(document).ready(function(){
+      $('table').DataTable({
+        paging: false,
+        searching: false,
+        ordering:  false,
+        bInfo : false
+      })
         ajax(null, `${baseApi}/lazada-order`, "GET",
         function(json) {
           toastr.success('Berhasil')
@@ -215,10 +225,17 @@
       // eslint-disable-next-line no-unused-vars
       let labels = []
       let data = []
-      JSON.parse(transWeek).forEach(e => {
+      let trans = JSON.parse(transWeek);
+      trans.sort((a, b) => {
+      let da = new Date(a.transDate),
+          db = new Date(b.transDate);
+          return da - db;
+      });
+      for (let i = 0; i < trans.length; i++) {
+        const e = trans[i];
         labels.push(moment(e.transDate).format('DD MMM'));
         data.push(e.amount);
-      });
+      }
 
       var visitorsChart = new Chart($visitorsChart, {
         data: {
