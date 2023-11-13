@@ -10,40 +10,52 @@
         <div class="card-header">
             <h2 class="card-title">Laporan Harian</h2>
         </div>
-        <div class="card-body ">
-          <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="date">Tanggal</label>
-                    <div class="input-group mb-3">
-                      <input value="{{ Request::query('date')}}" readonly type="text" class="form-control" id="date" name="date">
-                      <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
+        <div class="card-body">
+          <form action="" method="">
+            <div class="row">
+              <div class="col-4">
+                  <div class="form-group">
+                      <label for="date">Tanggal</label>
+                      <div class="input-group mb-3" style="flex-wrap: nowrap !important;">
+                        <input value="{{ $date }}" readonly type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
+                        <div class="input-group-append">
+                          <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
+                        </div>
                       </div>
-                    </div>
-                </div>
+                  </div>
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-primary" style="margin-top: 32px !important" type="submit"><i class="fa fa-search"></i> Submit</button>
+              </div>
             </div>
-            <div class="col-md-4">
-                <a href="javascript:void(0)" onclick="" class="btn btn-primary" style="margin-top: 32px !important"><i class="fa fa-search"></i> Submit</a>
-            </div>
-          </div>
+          </form>
         </div>
     </div>
     <div class="card">
         <div class="card-body table-responsive">
-          <table class="table table-striped table-bordered table-sm "style="width: 100% !important" id="table-daily-task">
+          <table class="table table-striped table-bordered table-sm "style="width: 100% !important" id="table-daily">
             <thead>
               <tr>
-                <th>Tanggal</th>
-                <th>Expedisi</th>
-                <th>Total Paket</th>
-                <th>Total Scan</th>
-                <th>Dibawa</th>
-                <th>Pending</th>
-                <th>Status</th>
-                <th>Aksi</th>
+                <th class="text-right">No</th>
+                <th class="text-center">Tanggal</th>
+                <th class="text-center">Jam</th>
+                <th class="text-right">Total Transaksi</th>
+                <th class="text-right">Total (.Rp)</th>
+                <th class="text-center">Detail</th>
               </tr>
             </thead>
+            <tbody>
+              @foreach ($directSales as $ds)
+                  <tr>
+                      <td class="text-right">{{ $loop->index+1 }}</td>
+                      <td class="text-center">{{ $date }}</td>
+                      <td class="text-center">{{ $ds['hour'].":  00"}}</td>
+                      <td class="text-right">{{ number_format($ds['data']) }}</td>
+                      <td class="text-right">{{ number_format($ds['amount']) }}</td>
+                      <td class="text-center">detail</td>
+                  </tr>
+              @endforeach
+            </tbody>
           </table>
         </div>
       </div>
@@ -63,6 +75,12 @@
             uiLibrary: 'bootstrap',
             format:"dd mmmm yyyy",
             // value:moment().format("DD MMMM YYYY")
+        })
+        $('table').DataTable({
+          paging: false,
+          searching: false,
+          ordering:  false,
+          bInfo : false
         })
     })
 </script>

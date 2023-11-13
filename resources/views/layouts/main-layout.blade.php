@@ -223,6 +223,39 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-header">Laporan</li>
+                        <li class="nav-item {{ (Request::is('report*'))?'menu-open':'' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-folder-open"></i>
+                                <p>Laporan Penjualan <i class="right fas fa-angle-left"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview pl-2">
+                                <li class="nav-item">
+                                    <a href="/report/daily" class="nav-link {{Request::is('report/daily')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Harian</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/report/date" class="nav-link {{Request::is('report/date')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Tanggal</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/report/monthly" class="nav-link {{Request::is('report/monthly')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Bulanan</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/report/yearly" class="nav-link {{Request::is('report/yearly')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Tahunan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-header">Setting</li>
                         <li class="nav-item">
                             <a href="/user" class="nav-link">
