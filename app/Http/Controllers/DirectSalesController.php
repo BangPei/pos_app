@@ -23,7 +23,6 @@ class DirectSalesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public $printer = "cashier_pos";
 
     public function index(UtilitiesRequest $request)
     {
@@ -161,7 +160,7 @@ class DirectSalesController extends Controller
     {
         $date = date('ymd');
         $ds = new DirectSales();
-        $ds->code = "DS" . $date . random_int(1000, 9999);
+        $ds->code = "DS" . $date . random_int(1000, 9999) . "_1";
         $ds->date = $request->date;
         $ds->customer_name = $request->customer_name;
         $ds->amount = $request->amount;
@@ -204,7 +203,7 @@ class DirectSalesController extends Controller
 
     public function printReceipt(DirectSales $ds)
     {
-        $connector = new WindowsPrintConnector($this->printer);
+        $connector = new WindowsPrintConnector(env("POS_PRINTER"));
         $printer = new Printer($connector);
 
         // $img = EscposImage::load("{{assets('/image/logo/logo.png')}}");
@@ -276,7 +275,7 @@ class DirectSalesController extends Controller
 
     public function printPrice(Request $request)
     {
-        $connector = new WindowsPrintConnector($this->printer);
+        $connector = new WindowsPrintConnector(env("POS_PRINTER"));
         $printer = new Printer($connector);
         $printer->selectPrintMode(Printer::MODE_FONT_B | Printer::MODE_DOUBLE_HEIGHT);
         $printer->text("Toko SS Bumi Indah\n");
