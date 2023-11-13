@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DirectSalesController extends Controller
@@ -84,7 +85,8 @@ class DirectSalesController extends Controller
      * @param  \App\Http\Requests\StoreDirectSalesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    private function dsCode()
     {
         $code = "DS";
         $currDate = date("ymd");
@@ -99,8 +101,14 @@ class DirectSalesController extends Controller
         }
 
         $fullCode = $code . "" . $currDate . "" . $n2;
+        return $fullCode;
+    }
+
+    public function store(Request $request)
+    {
+
         $ds = new DirectSales();
-        $ds->code = $fullCode;
+        $ds->code = $this->dsCode();
         $ds->date = $request->date;
         $ds->customer_name = $request->customer_name;
         $ds->amount = $request->amount;
@@ -147,6 +155,50 @@ class DirectSalesController extends Controller
         if ($request->isPrinted) {
             $this->printReceipt($ds);
         }
+        return response()->json($ds);
+    }
+    public function printStruct(Request $request)
+    {
+        $date = date('ymd');
+        $ds = new DirectSales();
+        $ds->code = "DS" . $date . random_int(1000, 9999);
+        $ds->date = $request->date;
+        $ds->customer_name = $request->customer_name;
+        $ds->amount = $request->amount;
+        $ds->discount = $request->discount;
+        $ds->additional_discount = $request->additional_discount;
+        $ds->cash = $request->cash;
+        $ds->change = $request->change;
+        $ds->subtotal = $request->subtotal;
+        $ds->total_item = $request->total_item;
+        $ds->created_by_id = auth()->user()->id;
+        $ds->edit_by_id = auth()->user()->id;
+        $ds->payment_type_id = $request->payment_type_id;
+        $ds->reduce = $request->reduce;
+        $ds->is_cash = $request->is_cash;
+        $ds->bank_id = $request->bank_id;
+        $ds->reduce_value = $request->reduce_value;
+
+        $details = [];
+        for ($i = 0; $i < count($request->details); $i++) {
+            $detail = new DirectSalesDetail();
+            $detail->direct_sales_id = $ds["id"];
+            $detail->product_barcode = $request->details[$i]["product"]['barcode'];
+            $detail->price = $request->details[$i]["price"];
+            $detail->qty = $request->details[$i]["qty"];
+            $detail->product_name = $request->details[$i]["product_name"];
+            $detail->discount = $request->details[$i]["discount"];
+            $detail->program = $request->details[$i]["program"];
+            $detail->subtotal = $request->details[$i]["subtotal"];
+            $detail->convertion = $request->details[$i]["convertion"];
+            $detail->uom = $request->details[$i]["uom"] ?? "";
+            $detail->category = $request->details[$i]["category"] ?? "";
+            array_push($details, $detail);
+        }
+        $ds->details = $details;
+        TempTransaction::where('user_id', auth()->user()->id)->delete();
+
+        $this->printReceipt($ds);
         return response()->json($ds);
     }
 

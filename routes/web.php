@@ -72,6 +72,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::post('transaction/price', [DirectSalesController::class, 'printPrice'])->middleware('auth');
     Route::get('transaction/month', [DirectSalesController::class, 'groupByMonth'])->middleware('auth');
     Route::get('transaction/week/{date}', [DirectSalesController::class, 'getAWeekData'])->middleware('auth');
+    Route::post('transaction/dummy', [DirectSalesController::class, 'printStruct'])->middleware('auth');
     Route::resource('transaction', DirectSalesController::class)->middleware('auth');
 
     Route::resource('setting', SettingController::class)->middleware('auth');
