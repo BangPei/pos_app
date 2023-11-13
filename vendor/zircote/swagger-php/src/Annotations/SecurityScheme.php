@@ -16,9 +16,11 @@ use OpenApi\Generator;
 class SecurityScheme extends AbstractAnnotation
 {
     /**
+     * The relative or absolute path to a security scheme.
+     *
      * @see [Using refs](https://swagger.io/docs/specification/using-ref/)
      *
-     * @var string|object
+     * @var string|class-string|object
      */
     public $ref = Generator::UNDEFINED;
 
@@ -83,7 +85,7 @@ class SecurityScheme extends AbstractAnnotation
     public $scheme = Generator::UNDEFINED;
 
     /**
-     * OpenId Connect URL to discover OAuth2 configuration values. This MUST be in the form of an URL.
+     * OpenId Connect URL to discover OAuth2 configuration values. This MUST be in the form of a URL.
      *
      * @var string
      */

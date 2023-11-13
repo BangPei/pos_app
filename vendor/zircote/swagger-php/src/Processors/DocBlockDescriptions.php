@@ -7,32 +7,22 @@
 namespace OpenApi\Processors;
 
 use OpenApi\Analysis;
-use OpenApi\Annotations\AbstractAnnotation;
-use OpenApi\Annotations\Operation;
-use OpenApi\Annotations\Parameter;
-use OpenApi\Annotations\Property;
-use OpenApi\Annotations\Schema;
+use OpenApi\Annotations as OA;
 use OpenApi\Generator;
 
 /**
- * This would be detected as summary.
+ * Checks if the annotation has a summary and/or description property
+ * and uses the text in the comment block (above the annotations) as summary and/or description.
  *
- * And this would be detected
- * as the description.
+ * Use `null`, for example: `@Annotation(description=null)`, if you don't want the annotation to have a description.
  */
-class DocBlockDescriptions
+class DocBlockDescriptions implements ProcessorInterface
 {
     use Concerns\DocblockTrait;
 
-    /**
-     * Checks if the annotation has a summary and/or description property
-     * and uses the text in the comment block (above the annotations) as summary and/or description.
-     *
-     * Use null `@Annotation(description=null)` if you don't want the annotation to have a description.
-     */
     public function __invoke(Analysis $analysis)
     {
-        /** @var AbstractAnnotation $annotation */
+        /** @var OA\AbstractAnnotation $annotation */
         foreach ($analysis->annotations as $annotation) {
             if (property_exists($annotation, '_context') === false) {
                 // only annotations with context
@@ -59,9 +49,9 @@ class DocBlockDescriptions
     }
 
     /**
-     * @param Operation|Property|Parameter|Schema $annotation
+     * @param OA\Operation|OA\Property|OA\Parameter|OA\Schema $annotation
      */
-    protected function description(AbstractAnnotation $annotation): void
+    protected function description(OA\AbstractAnnotation $annotation): void
     {
         if (!Generator::isDefault($annotation->description)) {
             if ($annotation->description === null) {
@@ -75,9 +65,9 @@ class DocBlockDescriptions
     }
 
     /**
-     * @param Operation|Property|Parameter|Schema $annotation
+     * @param OA\Operation|OA\Property|OA\Parameter|OA\Schema $annotation
      */
-    protected function summaryAndDescription(AbstractAnnotation $annotation): void
+    protected function summaryAndDescription(OA\AbstractAnnotation $annotation): void
     {
         $ignoreSummary = !Generator::isDefault($annotation->summary);
         $ignoreDescription = !Generator::isDefault($annotation->description);

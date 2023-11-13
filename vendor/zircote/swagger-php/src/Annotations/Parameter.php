@@ -20,9 +20,11 @@ use OpenApi\Generator;
 class Parameter extends AbstractAnnotation
 {
     /**
+     * The relative or absolute path to the endpoint.
+     *
      * @see [Using refs](https://swagger.io/docs/specification/using-ref/)
      *
-     * @var string|object
+     * @var string|class-string|object
      */
     public $ref = Generator::UNDEFINED;
 
@@ -163,7 +165,7 @@ class Parameter extends AbstractAnnotation
      * The key is the media type and the value describes it.
      * The map must only contain one entry.
      *
-     * @var MediaType[]
+     * @var array<MediaType>|JsonContent|XmlContent|Attachable
      */
     public $content = Generator::UNDEFINED;
 

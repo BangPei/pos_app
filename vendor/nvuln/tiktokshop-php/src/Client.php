@@ -25,6 +25,7 @@ use NVuln\TiktokShop\Resources\Promotion;
 use NVuln\TiktokShop\Resources\Reverse;
 use NVuln\TiktokShop\Resources\Seller;
 use NVuln\TiktokShop\Resources\Shop;
+use NVuln\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -38,14 +39,30 @@ use Psr\Http\Message\RequestInterface;
  * @property-read Finance $Finance
  * @property-read GlobalProduct $GlobalProduct
  * @property-read Promotion $Promotion
+ * @property-read Supplychain $Supplychain
  */
 class Client
 {
+    private CONST DEFAULT_VERSION = '202212';
     protected $app_key;
     protected $app_secret;
     protected $shop_id;
     protected $access_token;
+
+    /**
+     * required for calling cross-border shop
+     */
+    protected $shop_cipher;
     protected $sandbox;
+    protected $version;
+
+    /**
+     * custom guzzle client options
+     *
+     * @var array
+     * @see https://docs.guzzlephp.org/en/stable/request-options.html
+     */
+    protected $options;
 
     public const resources = [
         Shop::class,
@@ -58,14 +75,17 @@ class Client
         Finance::class,
         GlobalProduct::class,
         Promotion::class,
+        Supplychain::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false)
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->shop_id = $shop_id;
         $this->sandbox = $sandbox;
+        $this->version = $version;
+        $this->options = $options;
     }
 
     public function useSandboxMode()
@@ -93,6 +113,11 @@ class Client
         $this->shop_id = $shop_id;
     }
 
+    public function setShopCipher($shop_cipher)
+    {
+        $this->shop_cipher = $shop_cipher;
+    }
+
     public function auth()
     {
         return new Auth($this, $this->sandbox);
@@ -107,39 +132,74 @@ class Client
         return $webhook;
     }
 
+    /**
+     * append app_key, timestamp, version, shop_id, access_token, sign to request
+     *
+     * @param RequestInterface $request
+     * @return RequestInterface
+     */
+    protected function modifyRequestBeforeSend(RequestInterface $request)
+    {
+        $uri = $request->getUri();
+        parse_str($uri->getQuery(), $query);
+
+        $query['app_key'] = $this->getAppKey();
+        $query['timestamp'] = time();
+
+        if ($this->version && !isset($query['version'])) {
+            $query['version'] = $this->version;
+        }
+
+        if ($this->shop_id && !isset($query['shop_id'])) {
+            $query['shop_id'] = $this->shop_id;
+        }
+
+        if ($this->access_token && !isset($query['access_token'])) {
+            $query['access_token'] = $this->access_token;
+        }
+
+        if ($this->shop_cipher && !isset($query['shop_cipher'])) {
+            $query['shop_cipher'] = $this->shop_cipher;
+        }
+
+        // do not pass shop_cipher to global product api
+        if (preg_match('/^\/api\/product\/global_products/', $uri->getPath())) {
+            unset($query['shop_cipher']);
+        }
+
+        $this->prepareSignature($uri->getPath(), $query);
+
+        $uri = $uri->withQuery(http_build_query($query));
+
+        return $request->withUri($uri);
+    }
+
     protected function httpClient()
     {
         $stack = HandlerStack::create();
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
-            $uri = $request->getUri();
-            parse_str($uri->getQuery(), $query);
-
-            $query['app_key'] = $this->getAppKey();
-            $query['timestamp'] = time();
-            if ($this->shop_id && !isset($query['shop_id'])) {
-                $query['shop_id'] = $this->shop_id;
-            }
-
-            if ($this->access_token && !isset($query['access_token'])) {
-                $query['access_token'] = $this->access_token;
-            }
-
-            $this->prepareSignature($uri->getPath(), $query);
-
-            $uri = $uri->withQuery(http_build_query($query));
-
-            return $request->withUri($uri);
+            return $this->modifyRequestBeforeSend($request);
         }));
 
         $api_domain_endpoint = $this->sandbox ? 'open-api-sandbox.tiktokglobalshop.com' : 'open-api.tiktokglobalshop.com';
 
-        return new GuzzleHttpClient([
-            RequestOptions::HTTP_ERRORS => false, // disable throw exception, manual handle it
+        $options = array_merge([
+            RequestOptions::HTTP_ERRORS => false, // disable throw exception on http 4xx, manual handle it
             'handler' => $stack,
             'base_uri' => 'https://'.$api_domain_endpoint.'/api/',
-        ]);
+        ], $this->options ?? []);
+
+        return new GuzzleHttpClient($options);
     }
 
+    /**
+     * tiktokshop api signature algorithm
+     * @see https://partner.tiktokshop.com/doc/page/274638
+     *
+     * @param $uri
+     * @param $params
+     * @return void
+     */
     protected function prepareSignature($uri, &$params)
     {
         $paramsToBeSigned = $params;
@@ -162,7 +222,7 @@ class Client
         // 4. Wrap string generated in step 3 with app_secret.
         $stringToBeSigned = $this->getAppSecret() . $stringToBeSigned . $this->getAppSecret();
 
-        // 7. Use sha256 to generate sign with salt(secret).
+        // Encode the digest byte stream in hexadecimal and use sha256 to generate sign with salt(secret).
         $params['sign'] = hash_hmac('sha256', $stringToBeSigned, $this->getAppSecret());
     }
 

@@ -12,16 +12,17 @@ use OpenApi\Generator;
 class Items extends \OpenApi\Annotations\Items
 {
     /**
-     * @param string[]                                  $required
-     * @param Property[]                                $properties
-     * @param int|float                                 $maximum
-     * @param int|float                                 $minimum
-     * @param string[]|int[]|float[]|class-string       $enum
-     * @param array<Schema|\OpenApi\Annotations\Schema> $allOf
-     * @param array<Schema|\OpenApi\Annotations\Schema> $anyOf
-     * @param array<Schema|\OpenApi\Annotations\Schema> $oneOf
-     * @param array<string,mixed>|null                  $x
-     * @param Attachable[]|null                         $attachables
+     * @param string|class-string|object|null                        $ref
+     * @param string[]                                               $required
+     * @param Property[]                                             $properties
+     * @param int|float                                              $maximum
+     * @param int|float                                              $minimum
+     * @param string[]|int[]|float[]|bool[]|\UnitEnum[]|class-string $enum
+     * @param array<Schema|\OpenApi\Annotations\Schema>              $allOf
+     * @param array<Schema|\OpenApi\Annotations\Schema>              $anyOf
+     * @param array<Schema|\OpenApi\Annotations\Schema>              $oneOf
+     * @param array<string,mixed>|null                               $x
+     * @param Attachable[]|null                                      $attachables
      */
     public function __construct(
         // schema
@@ -29,6 +30,8 @@ class Items extends \OpenApi\Annotations\Items
         ?string $schema = null,
         ?string $title = null,
         ?string $description = null,
+        ?int $maxProperties = null,
+        ?int $minProperties = null,
         ?array $required = null,
         ?array $properties = null,
         ?string $type = null,
@@ -69,6 +72,8 @@ class Items extends \OpenApi\Annotations\Items
             'schema' => $schema ?? Generator::UNDEFINED,
             'title' => $title ?? Generator::UNDEFINED,
             'description' => $description ?? Generator::UNDEFINED,
+            'maxProperties' => $maxProperties ?? Generator::UNDEFINED,
+            'minProperties' => $minProperties ?? Generator::UNDEFINED,
             'required' => $required ?? Generator::UNDEFINED,
             'properties' => $properties ?? Generator::UNDEFINED,
             'type' => $type ?? Generator::UNDEFINED,

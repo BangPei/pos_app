@@ -17,7 +17,7 @@ class ExpeditionController extends Controller
      */
     public function index(UtilitiesRequest $request)
     {
-        $expedition = Expedition::all();
+        $expedition = Expedition::query();
         if ($request->ajax()) {
             return datatables()->of($expedition)->make(true);
         }

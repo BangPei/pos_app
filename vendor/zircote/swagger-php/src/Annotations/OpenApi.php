@@ -68,17 +68,12 @@ class OpenApi extends AbstractAnnotation
     public $components = Generator::UNDEFINED;
 
     /**
-     * Lists the required security schemes to execute this operation.
+     * A declaration of which security mechanisms can be used across the API.
      *
-     * The name used for each property must correspond to a security scheme declared
-     * in the Security Schemes under the Components Object.
-     * Security Requirement Objects that contain multiple schemes require that
-     * all schemes must be satisfied for a request to be authorized.
-     * This enables support for scenarios where multiple query parameters or
-     * HTTP headers are required to convey security information.
-     * When a list of Security Requirement Objects is defined on the Open API object or
-     * Operation Object, only one of Security Requirement Objects in the list needs to
-     * be satisfied to authorize the request.
+     * The list of values includes alternative security requirement objects that can be used.
+     * Only one of the security requirement objects need to be satisfied to authorize a request.
+     * Individual operations can override this definition.
+     * To make security optional, an empty security requirement `({})` can be included in the array.
      *
      * @var array
      */
@@ -226,7 +221,7 @@ class OpenApi extends AbstractAnnotation
             }
             foreach ($mapping as $nestedClass => $keyField) {
                 foreach ($container as $key => $item) {
-                    if (is_numeric($key) && is_object($item) && $item instanceof $nestedClass && (string) $item->$keyField === $property) {
+                    if (is_numeric($key) && is_object($item) && $item instanceof $nestedClass && (string) $item->{$keyField} === $property) {
                         return self::resolveRef($ref, $unresolved, $item, []);
                     }
                 }

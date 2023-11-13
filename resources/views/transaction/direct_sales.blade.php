@@ -137,13 +137,27 @@
               <input type="text" placeholder="Nama Pembeli" id="customer-name" class="font-weight-bold" style="width: 100%">
             </div>
           </div>
+          <div class="row">
+            <div class="col-4 font-weight-bold">Print Struk</div>
+            <div class="col-2 font-weight-bold">:</div>
+            <div class="col-6 text-left">
+              <input tabindex="-1" type="checkbox" id="is-printed">
+            </div>
+          </div>
           <hr>
           <div class="row width-screen">
-            <div class="col-md-12 col-sam-12 col-xs-12 text-center">
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
               <a class="btn btn-danger" onclick="cancelTransaction()"><i class="fas fa-trash"></i> Batal</a>
               <a href="javascript:void(0)" onclick="saveTransaction()" class="btn btn-primary btn-save"><i class="fas fa-save"></i> Simpan</a>
             </div>
           </div>
+          @if (!isset($directSales))
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center pt-2">
+              <a href="javascript:void(0)" tabindex="-1" onclick="saveTransaction('{{URL::to('transaction/dummy')}}')" class="btn btn-success btn-save"><i class="fas fa-print"></i> Print Struk</a>
+            </div>
+          </div>
+          @endif
         </div>
         <div class="col-md-8 col-sm-12">
           <table class="table table-striped table-bordered table-sm" id="table-order">
@@ -344,6 +358,7 @@
     // $('#barcode').on('focus',function(){
     //   onScan.simulate(document, [48,49,50]);
     // })
+    $('#is-printed').prop('checked',true)
     $('a[data-widget="pushmenu"]').click()
     tblOrder = $('#table-order').DataTable({
       paging: false,
@@ -834,7 +849,7 @@
             }
       })
   }
-  function saveTransaction(){
+  function saveTransaction(url=null){
     let dataAtm = $("#payment-type").find(':selected').attr('data-atm');
     let dataCash = $("#payment-type").find(':selected').attr('show-cash');
     let dataBank = $('input[name="bank"]:checked').val();
@@ -855,9 +870,12 @@
     directSales.date = moment(val,"DD MMMM YYYY HH:mm:ss").format(`YYYY-MM-DD HH:mm:ss`)
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
+    directSales.isPrinted = $('#is-printed').prop('checked')==true?1:0;
     $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
     let method = dsCode==""?"POST":"PUT";
-    let url = dsCode==""?"{{ route('transaction.store') }}":"{{URL::to('transaction/update')}}"
+    if (url==null) {
+      url = dsCode==""?"{{ route('transaction.store') }}":"{{URL::to('transaction/update')}}"
+    }
     ajax(directSales, url, method,
         function(json) {
           toastr.success('Transaksi Berhasil Disimpan')

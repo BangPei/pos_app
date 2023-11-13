@@ -105,11 +105,15 @@ class QueryBuilder
 
     /**
      * The type of query this is. Can be select, update or delete.
+     *
+     * @psalm-var self::SELECT|self::DELETE|self::UPDATE|self::INSERT
      */
     private int $type = self::SELECT;
 
     /**
      * The state of the query object. Can be dirty or clean.
+     *
+     * @psalm-var self::STATE_*
      */
     private int $state = self::STATE_CLEAN;
 
@@ -186,10 +190,19 @@ class QueryBuilder
     /**
      * Gets the associated DBAL Connection for this query builder.
      *
+     * @deprecated Use the connection used to instantiate the builder instead.
+     *
      * @return Connection
      */
     public function getConnection()
     {
+        Deprecation::trigger(
+            'doctrine/dbal',
+            'https://github.com/doctrine/dbal/pull/5780',
+            '%s is deprecated. Use the connection used to instantiate the builder instead.',
+            __METHOD__,
+        );
+
         return $this->connection;
     }
 
@@ -199,6 +212,7 @@ class QueryBuilder
      * @deprecated The builder state is an internal concern.
      *
      * @return int Either QueryBuilder::STATE_DIRTY or QueryBuilder::STATE_CLEAN.
+     * @psalm-return self::STATE_*
      */
     public function getState()
     {
@@ -404,7 +418,6 @@ class QueryBuilder
                 break;
 
             case self::SELECT:
-            default:
                 $sql = $this->getSQLForSelect();
                 break;
         }
@@ -974,7 +987,7 @@ class QueryBuilder
      *         ->from('counters', 'c')
      *         ->where('c.id = ?');
      *
-     *     // You can optionally programatically build and/or expressions
+     *     // You can optionally programmatically build and/or expressions
      *     $qb = $conn->createQueryBuilder();
      *
      *     $or = $qb->expr()->orx();
@@ -1536,7 +1549,7 @@ class QueryBuilder
         if (isset($this->sqlParts['join'][$fromAlias])) {
             foreach ($this->sqlParts['join'][$fromAlias] as $join) {
                 if (array_key_exists($join['joinAlias'], $knownAliases)) {
-                    throw QueryException::nonUniqueAlias($join['joinAlias'], array_keys($knownAliases));
+                    throw QueryException::nonUniqueAlias((string) $join['joinAlias'], array_keys($knownAliases));
                 }
 
                 $sql .= ' ' . strtoupper($join['joinType'])

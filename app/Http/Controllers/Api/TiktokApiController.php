@@ -114,12 +114,13 @@ class TiktokApiController extends Controller
         $client->setShopId($auth->shopId);
         $more = true;
         $nextCursor = null;
+        $page_sized = 50;
         $fullOrder = [];
         $listOrder = [];
 
         $orders = $client->Order->getOrderList([
             'order_status' => 112,
-            'page_size' => 50,
+            'page_size' => $page_sized,
             'sort_type' => 2
         ]);
         $more = $orders['more'];
@@ -136,7 +137,7 @@ class TiktokApiController extends Controller
             $listOrder = [];
             $orders = $client->Order->getOrderList([
                 'order_status' => 112,
-                'page_size' => 50,
+                'page_size' => $page_sized,
                 'sort_type' => 2,
                 'cursor' => $nextCursor,
             ]);
@@ -158,7 +159,7 @@ class TiktokApiController extends Controller
         $itemData = null;
         $itemData['image_url'] = $detail['sku_image'];
         $itemData['item_name'] = $detail['product_name'];
-        $itemData['item_sku'] = $detail['seller_sku'];
+        $itemData['item_sku'] = $detail['seller_sku']??"";
         $itemData['variation'] = $detail['sku_name'];
         $itemData['order_item_id'] = null;
         $itemData['sku_id'] = $detail['sku_id'];

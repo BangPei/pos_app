@@ -19,7 +19,7 @@ class DailyTaskController extends Controller
     {
         $dailyTask = DailyTask::where('status', 0);
         // $dailyTask = DailyTask::all();
-        $expeditions = Expedition::all();
+        $expeditions = Expedition::query();
         if ($request->ajax()) {
             return datatables()->of($dailyTask)->make(true);
         }

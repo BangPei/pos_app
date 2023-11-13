@@ -14,6 +14,8 @@ class DashboardController extends Controller
         $subtotal = DirectSales::whereBetween('date', [$from, $to])->sum('subtotal');
         $totalOrder = DirectSales::whereBetween('date', [$from, $to])->count();
         $totalProduct = Product::all()->count();
+        $transByMonth = app('App\Http\Controllers\DirectSalesController')->groupByMonth();
+        $transByWeek = app('App\Http\Controllers\DirectSalesController')->getAWeekData(date('Y-m-d'));
         $emptyStock = 0;
         $products = Product::all();
         foreach ($products as $pr) {
@@ -31,6 +33,8 @@ class DashboardController extends Controller
                 "totalOrder" => $totalOrder ?? 0,
                 "totalProduct" => $totalProduct ?? 0,
                 "stock" => $emptyStock,
+                "trans" => $transByMonth,
+                "transWeek" => $transByWeek,
             ]
         );
     }

@@ -6,7 +6,7 @@
 
 namespace OpenApi;
 
-use OpenApi\Annotations\OpenApi;
+use OpenApi\Annotations as OA;
 use OpenApi\Loggers\DefaultLogger;
 use Psr\Log\LoggerInterface;
 
@@ -44,8 +44,6 @@ use Psr\Log\LoggerInterface;
 #[\AllowDynamicProperties]
 class Context
 {
-    public $classs = null;
-
     /**
      * Prototypical inheritance for properties.
      *
@@ -53,10 +51,15 @@ class Context
      */
     private $parent;
 
+    public function clone()
+    {
+        return new Context(get_object_vars($this), $this->parent);
+    }
+
     public function __construct(array $properties = [], ?Context $parent = null)
     {
         foreach ($properties as $property => $value) {
-            $this->$property = $value;
+            $this->{$property} = $value;
         }
         $this->parent = $parent;
 
@@ -74,7 +77,7 @@ class Context
     }
 
     /**
-     * Check if a property is NOT set directly on this context and but its parent context.
+     * Check if a property is NOT set directly on this context and its parent context.
      *
      * Example: $c->not('method') or $c->not('class')
      */
@@ -122,7 +125,7 @@ class Context
         }
 
         $versions = (array) $versions;
-        $currentVersion = $this->version ?: OpenApi::DEFAULT_VERSION;
+        $currentVersion = $this->version ?: OA\OpenApi::DEFAULT_VERSION;
 
         return in_array($currentVersion, $versions);
     }
@@ -168,7 +171,7 @@ class Context
     public function __get(string $property)
     {
         if ($this->parent !== null) {
-            return $this->parent->$property;
+            return $this->parent->{$property};
         }
 
         return null;
@@ -191,6 +194,8 @@ class Context
      */
     public static function detect(int $index = 0): Context
     {
+        // trigger_deprecation('zircote/swagger-php', '4.0', 'Context detecting is deprecated');
+
         $context = new Context();
         $backtrace = debug_backtrace();
         $position = $backtrace[$index];
@@ -200,7 +205,7 @@ class Context
         if (isset($position['line'])) {
             $context->line = $position['line'];
         }
-        $caller = isset($backtrace[$index + 1]) ? $backtrace[$index + 1] : null;
+        $caller = $backtrace[$index + 1] ?? null;
         if (isset($caller['function'])) {
             $context->method = $caller['function'];
             if (isset($caller['type']) && $caller['type'] === '::') {

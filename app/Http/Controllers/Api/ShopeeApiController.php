@@ -23,7 +23,8 @@ class ShopeeApiController extends Controller
     public function index()
     {
         // return $this->getOrderByNoV2("221214MET95VCM");
-        // return $this->getProductSearch();
+        // return $this->getAccessToken();
+        // return $this->getLink();
     }
 
     public function rts($orderSn)
@@ -86,14 +87,13 @@ class ShopeeApiController extends Controller
 
     public function getLink()
     {
-        $timestamp = time();
-        $partner_id = 2005013;
         $host = "https://partner.shopeemobile.com";
-        $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
         $path = "/api/v2/shop/auth_partner";
-        $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key, false);
-        $url = $host . $path . "?timestamp=" . $timestamp . "&partner_id=" . $partner_id . "&sign=" . $sign . "&redirect=https://www.google.com";
-        return $url;
+        $timestamp = time();
+        $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp), $this->partner_key, false);
+        $url = $host . $path . "?partner_id=" . $this->partner_id . "&timestamp=" . $timestamp . "&sign=" . $sign . "&redirect=https://www.google.com";
+        $newUrl=str_replace(" ","",$url);
+        return $newUrl;
     }
 
     public function getAccessToken()
@@ -102,7 +102,7 @@ class ShopeeApiController extends Controller
         $path = "/api/v2/auth/token/get";
         $timestamp = time();
         $partner_id = 2005013;
-        $code = "655351526472676852744f5a774a4c68";
+        $code = "62466149514656424c45504a4c4b4242";
         $shop_id = 285374341;
         $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
         $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key, false);
