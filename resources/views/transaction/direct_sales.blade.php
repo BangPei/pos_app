@@ -863,19 +863,18 @@
     directSales.date = moment(val,"DD MMMM YYYY HH:mm:ss").format(`YYYY-MM-DD HH:mm:ss`)
     directSales.customer_name = $("#customer-name").val();
     directSales.payment_type_id = $('#payment-type').val();
-    directSales.isPrinted = $('#is-printed').prop('checked')
+    directSales.isPrinted = $('#is-printed').prop('checked')==true?1:0;
     $('.btn-save').attr('disabled', 'disabled').removeClass('btn-primary').addClass('btn-default')
     let method = dsCode==""?"POST":"PUT";
     let url = dsCode==""?"{{ route('transaction.store') }}":"{{URL::to('transaction/update')}}"
-    // ajax(directSales, url, method,
-    //     function(json) {
-    //       toastr.success('Transaksi Berhasil Disimpan')
-    //       dsCode==""?clearTransaction():null;
-    //       $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    // },function(json){
-    //   $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
-    // })
-    console.log(directSales);
+    ajax(directSales, url, method,
+        function(json) {
+          toastr.success('Transaksi Berhasil Disimpan')
+          dsCode==""?clearTransaction():null;
+          $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    },function(json){
+      $('.btn-save').removeAttr('disabled').addClass('btn-primary').removeClass('btn-default')
+    })
   }
 
   function countTotality() {
