@@ -72,10 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          <?php $transWeek->sortBy(function ($ds) {
-            return $ds['transDate'];
-        })?>
-          @foreach ($transWeek as $tran)
+          @foreach ($transWeek->sortBy('transDate') as $tran)
            <tr>
             <td>{{ $loop->index+1 }}</td>
             <td>{{ date_format(date_create($tran['transDate']),"d M Y") }}</td>

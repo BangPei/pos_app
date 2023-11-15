@@ -27,6 +27,18 @@
               <div class="col-md-4">
                 <button class="btn btn-primary" style="margin-top: 32px !important" type="submit"><i class="fa fa-search"></i> Submit</button>
               </div>
+              <div class="col-md-4">
+                <div class="row">
+                  <div class="col-6 text-center" style="display: grid">
+                    <dt>Transaksi</dt>
+                    <label for="" style="font-size: x-large">{{ number_format($total['data']) }}</label>
+                  </div>
+                  <div class="col-6 text-center" style="display: grid">
+                    <dt>Total (Rp.)</dt>
+                    <label for="" style="font-size: x-large">{{ number_format($total['amount']) }}</label>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -39,7 +51,7 @@
                 <th class="text-right">No</th>
                 <th class="text-center">Tanggal</th>
                 <th class="text-center">Jam</th>
-                <th class="text-right">Total Transaksi</th>
+                <th class="text-right">Transaksi</th>
                 <th class="text-right">Total (.Rp)</th>
                 <th class="text-center">Detail</th>
               </tr>
@@ -49,10 +61,10 @@
                   <tr>
                       <td class="text-right">{{ $loop->index+1 }}</td>
                       <td class="text-center">{{ $date }}</td>
-                      <td class="text-center">{{ $ds['hour'].":  00"}}</td>
+                      <td class="text-center text-bold {{ $ds['amount'] ==0?'text-danger':'text-default'}}">{{ $ds['hour'].":  00"}}</td>
                       <td class="text-right">{{ number_format($ds['data']) }}</td>
                       <td class="text-right">{{ number_format($ds['amount']) }}</td>
-                      <td class="text-center">detail</td>
+                      <td class="text-center"><a href="#">Detail</a></td>
                   </tr>
               @endforeach
             </tbody>

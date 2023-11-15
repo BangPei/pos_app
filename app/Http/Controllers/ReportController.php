@@ -6,7 +6,6 @@ use App\Models\DailyTask;
 use App\Models\DirectSales;
 use App\Models\Expedition;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -89,7 +88,11 @@ class ReportController extends Controller
 
     public function daily()
     {
-        $directSales = null;
+        $directSales = [];
+        $hours = [];
+        $sum = 0;
+        $data = 0;
+
         if (request('date')) {
             $date = Carbon::createFromFormat('d F Y', request('date'))->format('Y-m-d');
             $directSales = DirectSales::selectRaw("DATE_FORMAT(date, '%H') hour, sum(amount) amount,count(*) data")
@@ -98,13 +101,42 @@ class ReportController extends Controller
                 ->orderBy('hour', 'asc')
                 ->get()
                 ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
+            $sum = DirectSales::selectRaw("sum(amount) sum")
+                ->whereBetween("date", [$date . ' 00:00:00', $date . ' 23:59:59'])->sum('amount');
+            $data = DirectSales::whereBetween("date", [$date . ' 00:00:00', $date . ' 23:59:59'])->count();
+
+            for ($i = 0; $i < 24; $i++) {
+                if ($i < 10) {
+                    array_push($hours, "0" . $i);
+                } else {
+                    array_push($hours, (string)$i);
+                }
+            }
+
+            for ($i = 0; $i < count($hours); $i++) {
+                $filter = $directSales->filter(function ($ds) use ($i, $hours) {
+                    return $ds['hour'] === $hours[$i];
+                });
+                if (count($filter) == 0) {
+                    $directSales->push([
+                        'hour' => $hours[$i],
+                        'data' => 0,
+                        'amount' => 0
+                    ]);
+                }
+            }
         }
+
 
         return view('report/daily_task/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
             "date" => request('date'),
-            "directSales" => $directSales,
+            "directSales" => (count($directSales) != 0) ? $directSales->sortBy('hour') : [],
+            "total" => [
+                "amount" => $sum,
+                "data" => $data
+            ],
         ]);
     }
     public function dailyTaskByDate(Request $request)

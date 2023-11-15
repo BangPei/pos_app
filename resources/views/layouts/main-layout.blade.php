@@ -239,7 +239,7 @@
                                 <li class="nav-item">
                                     <a href="/report/date" class="nav-link {{Request::is('report/date')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Tanggal</p>
+                                        <p>Mingguan</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
