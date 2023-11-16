@@ -430,4 +430,14 @@ class DirectSalesController extends Controller
         }
         return $directSales;
     }
+
+    public function getByDateHour($date, $hour)
+    {
+        if (($date == null || $date == "") || ($hour == null || $hour == "")) {
+            return response()->json("Date or Hour can not be empty", 400);
+        }
+        $dateHour = $date . " " . $hour;
+        $directSales = DirectSales::where('date', 'like', '%' . $dateHour . '%')->get();
+        return response()->json($directSales);
+    }
 }

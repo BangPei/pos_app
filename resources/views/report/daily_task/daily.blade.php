@@ -61,10 +61,10 @@
                   <tr>
                       <td class="text-right">{{ $loop->index+1 }}</td>
                       <td class="text-center">{{ $date }}</td>
-                      <td class="text-center text-bold {{ $ds['amount'] ==0?'text-danger':'text-default'}}">{{ $ds['hour'].":  00"}}</td>
+                      <td class="text-center text-bold {{ $ds['amount'] ==0?'text-danger':'text-default'}}">{{ $ds['hour'].":00"}}</td>
                       <td class="text-right">{{ number_format($ds['data']) }}</td>
                       <td class="text-right">{{ number_format($ds['amount']) }}</td>
-                      <td class="text-center"><a href="#">Detail</a></td>
+                      <td class="text-center {{ $ds['amount'] ==0?'':'dt-control'}}"></td>
                   </tr>
               @endforeach
             </tbody>
@@ -82,18 +82,84 @@
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
+  let dsDetail = [];
     $(document).ready(function(){
         $('#date').datepicker({
             uiLibrary: 'bootstrap',
             format:"dd mmmm yyyy",
             // value:moment().format("DD MMMM YYYY")
         })
-        $('table').DataTable({
-          paging: false,
-          searching: false,
-          ordering:  false,
-          bInfo : false
-        })
+        table = $('table').DataTable({
+                paging: false,
+                searching: false,
+                ordering:  false,
+                bInfo : false
+              })
+        table.on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
+            let row = table.row(tr);
+        
+            if (row.child.isShown()) {
+                row.child.hide();
+            }else {
+              let data  = row.data();
+              let date = moment(data[1],"DD MMMM YYYY").format("YYYY-MM-DD")
+              let hour = data[2].split(':')[0]
+              
+              let ds=dsDetail.filter(e=>e.date == `${date} ${hour}`)
+              if (ds.length == 0) {
+                getDsByDateHour(date,hour,row);
+              }else{
+                row.child(format(ds[0])).show();
+              }
+
+            }
+        });
     })
+
+    function getDsByDateHour(date,hour,row){
+      ajax(null, `{{URL::to('/transaction/date/hour/${date}/${hour}')}}`, "GET",function(json) {
+          let data = {
+            date:`${date} ${hour}`,
+            details : json
+          }
+          dsDetail.push(data)
+          row.child(format(data)).show();
+      })
+    }
+
+    function format(d) {
+      let dataRow =`
+      <div class="m-3">
+      <table class="table table-striped table-bordered table-sm ">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Tanggal</th>
+            <th>Total Item</th>
+            <th>Total</th>
+            <th>Pembayaran</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      d.details.forEach(e=>{
+        dataRow += `
+        <tr>
+            <td>${e.code}</td>
+            <td>${moment(e.date).format('DD MMM YYYY HH:mm:ss')}</td>
+            <td>${e.details.length}</td>
+            <td>${formatNumber(e.amount)}</td>
+            <td>${e.payment_type.name}</td>
+            <td>
+              <a href="/transaction/${e.code}/edit" title="Edit" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a></form>
+            </td>
+        </tr>
+        `
+      })
+      dataRow +="</tbody></table></div>"
+      return dataRow;
+    }
 </script>
 @endsection

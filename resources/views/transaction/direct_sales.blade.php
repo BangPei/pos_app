@@ -1022,6 +1022,7 @@
   function clearTransaction() {
     $('#cash').val('');
     $('#is-cash').prop('checked',false);
+    $('#is-printed').prop('checked',true);
     $('input[name="bank"]').prop('checked',false)
     $('#customer-name').val('')
     $('#discount-2').val('')
