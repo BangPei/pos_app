@@ -8,7 +8,7 @@
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Laporan Harian</h2>
+            <h2 class="card-title">{{ $title }}</h2>
         </div>
         <div class="card-body">
           <form action="" method="">
@@ -149,7 +149,7 @@
         <tr>
             <td>${e.code}</td>
             <td>${moment(e.date).format('DD MMM YYYY HH:mm:ss')}</td>
-            <td>${e.details.length}</td>
+            <td>${e.total_item}</td>
             <td>${formatNumber(e.amount)}</td>
             <td>${e.payment_type.name}</td>
             <td>

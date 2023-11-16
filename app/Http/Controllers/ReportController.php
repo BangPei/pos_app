@@ -86,7 +86,7 @@ class ReportController extends Controller
         //
     }
 
-    public function daily()
+    public function hourly()
     {
         $directSales = [];
         $hours = [];
@@ -128,8 +128,8 @@ class ReportController extends Controller
         }
 
 
-        return view('report/daily_task/daily', [
-            "title" => "Lapran Harian",
+        return view('report/direct_sales/hourly', [
+            "title" => "Lapran Perjam",
             "menu" => "Laporan",
             "date" => request('date'),
             "directSales" => (count($directSales) != 0) ? $directSales->sortBy('hour') : [],

@@ -231,6 +231,12 @@
                             </a>
                             <ul class="nav nav-treeview pl-2">
                                 <li class="nav-item">
+                                    <a href="/report/hourly" class="nav-link {{Request::is('report/hourly')?'active':''}}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Perjam</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="/report/daily" class="nav-link {{Request::is('report/daily')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Harian</p>
