@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\DailyTask;
 use App\Models\DirectSales;
 use App\Models\Expedition;
@@ -86,6 +87,27 @@ class ReportController extends Controller
         //
     }
 
+    public function daily()
+    {
+        $directSales = [];
+        $sum = 0;
+        $data = 0;
+
+        $categories = Category::all();
+
+        return view('report/direct_sales/daily', [
+            "title" => "Lapran Harian",
+            "menu" => "Laporan",
+            "date" => request('date'),
+            "code" => "",
+            "directSales" => $directSales,
+            "categories" => $categories,
+            "total" => [
+                "amount" => $sum,
+                "data" => $data
+            ],
+        ]);
+    }
     public function hourly()
     {
         $directSales = [];

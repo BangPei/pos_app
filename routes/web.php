@@ -98,4 +98,5 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::resource('temp-stock', TempTransactionController::class)->middleware('auth');
 
     Route::get('report/hourly', [ReportController::class, 'hourly'])->middleware('auth');
+    Route::get('report/daily', [ReportController::class, 'daily'])->middleware('auth');
 });
