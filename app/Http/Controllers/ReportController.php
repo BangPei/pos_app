@@ -90,18 +90,35 @@ class ReportController extends Controller
 
     public function daily()
     {
-        $directSales = [];
+        $directSales = DirectSales::orderBy('date', 'DESC');
         $sum = 0;
         $data = 0;
 
         $payments = PaymentType::all();
+        $result = [];
+
+        if (request('code')) {
+            $directSales->where('code', request('code'));
+        }
+        if (request('from') && request('to')) {
+            $from = Carbon::createFromFormat('d F Y', request('from'))->format('Y-m-d');
+            $to = Carbon::createFromFormat('d F Y', request('to'))->format('Y-m-d');
+            $directSales->whereBetween('date', [$from . ' 00:00:00', $to . ' 23:59:59']);
+        }
+        if (request('payment')) {
+            $directSales->where('payment_type_id', (int)request('payment'));
+        }
+        // return $result;
+        // die;
 
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
-            "date" => request('date'),
-            "code" => "",
-            "directSales" => $directSales,
+            "dateFrom" => request('from'),
+            "dateTo" => request('to'),
+            "payment" => request('payment'),
+            "code" => request('code'),
+            "directSales" => $directSales->paginate(10)->withQueryString(),
             "payments" => $payments,
             "total" => [
                 "amount" => $sum,
