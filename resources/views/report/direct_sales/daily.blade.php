@@ -17,7 +17,17 @@
               <div class="col-3">
                   <div class="form-group">
                       <div class="input-group" style="flex-wrap: nowrap !important;">
-                        <input value="{{ $date }}" readonly type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
+                        <input value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date-from" name="date-from">
+                        <div class="input-group-append">
+                          <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-3">
+                  <div class="form-group">
+                      <div class="input-group" style="flex-wrap: nowrap !important;">
+                        <input value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date-to" name="date-to">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
@@ -26,10 +36,10 @@
               </div>
               <div class="col-3">
                 <div class="form-group">
-                  <select required name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror">
-                      <option selected value="" disabled>--Pilih Kategory--</option>
-                      @foreach ($categories as $ct)
-                          @if (old('category_id',$product->category_id??'')==$ct->id)
+                  <select required name="payment_type_id" id="payment_type_id" class="form-control select2 @error('payment_type_id') is-invalid @enderror">
+                      <option selected value="" disabled>--Pilih Pembayaran--</option>
+                      @foreach ($payments as $ct)
+                          @if (old('payment_type_id',$directSales->payment_type_id??'')==$ct->id)
                               <option selected value="{{$ct->id}}">{{$ct->name}}</option>
                           @else
                               <option value="{{$ct->id}}">{{$ct->name}}</option>
@@ -68,9 +78,20 @@
 
 <script>
   $(document).ready(function(){
-    $('#date').datepicker({
+    $('#date-from').datepicker({
         uiLibrary: 'bootstrap',
         format:"dd mmmm yyyy",
+        maxDate: function () {
+            return $('#date-to').val();
+        }
+        // value:moment().format("DD MMMM YYYY")
+    })
+    $('#date-to').datepicker({
+        uiLibrary: 'bootstrap',
+        format:"dd mmmm yyyy",
+        minDate: function () {
+            return $('#date-from').val();
+        }
         // value:moment().format("DD MMMM YYYY")
     })
   })

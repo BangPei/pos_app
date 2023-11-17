@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\DailyTask;
 use App\Models\DirectSales;
 use App\Models\Expedition;
+use App\Models\PaymentType;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -93,7 +94,7 @@ class ReportController extends Controller
         $sum = 0;
         $data = 0;
 
-        $categories = Category::all();
+        $payments = PaymentType::all();
 
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
@@ -101,7 +102,7 @@ class ReportController extends Controller
             "date" => request('date'),
             "code" => "",
             "directSales" => $directSales,
-            "categories" => $categories,
+            "payments" => $payments,
             "total" => [
                 "amount" => $sum,
                 "data" => $data

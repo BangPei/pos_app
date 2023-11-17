@@ -17,7 +17,7 @@
                   <div class="form-group">
                       <label for="date">Tanggal</label>
                       <div class="input-group mb-3" style="flex-wrap: nowrap !important;">
-                        <input value="{{ $date }}" readonly type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
+                        <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
