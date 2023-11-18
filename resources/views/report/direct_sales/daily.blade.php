@@ -19,6 +19,11 @@
             <div class="row">
               <div class="col-3">
                   <div class="form-group">
+                    <input value="{{ $product }}" type="text" placeholder="Barcode / Nama Produk" class="form-control" id="product" name="product">
+                  </div>
+              </div>
+              <div class="col-3">
+                  <div class="form-group">
                     <input value="{{ $code }}" type="text" placeholder="Kode Transaksi" class="form-control" id="code" name="code">
                   </div>
               </div>
@@ -63,6 +68,10 @@
           </form>
         </div>
     </div>
+    <div class="card p-2">
+      Sum : {{ $total['amount'] }}
+      data : {{ $total['data'] }}
+    </div>
     @if (count($directSales) == 0)
         <div class="card">
           <div class="row">
@@ -77,8 +86,8 @@
       <div class="row pl-2 pr-2">
         <div class="col">
           {{-- <a href="/stock/{{ $s->id }}/edit"> --}}
-            <label class="m-0 p-0 text-info" for="">{{ $ds->code}}</label>
-            <label class="m-0 p-0 text-muted" for=""> - Total Item : {{ $ds->total_item}}</label>
+            <label class="m-0 p-0 text-info">{{ $ds->code}}</label>
+            <label class="m-0 p-0 text-muted"> - Total Item : {{ $ds->total_item}}</label>
           {{-- </a> --}}
         </div>
         <div class="col-4 text-right text-muted">
@@ -93,36 +102,47 @@
         <div class="col-md-6">
           <ul>
             @foreach ($ds->details as $detail)
+            <div class="{{ ($loop->index >2)?'collapse':'' }}" id="{{ ($loop->index >2)?'collapse-'.$ds->code:'' }}">
               <li>
                 <div class="row text-center pr-4">
                   <div class="col text-left text-sm">
-                    <label class="m-0 p-0" for="">{{ Str::upper($detail->product_name) }}</label>
-                    <p class="m-0 p-0">SKU : <span class="m-0 p-0" for="">{{ $detail->product_barcode }}</span></p>
-                    <p class="m-0 p-0">Satuan : <span class="m-0 p-0" for="">{{$detail->uom??"--" }}</span></p>
+                    <label class="m-0 p-0" >{{ Str::upper($detail->product_name) }}</label>
+                    <p class="m-0 p-0">SKU : <span class="m-0 p-0" >{{ $detail->product_barcode }}</span></p>
+                    <p class="m-0 p-0">Satuan : <span class="m-0 p-0" >{{$detail->uom??"--" }}</span></p>
                   </div>
                   <div class="col-3 text-right">
                     <p class="m-0 p-0">Harga</p>
                     <p  class="m-0 p-0">
-                      <span for="">{{ number_format($detail->price, 0, ',', ',') }} <small>x</small> {{ number_format($detail->qty, 0, ',', ',') }}</span>
+                      <span >{{ number_format($detail->price, 0, ',', ',') }} <small>x</small> {{ number_format($detail->qty, 0, ',', ',') }}</span>
                     </p>
                   </div>
                 </div>
+                @if(!($loop->last))
+                  <hr style="margin: 0px !important;">
+                @endif
               </li>
+            </div>
             @endforeach
           </ul>
+          @if (count($ds->details) > 3)
+            <div class="d-flex justify-content-center">
+              <a data-toggle="collapse" href="#collapse-{{ $ds->code }}" aria-expanded="false" aria-controls="collapseExample"><i class="fas fa-angle-down"></i> Klik</a>
+            </div>
+          @endif
         </div>
         <div class="col-md-6 text-right">
           <div class="row mt-1">
             <div class="col">
               <p class="m-0 p-0">Subtotal</p>
               <p  class="m-0 p-0">
-                <span for="">Rp. {{ number_format($ds->subtotal, 0, ',', ',') }}</span>
+                <span >Rp. {{ number_format($ds->subtotal, 0, ',', ',') }}</span>
               </p>
               <p class="m-0 p-0"><small>
-                Pembayaran : {{ $ds->paymentType->name }} 
+                Pembayaran : <span class="badge badge-info"> {{ $ds->paymentType->name }} 
                 @if ($ds->bank !=null)
                   {{ $ds->bank->name }}
                 @endif
+                </span>
               </small></p>
               @if ($ds->reduce>0)
                   ({{ $ds->reduce }}%) Rp. {{ number_format($ds->reduce_value, 0, ',', ',') }}
@@ -131,13 +151,13 @@
             <div class="col">
               <p class="m-0 p-0">Diskon</p>
               <p  class="m-0 p-0">
-                <span for="">Rp. {{ number_format(($ds->discount+$ds->additional_discount), 0, ',', ',') }}</span>
+                <span >Rp. {{ number_format(($ds->discount+$ds->additional_discount), 0, ',', ',') }}</span>
               </p>
             </div>
             <div class="col">
               <p class="m-0 p-0">Grand Total</p>
               <p  class="m-0 p-0">
-                <span for="">Rp. {{ number_format(($ds->amount), 0, ',', ',') }}</span>
+                <label class="font-weight-bold" >Rp. {{ number_format(($ds->amount), 0, ',', ',') }}</label>
               </p>
               <br>
               <p class="m-0 pb-1 pt-1">

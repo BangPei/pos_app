@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\DailyTask;
 use App\Models\DirectSales;
+use App\Models\DirectSalesDetail;
 use App\Models\Expedition;
 use App\Models\PaymentType;
 use Carbon\Carbon;
@@ -91,13 +92,18 @@ class ReportController extends Controller
     public function daily()
     {
         $directSales = DirectSales::orderBy('date', 'DESC');
-        $sum = 0;
-        $data = 0;
 
         $payments = PaymentType::all();
 
         if (request('code')) {
-            $directSales->where('code', request('code'));
+            $directSales->where('code', 'like', request('code'));
+        }
+        if (request('product')) {
+            // // $details = DirectSales::find(1)->details()->where('product_barcode', request('product'))
+            // //     ->orWhere('product_name', 'like', "%" . request('product') . "%")->get();
+            // $ds = DirectSalesDetail::where('product_barcode', request('product'))
+            //     ->orWhere('product_name', 'like', "%" . request('product') . "%")
+            //     ->belongsTo(DirectSales::class)->get();
         }
         if (request('from') && request('to')) {
             $from = Carbon::createFromFormat('d F Y', request('from'))->format('Y-m-d');
@@ -107,6 +113,8 @@ class ReportController extends Controller
         if (request('payment')) {
             $directSales->where('payment_type_id', (int)request('payment'));
         }
+        // return count($ds);
+        // die;
 
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
@@ -115,11 +123,12 @@ class ReportController extends Controller
             "dateTo" => request('to'),
             "payment" => request('payment'),
             "code" => request('code'),
+            "product" => request('product'),
             "directSales" => $directSales->paginate(10)->withQueryString(),
             "payments" => $payments,
             "total" => [
-                "amount" => $sum,
-                "data" => $data
+                "amount" => $directSales->selectRaw('sum(amount) sum')->sum('amount'),
+                "data" => $directSales->count()
             ],
         ]);
     }
