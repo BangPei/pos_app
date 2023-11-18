@@ -86,7 +86,7 @@
         {
           data: 'id',
           mRender: function(data, type, full) {
-            return `<a href="/transaction/${full.code}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a></form>`
+            return `<a href="/transaction/${full.code}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a>`
             }
         }
         ],

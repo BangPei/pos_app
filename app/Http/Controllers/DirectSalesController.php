@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
-use Illuminate\Support\Str;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class DirectSalesController extends Controller
@@ -199,6 +198,13 @@ class DirectSalesController extends Controller
 
         $this->printReceipt($ds);
         return response()->json($ds);
+    }
+
+    public function printRealStruck($code)
+    {
+        $directSales = DirectSales::where('code', $code)->first();
+        $this->printReceipt($directSales);
+        return back();
     }
 
     public function printReceipt(DirectSales $ds)

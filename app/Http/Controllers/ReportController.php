@@ -95,7 +95,6 @@ class ReportController extends Controller
         $data = 0;
 
         $payments = PaymentType::all();
-        $result = [];
 
         if (request('code')) {
             $directSales->where('code', request('code'));
@@ -108,8 +107,6 @@ class ReportController extends Controller
         if (request('payment')) {
             $directSales->where('payment_type_id', (int)request('payment'));
         }
-        // return $result;
-        // die;
 
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",

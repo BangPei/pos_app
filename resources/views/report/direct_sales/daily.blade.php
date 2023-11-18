@@ -45,7 +45,7 @@
               <div class="col-3">
                 <div class="form-group">
                   <select name="payment" id="payment" class="form-control select2 @error('payment') is-invalid @enderror">
-                      <option selected value="" >--Pilih Pembayaran--</option>
+                      <option selected value="" >--Semua Pembayaran--</option>
                       @foreach ($payments as $ct)
                           @if (old('payment',$payment??'')==$ct->id)
                               <option selected value="{{$ct->id}}">{{$ct->name}}</option>
@@ -89,27 +89,21 @@
 
       @if (count($ds->details)!=0)
       <hr style="margin:10px">
-      <div class="row">
+      <div class="row pr-3">
         <div class="col-md-6">
           <ul>
             @foreach ($ds->details as $detail)
               <li>
                 <div class="row text-center pr-4">
-                  <div class="col-6 text-left text-sm">
+                  <div class="col text-left text-sm">
                     <label class="m-0 p-0" for="">{{ Str::upper($detail->product_name) }}</label>
                     <p class="m-0 p-0">SKU : <span class="m-0 p-0" for="">{{ $detail->product_barcode }}</span></p>
                     <p class="m-0 p-0">Satuan : <span class="m-0 p-0" for="">{{$detail->uom??"--" }}</span></p>
                   </div>
-                  <div class="col-3">
+                  <div class="col-3 text-right">
                     <p class="m-0 p-0">Harga</p>
                     <p  class="m-0 p-0">
-                      <span for="">Rp. {{ number_format($detail->price, 0, ',', ',') }} x {{ number_format($detail->qty, 0, ',', ',') }}</span>
-                    </p>
-                  </div>
-                  <div class="col-3">
-                    <p class="m-0 p-0">Diskon</p>
-                    <p  class="m-0 p-0">
-                      <span for="">Rp. {{ number_format($detail->discount, 0, ',', ',') }}</span>
+                      <span for="">{{ number_format($detail->price, 0, ',', ',') }} <small>x</small> {{ number_format($detail->qty, 0, ',', ',') }}</span>
                     </p>
                   </div>
                 </div>
@@ -117,16 +111,50 @@
             @endforeach
           </ul>
         </div>
-        <div class="col-md-6">
-          
+        <div class="col-md-6 text-right">
+          <div class="row mt-1">
+            <div class="col">
+              <p class="m-0 p-0">Subtotal</p>
+              <p  class="m-0 p-0">
+                <span for="">Rp. {{ number_format($ds->subtotal, 0, ',', ',') }}</span>
+              </p>
+              <p class="m-0 p-0"><small>
+                Pembayaran : {{ $ds->paymentType->name }} 
+                @if ($ds->bank !=null)
+                  {{ $ds->bank->name }}
+                @endif
+              </small></p>
+              @if ($ds->reduce>0)
+                  ({{ $ds->reduce }}%) Rp. {{ number_format($ds->reduce_value, 0, ',', ',') }}
+              @endif
+            </div>
+            <div class="col">
+              <p class="m-0 p-0">Diskon</p>
+              <p  class="m-0 p-0">
+                <span for="">Rp. {{ number_format(($ds->discount+$ds->additional_discount), 0, ',', ',') }}</span>
+              </p>
+            </div>
+            <div class="col">
+              <p class="m-0 p-0">Grand Total</p>
+              <p  class="m-0 p-0">
+                <span for="">Rp. {{ number_format(($ds->amount), 0, ',', ',') }}</span>
+              </p>
+              <br>
+              <p class="m-0 pb-1 pt-1">
+                <a target="_blank" rel="noopener noreferrer" href="/transaction/{{ $ds->code }}/edit" title="Lihat" class="btn btn-sm bg-gradient-success"><i class="fas fa-eye"> Detail</i></a> 
+              </p>
+              <form action="/transaction/struct/{{ $ds->code }}" method="GET">
+                <button type="submit" title="Lihat" class="btn btn-sm bg-gradient-primary"><i class="fas fa-print"> Print Struk</i></button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
       @endif
-      
     </div>
     @endforeach
-    <div class="d-flex">
-      {{ $directSales->appends(["sort"=>"date"])->links() }}
+    <div class="d-flex justify-content-center">
+      {{ $directSales->links() }}
     </div>
 </div>
 @include('component.base')
