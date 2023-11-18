@@ -104,6 +104,14 @@ class ReportController extends Controller
             // $ds = DirectSalesDetail::where('product_barcode', request('product'))
             //     ->orWhere('product_name', 'like', "%" . request('product') . "%")
             //     ->belongsTo(DirectSales::class)->get();
+            $details = DirectSalesDetail::where('product_barcode', request('product'))
+                ->orWhere('product_name', 'like', "%" . request('product') . "%")
+                ->get();
+            $listId = [];
+            for ($i = 0; $i < count($details); $i++) {
+                array_push($listId, $details[$i]->direct_sales_id);
+            }
+            $directSales->whereIn('id', $listId);
         }
         if (request('from') && request('to')) {
             $from = Carbon::createFromFormat('d F Y', request('from'))->format('Y-m-d');
@@ -113,9 +121,6 @@ class ReportController extends Controller
         if (request('payment')) {
             $directSales->where('payment_type_id', (int)request('payment'));
         }
-        // return count($ds);
-        // die;
-
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
