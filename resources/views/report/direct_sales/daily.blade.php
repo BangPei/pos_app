@@ -72,13 +72,13 @@
     <div class="card p-2">
       <div class="row m-2">
         <div class="col-6 text-left">
-          <span class="font-weight-bold" >
-            Data : {{ number_format($total['data'], 0, ',', ',') }}
+          <span >
+            Halaman : {{ $page['current_page'] }}, {{ $page['from'] }} - {{ $page['to'] }} dari {{ number_format($page['total'], 0, ',', ',') }}
           </span>
         </div>
         <div class="col-6 text-right">
           <span class="font-weight-bold" >
-            Grand Total : Rp. {{ number_format($total['amount'], 0, ',', ',') }}
+            Grand Total : Rp. {{ number_format($amount, 0, ',', ',') }}
           </span>
         </div>
       </div>
@@ -171,8 +171,7 @@
               <p  class="m-0 p-0">
                 <label class="font-weight-bold" >Rp. {{ number_format(($ds->amount), 0, ',', ',') }}</label>
               </p>
-              <br>
-              <p class="m-0 pb-1 pt-1">
+              <p class="m-0 pb-1 pt-2">
                 <a target="_blank" rel="noopener noreferrer" href="/transaction/{{ $ds->code }}/edit" title="Lihat" class="btn btn-sm bg-gradient-success"><i class="fas fa-eye"> Detail</i></a> 
               </p>
               <form action="/transaction/struct/{{ $ds->code }}" method="GET">

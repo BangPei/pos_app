@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\DailyTask;
 use App\Models\DirectSales;
 use App\Models\DirectSalesDetail;
-use App\Models\Expedition;
 use App\Models\PaymentType;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -117,12 +116,14 @@ class ReportController extends Controller
             $directSales->where('payment_type_id', (int)request('payment'));
         }
         $sum = $directSales->sum('amount');
-        $data = $directSales->count();
+        $ds = $directSales->paginate(request('perpage') ?? 20)->withQueryString();
+        $json = json_decode($ds->toJson());
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
-            "directSales" => $directSales->paginate(request('perpage'))->withQueryString(),
+            "directSales" => $ds,
             "payments" => $payments,
+            "amount" => $sum,
             "query" => [
                 "dateFrom" => request('from'),
                 "dateTo" => request('to'),
@@ -131,10 +132,15 @@ class ReportController extends Controller
                 "product" => request('product'),
                 "perpage" => request('perpage'),
             ],
-            "total" => [
-                "amount" => $sum,
-                "data" => $data
-            ],
+            "page" => [
+                "total" => $json->total,
+                "per_page" => $json->per_page,
+                "current_page" => $json->current_page,
+                "last_page" => $json->last_page,
+                "from" => $json->from,
+                "to" => $json->to,
+            ]
+
         ]);
     }
     public function hourly()
