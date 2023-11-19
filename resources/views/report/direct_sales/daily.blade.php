@@ -70,8 +70,19 @@
         </div>
     </div>
     <div class="card p-2">
-      Sum : {{ $total['amount'] }}
-      data : {{ $total['data'] }}
+      <div class="row m-2">
+        <div class="col-6 text-left">
+          <span class="font-weight-bold" >
+            Data : {{ number_format($total['data'], 0, ',', ',') }}
+          </span>
+        </div>
+        <div class="col-6 text-right">
+          <span class="font-weight-bold" >
+            Grand Total : Rp. {{ number_format($total['amount'], 0, ',', ',') }}
+          </span>
+        </div>
+      </div>
+      
     </div>
     @if (count($directSales) == 0)
         <div class="card">
