@@ -116,6 +116,8 @@ class ReportController extends Controller
         if (request('payment')) {
             $directSales->where('payment_type_id', (int)request('payment'));
         }
+        $sum = $directSales->sum('amount');
+        $data = $directSales->count();
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
@@ -130,8 +132,8 @@ class ReportController extends Controller
                 "perpage" => request('perpage'),
             ],
             "total" => [
-                "amount" => $directSales->selectRaw('sum(amount) sum')->sum('amount'),
-                "data" => $directSales->count()
+                "amount" => $sum,
+                "data" => $data
             ],
         ]);
     }
