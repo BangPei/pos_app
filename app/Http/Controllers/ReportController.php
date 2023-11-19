@@ -99,11 +99,6 @@ class ReportController extends Controller
             $directSales->where('code', 'like', request('code'));
         }
         if (request('product')) {
-            // // $details = DirectSales::find(1)->details()->where('product_barcode', request('product'))
-            // //     ->orWhere('product_name', 'like', "%" . request('product') . "%")->get();
-            // $ds = DirectSalesDetail::where('product_barcode', request('product'))
-            //     ->orWhere('product_name', 'like', "%" . request('product') . "%")
-            //     ->belongsTo(DirectSales::class)->get();
             $details = DirectSalesDetail::where('product_barcode', request('product'))
                 ->orWhere('product_name', 'like', "%" . request('product') . "%")
                 ->get();
@@ -124,13 +119,16 @@ class ReportController extends Controller
         return view('report/direct_sales/daily', [
             "title" => "Lapran Harian",
             "menu" => "Laporan",
-            "dateFrom" => request('from'),
-            "dateTo" => request('to'),
-            "payment" => request('payment'),
-            "code" => request('code'),
-            "product" => request('product'),
-            "directSales" => $directSales->paginate(10)->withQueryString(),
+            "directSales" => $directSales->paginate(request('perpage'))->withQueryString(),
             "payments" => $payments,
+            "query" => [
+                "dateFrom" => request('from'),
+                "dateTo" => request('to'),
+                "payment" => request('payment'),
+                "code" => request('code'),
+                "product" => request('product'),
+                "perpage" => request('perpage'),
+            ],
             "total" => [
                 "amount" => $directSales->selectRaw('sum(amount) sum')->sum('amount'),
                 "data" => $directSales->count()

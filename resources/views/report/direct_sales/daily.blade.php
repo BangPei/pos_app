@@ -1,12 +1,4 @@
 @extends('layouts.main-layout')
-@section('content-class')
- <style>
-  li :: marker {
-    vertical-align: text-top;
-  }
- </style>
-@endsection
-
 
 @section('content-child')
 <div class="col-md-12">
@@ -19,18 +11,18 @@
             <div class="row">
               <div class="col-3">
                   <div class="form-group">
-                    <input value="{{ $product }}" type="text" placeholder="Barcode / Nama Produk" class="form-control" id="product" name="product">
+                    <input value="{{ $query["product"] }}" type="text" placeholder="Barcode / Nama Produk" class="form-control" id="product" name="product">
                   </div>
               </div>
               <div class="col-3">
                   <div class="form-group">
-                    <input value="{{ $code }}" type="text" placeholder="Kode Transaksi" class="form-control" id="code" name="code">
+                    <input value="{{ $query["code"] }}" type="text" placeholder="Kode Transaksi" class="form-control" id="code" name="code">
                   </div>
               </div>
               <div class="col-3">
                   <div class="form-group">
                       <div class="input-group" style="flex-wrap: nowrap !important;">
-                        <input value="{{ $dateFrom }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="from" name="from">
+                        <input value="{{ $query["dateFrom"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="from" name="from">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
@@ -40,7 +32,7 @@
               <div class="col-3">
                   <div class="form-group">
                       <div class="input-group" style="flex-wrap: nowrap !important;">
-                        <input {{ isset($dateTo)?'':'disabled' }}  value="{{ $dateTo }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="to" name="to">
+                        <input {{ isset($query["dateTo"])?'':'disabled' }}  value="{{ $query["dateTo"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="to" name="to">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
@@ -52,14 +44,23 @@
                   <select name="payment" id="payment" class="form-control select2 @error('payment') is-invalid @enderror">
                       <option selected value="" >--Semua Pembayaran--</option>
                       @foreach ($payments as $ct)
-                          @if (old('payment',$payment??'')==$ct->id)
+                          @if (old('payment',$query["payment"]??'')==$ct->id)
                               <option selected value="{{$ct->id}}">{{$ct->name}}</option>
                           @else
                               <option value="{{$ct->id}}">{{$ct->name}}</option>
                           @endif
                       @endforeach
                   </select>
+                </div>
               </div>
+              <div class="col-3 d-none">
+                <div class="form-group">
+                  <select class="form-control perpage" style="height: 37px;width:80px" name="perpage" id="perpage">
+                    <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
+                    <option {{ $query["perpage"]==50?'selected':'' }} value="50">50</option>
+                    <option {{ $query["perpage"]==100?'selected':'' }} value="100">100</option>
+                  </select>
+                </div>
               </div>
               <div class="col-md-3">
                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Submit</button>
@@ -173,8 +174,14 @@
       @endif
     </div>
     @endforeach
-    <div class="d-flex justify-content-center">
-      {{ $directSales->links() }}
+    <div class="row d-flex text-right">
+      <span class="pt-1">Perhalaman : </span> 
+      <select class="form-control perpage" style="height: 37px;width:80px">
+        <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
+        <option {{ $query["perpage"]==50?'selected':'' }} value="50">50</option>
+        <option {{ $query["perpage"]==100?'selected':'' }} value="100">100</option>
+      </select>
+      <span class="pl-1">{{ $directSales->links() }}</span>
     </div>
 </div>
 @include('component.base')
@@ -195,8 +202,10 @@
           if ($('#from').val()==""||$('#from').val()==null) {
             $('#to').val("")
             $('#to').attr('disabled',true)
+            $('#to').attr('required',false)
           }else{
             $('#to').removeAttr('disabled')
+            $('#to').attr('required',true)
           }
          }
         // value:moment().format("DD MMMM YYYY")
@@ -208,6 +217,18 @@
             return $('#from').val();
         }
         // value:moment().format("DD MMMM YYYY")
+    })
+
+    $('.perpage').on('change',function(){
+      $('#perpage').val($(this).val())
+      let query = getQueryString();
+      query.perpage = $(this).val();
+      let params = "?";
+      for (const key in query) {
+        params += `${key}=${query[key]}&`
+      }
+      let loc = window.location;
+      window.location=`${loc.origin}${loc.pathname}${params}`
     })
   })
 </script>
