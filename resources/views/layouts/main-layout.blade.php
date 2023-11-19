@@ -243,12 +243,6 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/report/date" class="nav-link {{Request::is('report/date')?'active':''}}">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Mingguan</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
                                     <a href="/report/monthly" class="nav-link {{Request::is('report/monthly')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Bulanan</p>

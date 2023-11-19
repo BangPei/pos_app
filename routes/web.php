@@ -100,4 +100,5 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
     Route::get('report/hourly', [ReportController::class, 'hourly'])->middleware('auth');
     Route::get('report/daily', [ReportController::class, 'daily'])->middleware('auth');
+    Route::get('report/monthly', [ReportController::class, 'monthly'])->middleware('auth');
 });

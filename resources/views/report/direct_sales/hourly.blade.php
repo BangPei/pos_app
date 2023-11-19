@@ -16,12 +16,7 @@
               <div class="col-4">
                   <div class="form-group">
                       <label for="date">Tanggal</label>
-                      <div class="input-group mb-3" style="flex-wrap: nowrap !important;">
-                        <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
-                        <div class="input-group-append">
-                          <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
-                        </div>
-                      </div>
+                      <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
                   </div>
               </div>
               <div class="col-md-4">
@@ -85,7 +80,7 @@
   let dsDetail = [];
     $(document).ready(function(){
         $('#date').datepicker({
-            uiLibrary: 'bootstrap',
+            uiLibrary: 'bootstrap4',
             format:"dd mmmm yyyy",
             // value:moment().format("DD MMMM YYYY")
         })
