@@ -22,7 +22,35 @@ $(document).ready(function(){
 
 	$('.modal').on('hidden.bs.modal', function (event) {
 		resetForm($('.modal form'))
-	  })
+	})
+
+	$('.date-picker').datepicker({
+        format:"d MM yyyy",
+        orientation: "top auto",
+		autoclose: true,
+		todayHighlight: true,
+		language: 'id',
+		clearBtn:true
+    })
+
+	$('.month-picker').datepicker({
+		format:"MM yyyy",
+		orientation: "top auto",
+		autoclose: true,
+		startView: "months",
+		minViewMode: "months",
+		language: 'id',
+		clearBtn:true
+	});
+
+	$('.year-picker').datepicker({
+		format: "yyyy",
+		orientation: "top auto",
+		autoclose: true,
+		viewMode: "years",
+		minViewMode: "years",
+		language: 'id'
+	});
 
 	$('form[data-vaidate=true]').validate({
 		rules: {

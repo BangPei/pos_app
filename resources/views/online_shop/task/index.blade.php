@@ -55,7 +55,7 @@
             <div class="col-6">
               <div class="form-group">
                 <label for="date">Tanggal</label>
-                <input required readonly type="text" class="form-control" name="date" id="date" >
+                <input required value="{{ date('d F Y') }}" readonly type="text" class="form-control date-picker" name="date" id="date" >
               </div>
             </div>
             <div class="col-6">
@@ -216,12 +216,6 @@
           toastr.error(err?.responseJSON?.message??"Tidak Dapat Mengakses Server")
           $.unblockUI()
         })
-    })
-
-    $('#date').datepicker({
-      uiLibrary: 'bootstrap',
-      format:"dd mmmm yyyy",
-      value:moment().format("DD MMMM YYYY")
     })
 
     keyupTableNumber($('#table-daily-task'))

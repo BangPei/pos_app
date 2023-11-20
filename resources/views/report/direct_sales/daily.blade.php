@@ -1,5 +1,4 @@
 @extends('layouts.main-layout')
-
 @section('content-child')
 <div class="col-md-12">
     <div class="card">
@@ -22,7 +21,7 @@
               <div class="col-3">
                   <div class="form-group">
                       <div class="input-group" style="flex-wrap: nowrap !important;">
-                        <input value="{{ $query["dateFrom"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="from" name="from">
+                        <input value="{{ $query["dateFrom"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control date-picker" id="from" name="from">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
@@ -32,7 +31,7 @@
               <div class="col-3">
                   <div class="form-group">
                       <div class="input-group" style="flex-wrap: nowrap !important;">
-                        <input {{ isset($query["dateTo"])?'':'disabled' }}  value="{{ $query["dateTo"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="to" name="to">
+                        <input {{ isset($query["dateTo"])?'':'disabled' }}  value="{{ $query["dateTo"] }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control date-picker" id="to" name="to">
                         <div class="input-group-append">
                           <span class="input-group-text" id="basic-addon2"><i class="fa fa-calendar-alt"></i></span>
                         </div>
@@ -73,7 +72,7 @@
       <div class="row m-2">
         <div class="col-6 text-left">
           <span >
-            Halaman : {{ $page['current_page'] }}, {{ $page['from'] }} - {{ $page['to'] }} dari {{ number_format($page['total'], 0, ',', ',') }}
+            Halaman : {{ $page['current_page'] }}, {{ $page['from']??0 }} - {{ $page['to']??0 }} dari {{ number_format($page['total'], 0, ',', ',') }}
           </span>
         </div>
         <div class="col-6 text-right">
@@ -202,31 +201,18 @@
 
 <script>
   $(document).ready(function(){
-    $('#from').datepicker({
-        uiLibrary: 'bootstrap',
-        format:"dd mmmm yyyy",
-        maxDate: function () {
-            return $('#to').val();
-        },
-        change: function (e) {
-          if ($('#from').val()==""||$('#from').val()==null) {
-            $('#to').val("")
-            $('#to').attr('disabled',true)
-            $('#to').attr('required',false)
-          }else{
-            $('#to').removeAttr('disabled')
-            $('#to').attr('required',true)
-          }
-         }
-        // value:moment().format("DD MMMM YYYY")
-    })
-    $('#to').datepicker({
-        uiLibrary: 'bootstrap',
-        format:"dd mmmm yyyy",
-        minDate: function () {
-            return $('#from').val();
-        }
-        // value:moment().format("DD MMMM YYYY")
+
+    $('#from').on('changeDate',function(){
+      $('#to').val('')
+      if ($('#from').val()!="") {
+        var startDate = $(this).datepicker('getDate');
+        $('#to').attr('disabled',false)
+        $('#to').attr('required',true)
+        $('#to').datepicker('setStartDate', moment(startDate).toDate());
+      }else{
+        $('#to').attr('disabled',true)
+        $('#to').attr('required',false)
+      }
     })
 
     $('.perpage').on('change',function(){

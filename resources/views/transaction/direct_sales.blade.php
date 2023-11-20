@@ -13,7 +13,7 @@
         <div class="row text-right">
           <div class="col-6">
             <div class="form-group">
-              <input type="text" class="form-control datetimepicker-input" id="trans-date" data-toggle="datetimepicker" data-target="#trans-date"/>
+              <input type="text" autocomplete="off" class="form-control date-picker" id="trans-date" data-toggle="datetimepicker" data-target="#trans-date"/>
             </div>
           </div>
           <div class="col-6">
@@ -461,9 +461,6 @@
 
     keyupTableNumber($('#table-order'))
     $('#trans-date').val(moment(new Date()).format("DD MMMM YYYY"))
-    $('#trans-date').datetimepicker({
-      format:"DD MMMM YYYY",
-    });
 
     $('#modal-product').on('shown.bs.modal', function (e) {
       onScan.detachFrom(document);

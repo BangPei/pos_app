@@ -22,7 +22,7 @@
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
                         <label for="date">Tanggal</label>
-                        <input value="{{ $dailyTask->date }}" required readonly disabled type="text" class="form-control" name="date" id="date">
+                        <input value="{{ date_format(date_create($dailyTask->date),"d F Y")  }}" required readonly disabled type="text" class="form-control date-picker" name="date" id="date">
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
@@ -126,11 +126,6 @@
         });
 
         tableNumber(tblReceipt)
-
-        $('#date').datepicker({
-            uiLibrary:'bootstrap',
-            value:moment("{{ $dailyTask->date }}").format('DD MMMM YYYY')
-        })
 
         $('#table-daily-task').on('click', '.delete-receipt', function() {
             let rc = tblReceipt.row($(this).parents('tr')).data();

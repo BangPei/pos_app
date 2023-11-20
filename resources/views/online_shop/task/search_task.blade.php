@@ -27,7 +27,7 @@
                 <div class="form-group">
                     <label for="date">Tanggal</label>
                     <div class="input-group mb-3">
-                      <input value="{{ Request::query('date')}}" readonly type="text" class="form-control" id="date" name="date">
+                      <input value="{{ Request::query('date')}}" readonly type="text" class="form-control date-picker" id="date" name="date">
                       <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2"><i class="fa fa-home"></i></span>
                       </div>
@@ -72,11 +72,6 @@
     $(document).ready(function(){
 
         initDataTable("{{ route('search-task.index') }}","GET")
-        $('#date').datepicker({
-            uiLibrary: 'bootstrap',
-            format:"dd mmmm yyyy",
-            // value:moment().format("DD MMMM YYYY")
-        })
     })
 
     

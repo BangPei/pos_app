@@ -19,7 +19,9 @@
         <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
         <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
         <link rel="stylesheet" href="/plugins/toastr/toastr.css">
-        <link href="/plugins/gijgo/css/gijgo.css" rel="stylesheet" type="text/css" />
+        <link href="/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css" rel="stylesheet" type="text/css" />
+        
+        {{-- <link href="/plugins/gijgo/css/gijgo.css" rel="stylesheet" type="text/css" /> --}}
         @yield('content-class')
         <link rel="stylesheet" href="/dist/css/adminlte.min.css">
     </head>
@@ -377,7 +379,9 @@
         <script src="/plugins/toastr/toastr.min.js"></script>
         <script src="/plugins/jquery-mask/jquery.mask.min.js"></script>
         <script src="/dist/js/adminlte.js"></script>
-        <script src="/plugins/gijgo/js/gijgo.js" type="text/javascript"></script>
+        <script src="/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+        
+        {{-- <script src="/plugins/gijgo/js/gijgo.js" type="text/javascript"></script> --}}
         <script src="/js/script.js"></script>
         @yield('content-script')
         <!-- AdminLTE App -->

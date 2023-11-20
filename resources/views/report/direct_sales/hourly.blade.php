@@ -16,7 +16,7 @@
               <div class="col-4">
                   <div class="form-group">
                       <label for="date">Tanggal</label>
-                      <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control" id="date" name="date">
+                      <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Tanggal" class="form-control date-picker" id="date" name="date">
                   </div>
               </div>
               <div class="col-md-4">
@@ -79,11 +79,6 @@
 <script>
   let dsDetail = [];
     $(document).ready(function(){
-        $('#date').datepicker({
-            uiLibrary: 'bootstrap4',
-            format:"dd mmmm yyyy",
-            // value:moment().format("DD MMMM YYYY")
-        })
         table = $('table').DataTable({
                 paging: false,
                 searching: false,
