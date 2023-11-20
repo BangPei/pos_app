@@ -199,55 +199,49 @@ class ReportController extends Controller
     public function monthly()
     {
         $directSales = [];
-        $hours = [];
         $sum = 0;
         $data = 0;
 
-        if (request('date')) {
-            $date = Carbon::createFromFormat('d F Y', request('date'))->format('Y-m-d');
-            $directSales = DirectSales::selectRaw("DATE_FORMAT(date, '%H') hour, sum(amount) amount,count(*) data")
-                ->whereBetween('date', [$date . ' 00:00:00', $date . ' 23:59:59'])
-                ->groupBy('hour')
-                ->orderBy('hour', 'asc')
+        if (request('month')) {
+            $first = Carbon::createFromFormat('F Y', request('month'))->format('Y-m-01');
+            $last = Carbon::createFromFormat('F Y', request('month'))->format('Y-m-t');
+            $firstDate = $first . " 00:00:00";
+            $lastDate = $last . " 23:59:59";
+            $directSales = DirectSales::selectRaw("DATE_FORMAT(date, '%Y-%m-%d') transDate, sum(amount) amount,count(*) data")
+                ->whereBetween('date', [$firstDate, $lastDate])
+                ->groupBy('transDate')
+                ->orderBy('transDate', 'desc')
                 ->get()
                 ->makeHidden(['createdBy', 'editBy', 'details', 'paymentType', 'bank']);
             $sum = DirectSales::selectRaw("sum(amount) sum")
-                ->whereBetween("date", [$date . ' 00:00:00', $date . ' 23:59:59'])->sum('amount');
-            $data = DirectSales::whereBetween("date", [$date . ' 00:00:00', $date . ' 23:59:59'])->count();
+                ->whereBetween("date", [$firstDate, $lastDate])->sum('amount');
+            $data = DirectSales::whereBetween("date", [$firstDate, $lastDate])->count();
 
-            for ($i = 0; $i < 24; $i++) {
-                if ($i < 10) {
-                    array_push($hours, "0" . $i);
-                } else {
-                    array_push($hours, (string)$i);
-                }
-            }
-
-            for ($i = 0; $i < count($hours); $i++) {
-                $filter = $directSales->filter(function ($ds) use ($i, $hours) {
-                    return $ds['hour'] === $hours[$i];
-                });
-                if (count($filter) == 0) {
-                    $directSales->push([
-                        'hour' => $hours[$i],
-                        'data' => 0,
-                        'amount' => 0
-                    ]);
-                }
-            }
+            // for ($i = 0; $i < count($hours); $i++) {
+            //     $filter = $directSales->filter(function ($ds) use ($i, $hours) {
+            //         return $ds['hour'] === $hours[$i];
+            //     });
+            //     if (count($filter) == 0) {
+            //         $directSales->push([
+            //             'hour' => $hours[$i],
+            //             'data' => 0,
+            //             'amount' => 0
+            //         ]);
+            //     }
+            // }
         }
+        return $data;
 
-
-        return view('report/direct_sales/monthly', [
-            "title" => "Lapran Bulanan",
-            "menu" => "Laporan",
-            "date" => request('date'),
-            "directSales" => (count($directSales) != 0) ? $directSales->sortBy('hour') : [],
-            "total" => [
-                "amount" => $sum,
-                "data" => $data
-            ],
-        ]);
+        // return view('report/direct_sales/monthly', [
+        //     "title" => "Lapran Bulanan",
+        //     "menu" => "Laporan",
+        //     "date" => request('date'),
+        //     "directSales" => (count($directSales) != 0) ? $directSales->sortBy('hour') : [],
+        //     "total" => [
+        //         "amount" => $sum,
+        //         "data" => $data
+        //     ],
+        // ]);
     }
     public function dailyTaskByDate(Request $request)
     {
