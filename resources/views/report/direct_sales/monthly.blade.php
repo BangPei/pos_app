@@ -16,7 +16,7 @@
               <div class="col-4">
                   <div class="form-group">
                       <label for="date">Bulan</label>
-                      <input required value="{{ $date }}" type="text" autocomplete="off" placeholder="Masukan Bulan" class="form-control month-picker" id="month" name="month">
+                      <input required value="{{ $month }}" type="text" autocomplete="off" placeholder="Masukan Bulan" class="form-control month-picker" id="month" name="month">
                   </div>
               </div>
               <div class="col-md-4">
@@ -54,10 +54,14 @@
               @foreach ($directSales as $ds)
                   <tr>
                       <td class="text-right">{{ $loop->index+1 }}</td>
-                      <td class="text-center">{{ $date }}</td>
+                      <td class="text-center">{{ date('d F Y', strtotime($ds['transDate'])) }}</td>
                       <td class="text-right">{{ number_format($ds['data']) }}</td>
                       <td class="text-right">{{ number_format($ds['amount']) }}</td>
-                      <td class="text-center"></td>
+                      <td class="text-center">
+                        <a class="btn btn-info btn-sm" target="_blank" rel="noopener noreferrer" href="/report/daily?from={{ date('d F Y', strtotime($ds['transDate'])) }}&to={{ date('d F Y', strtotime($ds['transDate'])) }}">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                      </td>
                   </tr>
               @endforeach
             </tbody>

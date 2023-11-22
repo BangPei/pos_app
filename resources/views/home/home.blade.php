@@ -69,15 +69,21 @@
             <th>Tanggal</th>
             <th class="text-right">Total Transaksi</th>
             <th class="text-right">Total (Rp.)</th>
+            <th class="text-center">Detail</th>
           </tr>
         </thead>
         <tbody>
-          @foreach ($transWeek->sortBy('transDate') as $tran)
+          @foreach ($transWeek->sortByDesc('transDate') as $tran)
            <tr>
             <td>{{ $loop->index+1 }}</td>
             <td>{{ date_format(date_create($tran['transDate']),"d M Y") }}</td>
             <td class="text-right">{{ number_format($tran['data']) }}</td>
             <td class="text-right">{{ number_format($tran['amount']) }}</td>
+            <td class="text-center">
+              <a  target="_blank" rel="noopener noreferrer" href="/report/daily?from={{ date('d F Y', strtotime($tran['transDate'])) }}&to={{ date('d F Y', strtotime($tran['transDate'])) }}">
+                <i class="fas fa-eye"></i>
+              </a>
+            </td>
            </tr>
           @endforeach
         </tbody>
@@ -122,16 +128,22 @@
                 <th>Bulan</th>
                 <th class="text-right">Total Transaksi</th>
                 <th class="text-right">Total (Rp.)</th>
+                <th class="text-center">Detail</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($trans[(string)date('Y', time())] as $tran)
-               <tr>
-                <td>{{ $loop->index+1}}</td>
-                <td>{{ $tran['month'] }}</td>
-                <td class="text-right">{{ number_format($tran['data']) }}</td>
-                <td class="text-right">{{ number_format($tran['amount']) }}</td>
-               </tr>
+                <tr>
+                  <td>{{ $loop->index+1}}</td>
+                  <td>{{ $tran['month'] }}</td>
+                  <td class="text-right">{{ number_format($tran['data']) }}</td>
+                  <td class="text-right">{{ number_format($tran['amount']) }}</td>
+                  <td class="text-center">
+                    <a  target="_blank" rel="noopener noreferrer" href="/report/monthly?month={{ $tran['month'] }} {{ date('Y', time()) }}">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
               @endforeach
             </tbody>
           </table>
@@ -156,16 +168,22 @@
                 <th>Bulan</th>
                 <th class="text-right">Total Transaksi</th>
                 <th class="text-right">Total (Rp.)</th>
+                <th class="text-center">Detail</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($trans[(string)(date('Y', time())-1)] as $tran)
-               <tr>
-                <td>{{ $loop->index+1}}</td>
-                <td>{{ $tran['month'] }}</td>
-                <td class="text-right">{{ number_format($tran['data']) }}</td>
-                <td class="text-right">{{ number_format($tran['amount']) }}</td>
-               </tr>
+                <tr>
+                  <td>{{ $loop->index+1}}</td>
+                  <td>{{ $tran['month'] }}</td>
+                  <td class="text-right">{{ number_format($tran['data']) }}</td>
+                  <td class="text-right">{{ number_format($tran['amount']) }}</td>
+                  <td class="text-center">
+                    <a  target="_blank" rel="noopener noreferrer" href="/report/monthly?month={{ $tran['month'] }} {{ date('Y', time())-1 }}">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
               @endforeach
             </tbody>
           </table>

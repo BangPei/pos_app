@@ -8,6 +8,7 @@ use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use DateTime;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -217,31 +218,35 @@ class ReportController extends Controller
                 ->whereBetween("date", [$firstDate, $lastDate])->sum('amount');
             $data = DirectSales::whereBetween("date", [$firstDate, $lastDate])->count();
 
-            // for ($i = 0; $i < count($hours); $i++) {
-            //     $filter = $directSales->filter(function ($ds) use ($i, $hours) {
-            //         return $ds['hour'] === $hours[$i];
-            //     });
-            //     if (count($filter) == 0) {
-            //         $directSales->push([
-            //             'hour' => $hours[$i],
-            //             'data' => 0,
-            //             'amount' => 0
-            //         ]);
-            //     }
-            // }
-        }
-        return $data;
+            $endDate = Carbon::create($last)->format('t');
 
-        // return view('report/direct_sales/monthly', [
-        //     "title" => "Lapran Bulanan",
-        //     "menu" => "Laporan",
-        //     "date" => request('date'),
-        //     "directSales" => (count($directSales) != 0) ? $directSales->sortBy('hour') : [],
-        //     "total" => [
-        //         "amount" => $sum,
-        //         "data" => $data
-        //     ],
-        // ]);
+            for ($i = 1; $i <= $endDate; $i++) {
+                $date = Carbon::createFromFormat('F Y', request('month'))
+                    ->format('Y-m-' . ($i < 10 ? ('0' . $i) : $i));
+
+                $filter = $directSales->filter(function ($ds) use ($date) {
+                    return $ds['transDate'] === $date;
+                });
+                if (count($filter) == 0) {
+                    $directSales->push([
+                        'transDate' => $date,
+                        'data' => 0,
+                        'amount' => 0
+                    ]);
+                }
+            }
+        }
+
+        return view('report/direct_sales/monthly', [
+            "title" => "Lapran Bulanan",
+            "menu" => "Laporan",
+            "month" => request('month'),
+            "directSales" => (count($directSales) != 0) ? $directSales->sortBy('transDate') : [],
+            "total" => [
+                "amount" => $sum,
+                "data" => $data
+            ],
+        ]);
     }
     public function dailyTaskByDate(Request $request)
     {
