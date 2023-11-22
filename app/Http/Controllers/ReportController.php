@@ -91,7 +91,7 @@ class ReportController extends Controller
 
     public function daily()
     {
-        $directSales = DirectSales::orderBy('date', 'DESC');
+        $directSales = DirectSales::orderBy(request('order') ?? 'date', request('sort') ?? 'DESC');
 
         $payments = PaymentType::all();
 
@@ -132,6 +132,8 @@ class ReportController extends Controller
                 "code" => request('code'),
                 "product" => request('product'),
                 "perpage" => request('perpage'),
+                "order" => request('order'),
+                "sort" => request('sort'),
             ],
             "page" => [
                 "total" => $json->total,

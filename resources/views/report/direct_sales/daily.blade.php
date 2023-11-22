@@ -76,9 +76,18 @@
           </span>
         </div>
         <div class="col-6 text-right">
-          <span class="font-weight-bold" >
-            Grand Total : Rp. {{ number_format($amount, 0, ',', ',') }}
-          </span>
+          <div class="row justify-content-end">
+              Urut Berdasarkan : 
+              <select id="order-by" name="order-by">
+                <option {{ ($query['order']==='date' &&   $query['sort']==='desc')?'selected':'' }} value="date:desc">Tanggal Baru</option>
+                <option {{ ($query['order']==='date' &&   $query['sort']==='asc')?'selected':'' }} value="date:asc">Tanggal Terlama</option>
+                <option {{ ($query['order']==='amount' && $query['sort']==='desc')?'selected':'' }} value="amount:desc">Total Terbesar</option>
+                <option {{ ($query['order']==='amount' && $query['sort']=='asc')?'selected':'' }} value="amount:asc">Total Terkecil</option>
+              </select>
+              <span class="font-weight-bold pl-1">
+                Grand Total : Rp. {{ number_format($amount, 0, ',', ',') }}
+              </span>
+          </div>
         </div>
       </div>
       
@@ -183,7 +192,7 @@
       @endif
     </div>
     @endforeach
-    <div class="row d-flex text-right">
+    <div class="row pl-2 pr-2 d-flex justify-content-end">
       <span class="pt-1">Perhalaman : </span> 
       <select class="form-control perpage" style="height: 37px;width:80px">
         <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
@@ -219,6 +228,18 @@
       $('#perpage').val($(this).val())
       let query = getQueryString();
       query.perpage = $(this).val();
+      let params = "?";
+      for (const key in query) {
+        params += `${key}=${query[key]}&`
+      }
+      let loc = window.location;
+      window.location=`${loc.origin}${loc.pathname}${params}`
+    })
+
+    $('#order-by').on('change',function(){
+      let query = getQueryString();
+      query.order = $(this).val().split(':')[0];
+      query.sort = $(this).val().split(':')[1];
       let params = "?";
       for (const key in query) {
         params += `${key}=${query[key]}&`
