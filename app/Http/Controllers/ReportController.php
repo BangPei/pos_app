@@ -250,6 +250,31 @@ class ReportController extends Controller
             ],
         ]);
     }
+    public function yearly()
+    {
+        $directSales = [];
+        $currTotal = 0;
+        $data = 0;
+        if (request('year')) {
+            # code...
+            $directSales = app('App\Http\Controllers\DirectSalesController')->getDataByMonth(request('year'));
+            for ($i = 0; $i < count($directSales); $i++) {
+                $currTotal = $directSales[$i]['amount'] + $currTotal;
+                $data = $directSales[$i]['data'] + $data;
+            }
+        }
+
+        return view('report/direct_sales/yearly', [
+            "title" => "Lapran Tahunan",
+            "menu" => "Laporan",
+            "year" => request('year'),
+            "trans" => $directSales,
+            "total" => [
+                "amount" => $currTotal,
+                "data" => $data
+            ],
+        ]);
+    }
     public function dailyTaskByDate(Request $request)
     {
         $data = $request->validate([

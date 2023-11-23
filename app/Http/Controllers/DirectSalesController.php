@@ -373,7 +373,7 @@ class DirectSalesController extends Controller
         //
     }
 
-    private function getDataByMonth($year)
+    public function getDataByMonth($year)
     {
         $months = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $directSales = DirectSales::selectRaw('year(date) year, monthname(date) month,MONTH(date) no, sum(amount) amount,count(*) data')
