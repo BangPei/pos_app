@@ -10,8 +10,8 @@ class Stock extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $with = ['created_by', 'edit_by'];
-    protected $hidden = ['created_by_id', 'edit_by_id',];
+    protected $with = ['created_by', 'edit_by', 'category'];
+    protected $hidden = ['created_by_id', 'edit_by_id', 'category_id'];
 
     public function created_by()
     {
@@ -24,5 +24,10 @@ class Stock extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

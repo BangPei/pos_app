@@ -42,10 +42,10 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
     Route::resource('user', UserController::class)->middleware('auth');
 
-    Route::get('product/mapping', [ProductController::class, 'mapping'])->middleware('auth');
     Route::put('product/price', [ProductController::class, 'updatePrice'])->middleware('auth');
     Route::put('product/status', [ProductController::class, 'changeStatus'])->middleware('auth');
     Route::get('product/barcode/{barcode}', [ProductController::class, 'barcode'])->middleware('auth');
+    Route::get('product/barcode/check/{barcode}', [ProductController::class, 'checkBarcode'])->middleware('auth');
     Route::get('product/dataTable', [ProductController::class, 'dataTable'])->middleware('auth');
     Route::resource('product', ProductController::class)->middleware('auth');
 

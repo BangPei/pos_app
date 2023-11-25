@@ -18,9 +18,6 @@
         </div>
         <div class="col-4 text-right">
           <div class="btn-group" role="group" aria-label="Basic example">
-            {{-- <a class="btn btn-success" href="/product/mapping">
-              <i class="fas fa-plus-circle"></i> Mapping Stock
-            </a> --}}
             <a class="btn btn-primary" href="/product/create">
               <i class="fas fa-plus-circle"></i> Tambah
             </a>

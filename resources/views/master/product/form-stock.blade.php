@@ -2,6 +2,11 @@
 
 @section('content-class')
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <style>
+    .modal .select2-container {
+        width: 100% !important;
+    }
+  </style>
 @endsection
 
 @section('content-child')
@@ -29,7 +34,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="name">Nama Group Stock</label>
                             <input required  type="text" value="{{ old('name',$stock->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
@@ -40,7 +45,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="value">Jumlah Stok</label>
                             <input required number type="text" value="{{ old('name',number_format($stock->value??0)) }}" class="form-control @error('value') is-invalid @enderror" name="value" id="value">
@@ -49,6 +54,22 @@
                                     {{ $message }}
                                 </div>
                             @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="category_id">Kategori</label>
+                            <select required name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror">
+                                <option selected value="" disabled>--Pilih Kategory--</option>
+                                @foreach ($categories as $ct)
+                                    @if (old('category_id',$stock->category_id??'')==$ct->id)
+                                        <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @else
+                                        <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -86,31 +107,54 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-product" tabindex="-1">
+<div class="modal fade" id="modal-product" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modal-title">List Product</h5>
+          <h5 class="modal-title" id="modal-title">Form Product</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="row">
-            <div class="col-12 table-responsive">
-              <table class="table table-sm table-striped table-bordered" width="100%" id="table-product">
-                <thead>
-                  <tr>
-                    <th><input type="checkbox" class="checkAll"></th>
-                    <th>Barcode</th>
-                    <th>Nama</th>
-                    <th>Satuan</th>
-                    <th>Harga</th>
-                  </tr>
-                </thead>
-              </table>
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="barcode">Kode Barang</label>
+                        <input required autofocus="true"  type="text" class="form-control" name="barcode" id="barcode">
+                        <small><i id="barcode-error" class="text-danger"></i></small>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="product-name">Nama</label>
+                        <input required  type="text" class="form-control" name="product-name" id="product-name">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="uom_id">Satuan</label>
+                        <select required name="uom_id" id="uom_id" class="form-control select2">
+                            <option selected value="" disabled>--Pilih Satuan--</option>
+                            @foreach ($uoms as $uom)
+                                <option value="{{$uom->id}}">{{$uom->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="convertion">Konversi Qty</label>
+                        <input required  type="number" class="form-control" name="convertion" id="convertion">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="price">Harga Jual</label>
+                        <input required  type="number" class="form-control" name="price" id="price">
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
@@ -185,82 +229,15 @@
             ]
         })
 
-        $('#modal-product').on('show.bs.modal', function (e) {
-            tblProduct = $('#table-product').DataTable({
-                processing:true,
-                serverSide:true,
-                ajax:{
-                    url:"{{URL::to('product/dataTable')}}",
-                    type:"GET",
-                },
-                columns:[
-                    {
-                        data:"id",
-                        defaultContent:"--",
-                        mRender:function(data,type,full){
-                            return `<input type="checkbox" class="input-check" data-id="${data}">`
-                        }
-                    },
-                    {
-                        data:"barcode",
-                        defaultContent:"--"
-                    },
-                    {
-                        data:"name",
-                        defaultContent:"--",
-                    },
-                    {
-                        data:"uom.name",
-                        defaultContent:"--"
-                    },
-                    {
-                        data:"price",
-                        defaultContent:"0",
-                        className:"text-right",
-                        mRender:function(data,type,full){
-                            return `Rp. ${formatNumber(data)}`
-                        }
-                    },
-                ],
-                columnDefs: [
-                    { 
-                        className: "text-center",
-                        targets: [0,3,4]
-                    },
-                ],
-                order: [[1, 'desc']],
-                drawCallback: function( settings ) {
-                    var api = this.api();
-                    var node = api.rows().nodes()
-                    for (var i = 0; i < node.length; i++) {
-                        let dataId = $(node[i]).find('input').attr('data-id')
-                        let isExist = stock.products.some(item => item.id == dataId)
-                        if (isExist) {
-                            $(node[i]).find('input').prop('checked',true)
-                        }
-                    }
-                },
-            })
-            $('div.dataTables_filter input', tblProduct.table().container()).focus();
-        })
-        $('#modal-product').on('hidden.bs.modal', function (e) {
-            $('#table-product').DataTable().destroy();
-        })
-        $('#table-product').on('change','td input[type="checkbox"]',function() {
-            let product = tblProduct.row($(this).parents('tr')).data();
-            let val = $(this).prop('checked');
-            
-            if (val == true) {
-                stock.products.push(product)
-            }else{
-                stock.products.splice(product, 1);
-            }
-            reloadJsonDataTable(tblStockProduct, stock.products);
-        })
         $('#table-stock-product').on('click','.delete-product',function(){
             let data = tblStockProduct.row($(this).parents('tr')).index();
             stock.products.splice(data, 1);
             reloadJsonDataTable(tblStockProduct, stock.products);
+        })
+
+        $('#barcode').on('change',function(){
+            let barcode = $(this).val();
+            barcodeCheck(barcode);
         })
     })
 
@@ -275,8 +252,22 @@
         })
     }
 
+    function barcodeCheck(barcode){
+        ajax(null, `{{URL::to('product/barcode/check/${barcode}')}}`, "GET",
+            function(json) {
+                $('#barcode-error').html("")
+        },function (json) {
+            let message = json?.responseJSON?.message??"error"
+            $('#barcode').val('')
+            $('#barcode-error').html(message)
+        })
+    }
+
     function saveStock(){
         stock.name = $('#name').val();
+        stock.category={
+            id:$('#category_id').val()
+        };
         let value = $('#value').val();
         if (stock.name == "" || value =="") {
             toastr.error('Nama Group dan Stok tidak boleh kosong');

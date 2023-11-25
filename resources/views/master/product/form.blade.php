@@ -59,21 +59,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-12">
                             <div class="form-group">
-                                <label for="category_id">Kategori</label>
-                                <select required name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror">
-                                    <option selected value="" disabled>--Pilih Kategory--</option>
-                                    @foreach ($categories as $ct)
-                                        @if (old('category_id',$product->category_id??'')==$ct->id)
-                                            <option selected value="{{$ct->id}}">{{$ct->name}}</option>
-                                        @else
-                                            <option value="{{$ct->id}}">{{$ct->name}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-12">
-                            <div class="form-group">
                                 <label for="uom_id">Satuan</label>
                                 <select required name="uom_id" id="uom_id" class="form-control select2 @error('uom_id') is-invalid @enderror">
                                     <option selected value="" disabled>--Pilih Satuan--</option>

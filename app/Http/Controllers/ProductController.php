@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Stock;
@@ -20,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::orderBy('name', 'asc');
+        $product = Product::orderBy('name', 'asc')->with('stock');
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');
@@ -35,26 +34,12 @@ class ProductController extends Controller
     }
     public function dataTable(UtilitiesRequest $request)
     {
-        $product = Product::with(['program' => function ($query) {
+        $product = Product::with('stock')->with(['program' => function ($query) {
             $query->with('multipleDiscount');
         }]);
         if ($request->ajax()) {
             return datatables()->of($product)->make(true);
         }
-    }
-
-    public function mapping()
-    {
-        $products = Product::where('stock_id', "")->orWhere('stock_id', 0)->get();
-        foreach ($products as $pr) {
-            $stock = Stock::where('name', $pr->name)->first();
-            if (isset($stock)) {
-                Product::where('id', $pr->id)->update([
-                    'stock_id' => $stock->id,
-                ]);
-            }
-        }
-        // return Redirect::to('product');
     }
 
     /**
@@ -67,7 +52,6 @@ class ProductController extends Controller
         return view('master/product/form', [
             "title" => "Product Form",
             "menu" => "Master",
-            "categories" => Category::where('is_active', 1)->get(),
             "uoms" => Uom::all(),
             "stocks" => Stock::all(),
         ]);
@@ -88,7 +72,6 @@ class ProductController extends Controller
                 'price' => 'required',
                 'convertion' => 'required|numeric|min:1',
                 'stock_id' => 'required',
-                'category_id' => 'required',
                 'uom_id' => 'required',
                 'image' => 'image|file',
             ]
@@ -131,7 +114,6 @@ class ProductController extends Controller
         return view('master/product/form', [
             "title" => "Product Form",
             "menu" => "Master",
-            "categories" => Category::all(),
             "uoms" => Uom::all(),
             "stocks" => Stock::all(),
             "product" => $product,
@@ -154,7 +136,6 @@ class ProductController extends Controller
                 'price' => 'required',
                 'convertion' => 'required|numeric|min:1',
                 'stock_id' => 'required',
-                'category_id' => 'required',
                 'uom_id' => 'required',
                 'image' => 'image|file',
             ]
@@ -170,7 +151,6 @@ class ProductController extends Controller
             'price' => $product['price'],
             'convertion' => $product['convertion'],
             'stock_id' => $product['stock_id'],
-            'category_id' => $product['category_id'],
             'uom_id' => $product['uom_id'],
         ]);
         session()->flash('message', 'Berhasil merubah satuan ' . $request['name']);
@@ -204,10 +184,18 @@ class ProductController extends Controller
     public function barcode($barcode)
     {
         $product = new Product();
-        $product = Product::where('barcode', $barcode)->with(['program' => function ($query) {
+        $product = Product::where('barcode', $barcode)->with('stock')->with(['program' => function ($query) {
             $query->with('multipleDiscount');
         }])->first();
         return response()->json($product);
+    }
+    public function checkBarcode($barcode)
+    {
+        $product = Product::where('barcode', $barcode)->with('stock')->first();
+        if (isset($product)) {
+            return response()->json(['message' => 'Barcode sudah terdaftar pada group ' . $product->stock->name], 400);
+        }
+        return response()->json(true);
     }
 
     /**
@@ -224,7 +212,6 @@ class ProductController extends Controller
         //     'barcode' => $product->barcode,
         //     'name' => $product->name,
         //     'price' => $product->price,
-        //     'category_id' => $product->category_id,
         //     'uom_id' => $product->uom_id,
         //     'description' => $product->description,
         //     'is_active' => $product->is_active,

@@ -11,18 +11,13 @@ class Product extends Model
 
     protected $guarded = ['id'];
     protected $hidden = [
-        'category_id',
         'uom_id',
         'stock_id',
         'created_by_id',
         'edit_by_id',
     ];
-    protected $with = ['category', 'created_by', 'edit_by', 'uom', 'stock'];
+    protected $with = ['created_by', 'edit_by', 'uom'];
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
     public function uom()
     {
         return $this->belongsTo(Uom::class);

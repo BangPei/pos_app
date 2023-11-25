@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Stock;
 use App\Models\Product;
 use App\Models\TempTransaction;
+use App\Models\Uom;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
@@ -48,6 +50,8 @@ class StockController extends Controller
         return view('master/product/form-stock', [
             "title" => "Form Stock",
             "menu" => "Master",
+            "categories" => Category::all(),
+            "uom" => Uom::all(),
         ]);
     }
 
@@ -62,6 +66,7 @@ class StockController extends Controller
         $stock = $request->validate([
             'name' => 'required',
             'value' => 'required',
+            'category_id' => 'required',
         ]);
         $stock['created_by_id'] = auth()->user()->id;
         $stock['edit_by_id'] = auth()->user()->id;
@@ -107,7 +112,9 @@ class StockController extends Controller
         return view('master/product/form-stock', [
             "title" => "Form Stock",
             "menu" => "Master",
-            "stock" => $stock
+            "stock" => $stock,
+            "categories" => Category::all(),
+            "uoms" => Uom::all(),
         ]);
     }
 
@@ -124,6 +131,7 @@ class StockController extends Controller
         Stock::where('id', $request->id)->update([
             'name' => $request->name,
             'value' => $request->value,
+            'category_id' => $request->category['id'],
             'edit_by_id' => auth()->user()->id,
         ]);
         Product::where('stock_id', $stock['id'])->update([
