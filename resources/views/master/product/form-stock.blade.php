@@ -116,11 +116,12 @@
           </button>
         </div>
         <div class="modal-body">
-            <form action="">
+            <form action="" id="form-stock" onsubmit="return false">
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="barcode">Kode Barang</label>
+                            <input  id="product-id" name="product-id">
                             <input required autofocus="true"  type="text" class="form-control" name="barcode" id="barcode">
                             <small><i id="barcode-error" class="text-danger"></i></small>
                         </div>
@@ -231,7 +232,7 @@
                     className:"text-center",
                     mRender: function(data, type, full) {
                         return `
-                        <a title="view" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a> 
+                        <a data-toggle="modal" data-target="#modal-product" title="view" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a> 
                         <a title="delete" class="btn btn-sm bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>
                         `
                     }
@@ -239,11 +240,55 @@
             ]
         })
 
+        formValid($('#form-stock'),function(e){
+            let productId = $('#product-id').val()
+            let product = {
+                name:$('#product-name').val(),
+                barcode:$('#barcode').val(),
+                convertion:$('#convertion').val(),
+                price:$('#price').val(),
+                image:null,
+                is_active:1,
+                uom:{
+                    id:$('#uom_id').val(),
+                    name:$('#uom_id').find('option:selected').text()
+                },
+            }
+            if (productId==""||productId==null) {
+                stock.products.push(product)
+            }else{
+                stock.products.filter(val=>{
+                    val.name=$('#product-name').val(),
+                    val.barcode=$('#barcode').val(),
+                    val.convertion=$('#convertion').val(),
+                    val.price=$('#price').val(),
+                    val.image=null,
+                    val.is_active=1,
+                    val.uom={
+                        id:$('#uom_id').val(),
+                        name:$('#uom_id').find('option:selected').text()
+                    }
+                })
+            }
+            reloadJsonDataTable(tblStockProduct, stock.products);
+            $('#modal-product').modal('hide')
+        })
+
         $('#table-stock-product').on('click','.delete-product',function(){
             let data = tblStockProduct.row($(this).parents('tr')).index();
             stock.products.splice(data, 1);
             reloadJsonDataTable(tblStockProduct, stock.products);
         })
+        $('#table-stock-product').on('click','.edit-product',function(){
+            let data = tblStockProduct.row($(this).parents('tr')).data();
+            $('#product-id').val(data.id)
+            $('#product-name').val(data.name)
+            $('#barcode').val(data.barcode)
+            $('#convertion').val(data.convertion)
+            $('#price').val(data.price)
+            $('#uom_id').val(data.uom.id).trigger('change')
+        })
+        
 
         $('#barcode').on('change',function(){
             let barcode = $(this).val();

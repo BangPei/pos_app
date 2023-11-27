@@ -140,7 +140,15 @@ class StockController extends Controller
         $products = [];
         for ($i = 0; $i < count($stock->products); $i++) {
             $Product = Product::where('id', $stock->products[$i]['id'])->update([
-                'stock_id' => $stock['id']
+                'stock_id' => $stock['id'],
+                'uom_id' => $stock->products[$i]['uom']['id'],
+                'convertion' => $stock->products[$i]['convertion'],
+                'price' => $stock->products[$i]['price'],
+                'barcode' => $stock->products[$i]['barcode'],
+                'name' => $stock->products[$i]['name'],
+                'is_active' => $stock->products[$i]['is_active'],
+                'created_by_id' => auth()->user()->id,
+                'edit_by_id' => auth()->user()->id,
             ]);
             array_push($products, $Product);
         }
