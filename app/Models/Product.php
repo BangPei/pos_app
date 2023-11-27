@@ -38,4 +38,9 @@ class Product extends Model
     {
         return $this->hasOne(MultipleDiscountDetail::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'barcode';
+    }
 }

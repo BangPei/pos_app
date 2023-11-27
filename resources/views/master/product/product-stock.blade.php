@@ -136,7 +136,7 @@
                   </div>
                   <div class="col-">
                     <p class="m-0 p-0">
-                      <a href="/product/{{$pr->id}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
+                      <a href="/product/{{$pr->barcode}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
                     </p>
                   </div>
                 </div>
