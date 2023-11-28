@@ -522,7 +522,7 @@
         columnDefs: [
             { 
               className: "text-center",
-              targets: [2,4,5]
+              targets: [2,4,5,6]
             },
             {
               width: '12%',
@@ -530,7 +530,7 @@
             },
             {
               width: '10%',
-              targets: [2,3,4,5],
+              targets: [2,3,4,5,6],
             },
           ],
       })
@@ -539,8 +539,8 @@
 
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
-      console.log(product);
       if (product.is_active == 0) {
+        $("#modal-product").modal('hide');
         $('#label-error').html(`Product dengan code ${product.barcode} tidak aktif`);
         $('#modal-error').modal({backdrop: 'static', keyboard: false});
         return false;
@@ -555,9 +555,9 @@
     })
 
     $('#modal-product').on('hidden.bs.modal', function (e) {
-      initScanJs()
       $('#table-product').DataTable().destroy();
       $('#barcode').trigger('focus')
+      initScanJs()
     })
     $('#modal-price,#modal-error,#modal-multi-qty').on('hidden.bs.modal', function (e) {
       initScanJs()
@@ -809,12 +809,7 @@
   function getProductByBarcode(barcode,callback) {
     ajax(null, `{{URL::to('/product/barcode/${barcode}')}}`, "GET",
       function(item) {
-        if (Object.keys(item).length==0){
-          $('#label-error').html(`Produk dengan code <strong>"${barcode}"</strong> tidak tersedia atau tidak aktif.`);
-          $('#modal-error').modal({backdrop: 'static', keyboard: false});
-        }else{
-          callback(item)
-        }
+        callback(item)
       },function(json){
         $('#label-error').html(json.responseJSON.message);
         $('#modal-error').modal({backdrop: 'static', keyboard: false});
