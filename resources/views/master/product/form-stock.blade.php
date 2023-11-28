@@ -89,6 +89,7 @@
                                 <th>Satuan</th>
                                 <th>Harga</th>
                                 <th>Stock</th>
+                                <th>Status</th>
                                 <th style="min-width: 100px">#</th>
                             </tr>
                         </thead>
@@ -121,7 +122,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="barcode">Kode Barang</label>
-                            <input  id="product-id" name="product-id">
+                            <input class="d-none"  id="product-id" name="product-id">
                             <input required autofocus="true"  type="text" class="form-control" name="barcode" id="barcode">
                             <small><i id="barcode-error" class="text-danger"></i></small>
                         </div>
@@ -227,12 +228,26 @@
                     }
                 },
                 {
+                    data:"is_active",
+                    // bSortable: false,
+                    defaultContent:"--",
+                    className:"text-center",
+                    mRender:function(data,type,full){
+                        return `
+                        <div class="custom-control custom-switch">
+                        <input type="checkbox" ${data?'checked':''} name="my-switch" class="custom-control-input" id="switch-${full.barcode}">
+                        <label class="custom-control-label" for="switch-${full.barcode}"></label>
+                      </div>
+                        `
+                    }
+                },
+                {
                     data:"id",
                     // bSortable: false,
                     className:"text-center",
                     mRender: function(data, type, full) {
                         return `
-                        <a data-toggle="modal" data-target="#modal-product" title="view" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-eye"></i></a> 
+                        <a data-toggle="modal" data-target="#modal-product" title="view" class="btn btn-sm bg-gradient-primary edit-product"><i class="fas fa-edit"></i></a> 
                         <a title="delete" class="btn btn-sm bg-gradient-danger delete-product"><i class="fas fa-trash"></i></a>
                         `
                     }
@@ -248,7 +263,7 @@
                 convertion:$('#convertion').val(),
                 price:$('#price').val(),
                 image:null,
-                is_active:1,
+                is_active:true,
                 uom:{
                     id:$('#uom_id').val(),
                     name:$('#uom_id').find('option:selected').text()
@@ -331,6 +346,10 @@
         stock.value = parseFloat(value.replace(/,/g, ""));
         let method = stockId == ""?"POST":"PUT";
         let url = stockId == ""?"{{ route('stock.store') }}":"{{URL::to('stock/update')}}"
+        stock.products.forEach(val=>{
+            let bool = $(`#table-stock-product tbody #switch-${val.barcode}`).prop('checked');
+            val.is_active = bool?1:0;
+        })
         
         ajax(stock, url, method,
             function(json) {

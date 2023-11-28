@@ -128,31 +128,35 @@ class StockController extends Controller
     public function update(Request $request)
     {
         $stock = $request;
+        $bool = true;
+        $filter = array_filter($stock->products, function ($val) {
+            return $val['is_active'] == 1;
+        });
+        $bool = count($filter) > 0 ? 1 : 0;
         Stock::where('id', $request->id)->update([
             'name' => $request->name,
             'value' => $request->value,
+            'is_active' => $bool,
             'category_id' => $request->category['id'],
             'edit_by_id' => auth()->user()->id,
         ]);
-        Product::where('stock_id', $stock['id'])->update([
-            'stock_id' => null
-        ]);
-        $products = [];
+        Product::where('stock_id', $stock['id'])->delete();
+        // $products = [];
         for ($i = 0; $i < count($stock->products); $i++) {
-            $Product = Product::where('id', $stock->products[$i]['id'])->update([
-                'stock_id' => $stock['id'],
-                'uom_id' => $stock->products[$i]['uom']['id'],
-                'convertion' => $stock->products[$i]['convertion'],
-                'price' => $stock->products[$i]['price'],
-                'barcode' => $stock->products[$i]['barcode'],
-                'name' => $stock->products[$i]['name'],
-                'is_active' => $stock->products[$i]['is_active'],
-                'created_by_id' => auth()->user()->id,
-                'edit_by_id' => auth()->user()->id,
-            ]);
-            array_push($products, $Product);
+            $product = new Product();
+            $product->stock_id = $stock['id'];
+            $product->uom_id = $stock->products[$i]['uom']['id'];
+            $product->convertion = $stock->products[$i]['convertion'];
+            $product->price = $stock->products[$i]['price'];
+            $product->barcode = $stock->products[$i]['barcode'];
+            $product->name = $stock->products[$i]['name'];
+            $product->is_active = $stock->products[$i]['is_active'];
+            $product->created_by_id = auth()->user()->id;
+            $product->edit_by_id = auth()->user()->id;
+            $product->save();
+            // array_push($products, $product);
         }
-        $stock['products'] = $products;
+        // $stock['products'] = $products;
         return response()->json($stock);
     }
 
@@ -192,5 +196,22 @@ class StockController extends Controller
             ]);
         }
         return back();
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $stock = $request;
+        if ($request->ajax()) {
+            Stock::where('id', $stock['id'])->update([
+                'is_active' => $stock['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+
+            Product::where('stock_id', $stock['id'])->update([
+                'is_active' => $stock['is_active'],
+                'edit_by_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($stock);
     }
 }

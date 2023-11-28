@@ -48,12 +48,13 @@
   @foreach ($stocks as $s)
       <div class="card p-2">
         <div class="row pl-2 pr-2">
-          <div class="col">
+          <div class="col-7">
             <a href="/stock/{{ $s->id }}/edit">
               <label class="m-0 p-0" for="">{{ Str::upper($s->name) }}</label>
+              <a class="pl-1" href="/stock/{{ $s->id }}/edit"> <i class="fa fa-eye"></i></a>
             </a>
-          </div>
-          <div class="col-4">
+          </div> 
+          <div class="col-3 text-right">
             <label class="m-0 p-0 p-stock-{{ $s->id??"" }}">
               Stock : {{ number_format($s->value) }} 
               <i onclick="editStock({{ $s->id }})" class="fa fa-edit text-primary"></i>
@@ -71,9 +72,15 @@
                   </div>
             </form>
           </div>
+          <div class="col text-right pr-4">
+            <div class="custom-control custom-switch switch-stock">
+              <label class="pr-5">status : </label>
+              <input data-id="{{ $s->id }}" type="checkbox" {{ $s->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $s->id }}">
+              <label class="custom-control-label" for="switch-{{ $s->id }}"></label>
+            </div>
+          </div>
           @if (count($s->products)==0)
             <div class="col text-right">
-              
               <form method="POST" action="/stock/remove">
                 @csrf
                 @method("delete")
@@ -89,7 +96,7 @@
             @foreach ($s->products as $pr)
               <h6>
                 <div class="row text-center pl-4 pr-4">
-                  <div class="col">
+                  <div class="col-1">
                     @if ((!isset($pr->image))|| ($pr->image==""))
                     <img width="60" src="{{ asset('image/logo/logo.png') }}" class="rounded float-left img-thumbnail" alt="{{ $pr->name }}">
                     @else
@@ -100,13 +107,13 @@
                     <label class="m-0 p-0" for="">{{ Str::upper($pr->name) }}</label>
                     <p class="m-0 p-0">SKU : <label class="m-0 p-0" for="">{{ $pr->barcode }}</label></p>
                     <p class="m-0 p-0">Satuan : <label class="m-0 p-0" for="">{{$pr->convertion."/".$pr->uom?->name??"" }}</label></p>
-                    <p class="m-0 p-0">Kategori : <label class="m-0 p-0" for="">{{ $pr->category?->name??"" }}</label></p>
+                    
                   </div>
                   <div class="col-3">
                     <p class="m-0 p-0">Harga Jual</p>
                     <p  class="m-0 p-0 p-price-{{ $pr->id }}">
                       <label for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label>
-                      <i onclick="editPrice({{ $pr->id }})" class="fa fa-edit text-primary"></i>
+                      <i onclick="priceClick({{ $pr->id }})" class="fa fa-edit text-primary"></i>
                     </p>
                     <form method="post" action="/product/price" class="form-price-{{ $pr->id }} d-none">
                       <input type="text" name="id" class="d-none" value="{{ $pr->id }}">
@@ -121,24 +128,22 @@
                       </div>
                     </form>
                   </div>
-                  <div class="col-3">
-                    <p class="m-0 p-0">Tersedia</p>
+                  <div class="col-3 text-right">
                     <p class="m-0 p-0"> <label>{{ number_format(floor($s->value / $pr->convertion??0), 0, ',', ',')}}</label></p>
                   </div>
-                  <div class="col">
+                  <div class="col text-right">
                     <p class="m-0 p-0">
-                      status
                       <div class="custom-control custom-switch">
                         <input type="checkbox" {{ $pr->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $pr->id }}">
                         <label class="custom-control-label" for="switch-{{ $pr->id }}"></label>
                       </div>
                     </p>
                   </div>
-                  <div class="col-">
+                  {{-- <div class="col-">
                     <p class="m-0 p-0">
                       <a href="/product/{{$pr->barcode}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
                     </p>
-                  </div>
+                  </div> --}}
                 </div>
               </h6>
             @endforeach
@@ -157,8 +162,28 @@
 
 @section('content-script')
 <script>
+
+  $(document).ready(function(){
+    $('.switch-stock').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      let data = {
+        id:$(this).attr('data-id'),
+        is_active:bool?1:0
+      }
+      ajax(data, `{{URL::to('/stock/status')}}`, "PUT",
+          function(json) {
+            location.reload();
+      })
+    })
+  })
+  function closePrice(id){
+    $(`.cancel-${id}`).on('click',function(){
+      $(`.form-price-${id}`).addClass('d-none')
+      $(`.p-price-${id}`).removeClass('d-none')
+    })
+  }
   function priceClick(id){
-    $(`.p-price-${id}`).dblclick(function(){
+    $(`.p-price-${id}`).on('click',function(){
       $(`.p-price-${id}`).addClass('d-none')
       $(`.form-price-${id}`).removeClass('d-none')
     })
