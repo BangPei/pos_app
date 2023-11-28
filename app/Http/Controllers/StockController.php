@@ -51,7 +51,7 @@ class StockController extends Controller
             "title" => "Form Stock",
             "menu" => "Master",
             "categories" => Category::all(),
-            "uom" => Uom::all(),
+            "uoms" => Uom::all(),
         ]);
     }
 
@@ -66,20 +66,28 @@ class StockController extends Controller
         $stock = $request->validate([
             'name' => 'required',
             'value' => 'required',
-            'category_id' => 'required',
+            'category' => 'required',
         ]);
+        $stock['category_id'] = $stock['category']['id'];
         $stock['created_by_id'] = auth()->user()->id;
         $stock['edit_by_id'] = auth()->user()->id;
-        $stock =  Stock::Create($stock);
-        if (isset($request->products)) {
-            $products = [];
+        if (!isset($request->products)) {
+            return response()->json(['message' => 'Product Tidak Boleh Kosong'], 400);
+        } else {
+            $stock =  Stock::Create($stock);
             for ($i = 0; $i < count($request->products); $i++) {
-                $Product = Product::where('id', $request->products[$i]['id'])->update([
-                    'stock_id' => $stock['id']
-                ]);
-                array_push($products, $Product);
+                $product = new Product();
+                $product->stock_id = $stock['id'];
+                $product->uom_id = $request->products[$i]['uom']['id'];
+                $product->convertion = $request->products[$i]['convertion'];
+                $product->price = $request->products[$i]['price'];
+                $product->barcode = $request->products[$i]['barcode'];
+                $product->name = $request->products[$i]['name'];
+                $product->is_active = $request->products[$i]['is_active'];
+                $product->created_by_id = auth()->user()->id;
+                $product->edit_by_id = auth()->user()->id;
+                $product->save();
             }
-            $stock['products'] = $products;
         }
         session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
         return back();
@@ -129,6 +137,9 @@ class StockController extends Controller
     {
         $stock = $request;
         $bool = true;
+        if (count($stock->products) == 0) {
+            return response()->json(['message' => 'Product Tidak Boleh Kosong'], 400);
+        }
         $filter = array_filter($stock->products, function ($val) {
             return $val['is_active'] == 1;
         });

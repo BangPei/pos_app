@@ -112,16 +112,16 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview pl-2">
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="/product" class="nav-link {{Request::is('product*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Barang</p>
                                     </a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item">
                                     <a href="/stock" class="nav-link {{Request::is('stock*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Group Stok</p>
+                                        <p>Barang</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

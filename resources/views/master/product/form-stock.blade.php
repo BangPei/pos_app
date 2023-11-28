@@ -16,93 +16,95 @@
             <h2 class="card-title">Form Group Stock</h2>
         </div>
         <div class="card-body ">
-            <div class="row">
-                <div class="col-md-12">
-                    @if (session()->has('message'))
-                    <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ session('message') }}</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                                </button>
+            <form action="" id="form-master" onsubmit="return false">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if (session()->has('message'))
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ session('message') }}</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <!-- /.card-tools -->
                             </div>
-                            <!-- /.card-tools -->
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="name">Nama Group Stock</label>
+                            <input required  type="text" value="{{ old('name',$stock->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="name">Nama Group Stock</label>
-                        <input required  type="text" value="{{ old('name',$stock->name??'') }}" class="form-control @error('name') is-invalid @enderror" name="name" id="name">
-                        @error('name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="value">Jumlah Stok</label>
+                            <input required number type="text" value="{{ old('name',number_format($stock->value??0)) }}" class="form-control @error('value') is-invalid @enderror" name="value" id="value">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="category_id">Kategori</label>
+                            <select required name="category_id" id="category_id" class="form-control select2">
+                                <option selected value="" disabled>--Pilih Kategory--</option>
+                                @foreach ($categories as $ct)
+                                    @if (old('category_id',$stock->category_id??'')==$ct->id)
+                                        <option selected value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @else
+                                        <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="value">Jumlah Stok</label>
-                        <input required number type="text" value="{{ old('name',number_format($stock->value??0)) }}" class="form-control @error('value') is-invalid @enderror" name="value" id="value">
-                        @error('name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                <hr>
+                <div class="row">
+                    <div class="col-12 text-right mb-3">
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+                            <i class="fas fa-plus"></i> Tambah Produk
+                        </a>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    <div class="form-group">
-                        <label for="category_id">Kategori</label>
-                        <select required name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror">
-                            <option selected value="" disabled>--Pilih Kategory--</option>
-                            @foreach ($categories as $ct)
-                                @if (old('category_id',$stock->category_id??'')==$ct->id)
-                                    <option selected value="{{$ct->id}}">{{$ct->name}}</option>
-                                @else
-                                    <option value="{{$ct->id}}">{{$ct->name}}</option>
-                                @endif
-                            @endforeach
-                        </select>
+                <div class="row">
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped table-bordered table-sm" id="table-stock-product">
+                            <thead>
+                                <tr>
+                                    <th>Barcode</th>
+                                    <th>Produk</th>
+                                    <th>Satuan</th>
+                                    <th>Harga</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th style="min-width: 100px">#</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-12 text-right mb-3">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-                        <i class="fas fa-plus"></i> Tambah Produk
-                    </a>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <button type="button" onclick="history.back()" class="btn btn-default"><i class="fas fa-arrow-left"></i> Kembali</button>
+                        <button type="submit" class="btn btn-primary "><i class="fas fa-save"></i> Simpan</button>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 table-responsive">
-                    <table class="table table-striped table-bordered table-sm" id="table-stock-product">
-                        <thead>
-                            <tr>
-                                <th>Barcode</th>
-                                <th>Produk</th>
-                                <th>Satuan</th>
-                                <th>Harga</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                                <th style="min-width: 100px">#</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <button type="button" onclick="history.back()" class="btn btn-default"><i class="fas fa-arrow-left"></i> Kembali</button>
-                    <button type="button" onclick="saveStock()" class="btn btn-primary "><i class="fas fa-save"></i> Simpan</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -160,7 +162,6 @@
                 <hr>
                 <div class="row">
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Batal</button>
                         <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button> 
                     </div>
                 </div>
@@ -309,6 +310,7 @@
             let barcode = $(this).val();
             barcodeCheck(barcode);
         })
+        saveStock()
     })
 
     function getStock(){
@@ -334,34 +336,35 @@
     }
 
     function saveStock(){
-        stock.name = $('#name').val();
-        stock.category={
-            id:$('#category_id').val()
-        };
-        let value = $('#value').val();
-        if (stock.name == "" || value =="") {
-            toastr.error('Nama Group dan Stok tidak boleh kosong');
-            return false;
-        }
-        stock.value = parseFloat(value.replace(/,/g, ""));
-        let method = stockId == ""?"POST":"PUT";
-        let url = stockId == ""?"{{ route('stock.store') }}":"{{URL::to('stock/update')}}"
-        stock.products.forEach(val=>{
-            let bool = $(`#table-stock-product tbody #switch-${val.barcode}`).prop('checked');
-            val.is_active = bool?1:0;
+        formValid($('#form-master'),function(e){
+            stock.name = $('#name').val();
+            stock.category={
+                id:$('#category_id').val()
+            };
+            let value = $('#value').val();
+            stock.value = parseFloat(value.replace(/,/g, ""));
+            if (stock.products.length ==0) {
+                toastr.error('Produk tidak boleh kosong');
+                return false;
+            }
+            let method = stockId == ""?"POST":"PUT";
+            let url = stockId == ""?"{{ route('stock.store') }}":"{{URL::to('stock/update')}}"
+            stock.products.forEach(val=>{
+                let bool = $(`#table-stock-product tbody #switch-${val.barcode}`).prop('checked');
+                val.is_active = bool?1:0;
+            })
+            
+            ajax(stock, url, method,
+                function(json) {
+                    toastr.success('Berhasil Memproses Data')
+                    resetForm($('#form-stock'))
+                    stock.products = [];
+                    reloadJsonDataTable(tblStockProduct,stock.products);
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1000);
+            })
         })
-        
-        ajax(stock, url, method,
-            function(json) {
-                toastr.success('Berhasil Memproses Data')
-                resetForm($('#form-stock'))
-                stock.products = [];
-                reloadJsonDataTable(tblStockProduct,stock.products);
-                setTimeout(() => {
-                    location.reload()
-                }, 1000);
-        })
-        
     }
 </script>
 @endsection
