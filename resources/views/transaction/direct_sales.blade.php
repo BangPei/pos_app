@@ -201,6 +201,7 @@
                   <th>Satuan</th>
                   <th>Harga</th>
                   <th>Stock</th>
+                  <th>Status</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -504,9 +505,17 @@
             }
           },
           {
+            data:"is_active",
+            defaultContent:"--",
+            className:"text-center",
+            mRender:function(data,type,full){
+              return `<small class="badge badge-${data==1?'info':'danger'}">${data==1?'Aktif':'Tidak Aktif'}</small>`
+            }
+          },
+          {
             data: 'id',
             mRender: function(data, type, full) {
-              return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
+              return `<a title="check" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
             }
           }
         ],
@@ -528,9 +537,14 @@
       $('div.dataTables_filter input', tblProduct.table().container()).focus();
     })
 
-
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
+      console.log(product);
+      if (product.is_active == 0) {
+        $('#label-error').html(`Product dengan code ${product.barcode} tidak aktif`);
+        $('#modal-error').modal({backdrop: 'static', keyboard: false});
+        return false;
+      }
       addProduct(product);
       $("#modal-product").modal('hide');
     })
@@ -801,7 +815,10 @@
         }else{
           callback(item)
         }
-      },
+      },function(json){
+        $('#label-error').html(json.responseJSON.message);
+        $('#modal-error').modal({backdrop: 'static', keyboard: false});
+      }
     )
   }
 

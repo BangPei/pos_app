@@ -187,6 +187,9 @@ class ProductController extends Controller
         $product = Product::where('barcode', $barcode)->with('stock')->with(['program' => function ($query) {
             $query->with('multipleDiscount');
         }])->first();
+        if ($product->is_active == 0) {
+            return response()->json(['message' => 'Produk dengan code ' . $barcode . ' tidak aktif'], 400);
+        }
         return response()->json($product);
     }
     public function checkBarcode($barcode)
