@@ -18,25 +18,54 @@ class StockController extends Controller
      */
     public function index()
     {
-        $stock = Stock::orderBy('name', 'asc')->with('products');
-        if (request('search')) {
-            if (request('search-type') == "name") {
-                $stock->where('name', 'like', '%' . request('search') . '%');
-            } else {
-                $product = Product::where('barcode', request('search'))->first();
-                if (isset($product->stock_id)) {
-                    $stock->where('id', $product->stock_id);
-                } else {
-                    $stock->where('name', request('search'));
+
+        switch (request('tab')) {
+            case 'active':
+                $products = Product::where('is_active', 1)->get();
+                $listId = [];
+                for ($i = 0; $i < count($products); $i++) {
+                    array_push($listId, $products[$i]->stock_id);
                 }
+                $stock = Stock::whereIn('id', $listId)->orderBy('name', 'asc')->with('products');;
+                break;
+            case 'disactive':
+                $products = Product::where('is_active', 0)->get();
+                $listId = [];
+                for ($i = 0; $i < count($products); $i++) {
+                    array_push($listId, $products[$i]->stock_id);
+                }
+                $stock = Stock::whereIn('id', $listId)->orderBy('name', 'asc')->with('products');;
+                break;
+
+            default:
+                $stock = Stock::orderBy('name', 'asc')->with('products');
+                break;
+        }
+
+        if (request('search')) {
+            $products = Product::where('barcode', request('search'))
+                ->orWhere('name', 'like', "%" . request('search') . "%")
+                ->get();
+            $listId = [];
+            for ($i = 0; $i < count($products); $i++) {
+                array_push($listId, $products[$i]->stock_id);
             }
+            $stock->whereIn('id', $listId);
         }
         return view('master/product/product-stock', [
             "title" => "Stock",
             "menu" => "Master",
-            "search" => request('search'),
-            "count" => count($stock->get()),
-            "stocks" => $stock->paginate(20)->withQueryString()
+            "count" => $stock->count(),
+            "stocks" => $stock->paginate(20)->withQueryString(),
+            "tab" => [
+                "all" => Product::count(),
+                "active" => Product::where('is_active', 1)->count(),
+                "disActive" => Product::where('is_active', 0)->count(),
+            ],
+            "query" => [
+                'tab' => request('tab'),
+                "search" => request('search'),
+            ]
         ]);
     }
 

@@ -9,13 +9,7 @@
         <div class="col-6">
           <form action="" method="">
             <div class="input-group">
-              <div class="input-group-prepend">
-                <select class="form-control" name="search-type" id="search-type">
-                  <option {{ app('request')->input('search-type') == "name"?"selected":"" }} value="name">Produk</option>
-                  <option {{ app('request')->input('search-type') == "barcode"?"selected":"" }} value="barcode">Barcode</option>
-                </select>
-              </div>
-              <input autofocus="true" type="text" value="{{ $search }}" name="search" id="search" class="form-control" placeholder="Cari Barcode atau Nama Barang" >
+              <input autofocus="true" type="text" value="{{ $query['search'] }}" name="search" id="search" class="form-control" placeholder="Masukan Barcode atau Nama Barang" >
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
               </div>
@@ -32,6 +26,33 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="row pb-2">
+    <div class="col-12">
+      <ul class="nav nav-tabs" id="custom-tabs-five-tab" role="tablist">
+        <li class="nav-item">
+          <a data-tab="all" class="nav-link {{ ($query['tab']=='all'||Request::get('tab')==null)?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="true">
+            Semua
+            <small><span class="badge badge-primary">{{ number_format($tab['all']) }}</span></small>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a data-tab="active" class="nav-link {{ $query['tab']=='active'?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="false">
+            Aktif <small><span class="badge badge-primary">{{ number_format($tab['active']) }}</span></small>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a data-tab="disactive" class="nav-link {{ $query['tab']=='disactive'?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="false">
+            Tidak Aktif
+            <small><span class="badge badge-primary">{{ number_format($tab['disActive']) }}</span></small>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a data-tab="empty-stock" class="nav-link {{ $query['tab']=='empty-stock'?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="false">Stok 0</a>
+        </li>
+      </ul>
+      
     </div>
   </div>
 
@@ -133,8 +154,8 @@
                   </div>
                   <div class="col text-right">
                     <p class="m-0 p-0">
-                      <div class="custom-control custom-switch">
-                        <input type="checkbox" {{ $pr->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $pr->id }}">
+                      <div class="custom-control switch-product custom-switch">
+                        <input data-id="{{ $pr->id }}" type="checkbox" {{ $pr->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $pr->id }}">
                         <label class="custom-control-label" for="switch-{{ $pr->id }}"></label>
                       </div>
                     </p>
@@ -175,7 +196,35 @@
             location.reload();
       })
     })
+    $('.switch-product').on('click','.custom-control-input',function() {
+      let bool = $(this).prop('checked');
+      let data = {
+        id:$(this).attr('data-id'),
+        is_active:bool?1:0
+      }
+      ajax(data, `{{URL::to('/product/status')}}`, "PUT",
+          function(json) {
+            location.reload();
+      })
+    })
+
+    $('#custom-tabs-five-tab li a').on('click',function(){
+      let query = getQueryString();
+      query.tab = $(this).attr('data-tab');
+      let params = "?";
+      for (const key in query) {
+        params += `${key}=${query[key]}&`
+      }
+      let loc = window.location;
+      window.location=`${loc.origin}${loc.pathname}${params}`
+    })
+    initialTab();
   })
+  function initialTab(){
+    let query = getQueryString();
+    query.tab = query.tab==undefined?"all":query.tab
+    console.log(query);
+  }
   function closePrice(id){
     $(`.cancel-${id}`).on('click',function(){
       $(`.form-price-${id}`).addClass('d-none')

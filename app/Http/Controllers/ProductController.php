@@ -165,8 +165,22 @@ class ProductController extends Controller
                 'is_active' => $product['is_active'],
                 'edit_by_id' => auth()->user()->id,
             ]);
+            $product2 = Product::where('id', $product['id'])->first();
+            $stock = Stock::where('id', $product2->stock_id)->with('products')->first();
+            $active = $stock->products->filter(function ($val) {
+                return $val->is_active == 1;
+            });
+            if (count($active) > 0) {
+                Stock::where('id', $stock->id)->update([
+                    'is_active' => 1
+                ]);
+            } else {
+                Stock::where('id', $stock->id)->update([
+                    'is_active' => 0
+                ]);
+            }
         }
-        return response()->json($product);
+        return response()->json(true);
     }
     public function updatePrice(Request $request)
     {
