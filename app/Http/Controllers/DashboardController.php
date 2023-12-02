@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DirectSales;
 use App\Models\Product;
+use App\Models\Stock;
 
 class DashboardController extends Controller
 {
@@ -16,14 +17,7 @@ class DashboardController extends Controller
 
         $transByMonth = app('App\Http\Controllers\DirectSalesController')->groupByMonth();
         $transByWeek = app('App\Http\Controllers\DirectSalesController')->getAWeekData(date('Y-m-d'));
-        $emptyStock = 0;
-        $products = Product::with('stock')->get();
-        foreach ($products as $pr) {
-            $stock = $pr->stock?->value ?? 0 / $pr->convertion;
-            if ($stock < 1) {
-                $emptyStock++;
-            }
-        }
+        $emptyStock = app('App\Http\Controllers\StockController')->getEmptyStock()->count();
         return view(
             'home/home',
             [
@@ -31,7 +25,7 @@ class DashboardController extends Controller
                 "menu" => "Home",
                 "subtotal" => $subtotal ?? 0,
                 "totalOrder" => $totalOrder ?? 0,
-                "totalProduct" => $products->count() ?? 0,
+                "totalProduct" => Stock::count(),
                 "stock" => $emptyStock,
                 "trans" => $transByMonth,
                 "transWeek" => $transByWeek,

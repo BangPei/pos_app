@@ -7,15 +7,30 @@
       <div class="row">
         <div class="col-2"><h2 class="card-title mt-2">Group Stok</h2></div>
         <div class="col-6">
-          <form action="" method="">
-            <div class="input-group">
-              <input autofocus="true" type="text" value="{{ $query['search'] }}" name="search" id="search" class="form-control" placeholder="Masukan Barcode atau Nama Barang" >
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+            <form action="">
+              <div class="input-group">
+                <input autofocus="true" type="text" value="{{ $query['search'] }}" name="search" id="search" class="form-control" placeholder="Masukan Barcode atau Nama Barang" >
+                <div class="form-group d-none">
+                  <select class="form-control perpage" style="height: 37px;width:80px" name="perpage" id="perpage">
+                    <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
+                    <option {{ $query["perpage"]==50?'selected':'' }} value="50">50</option>
+                    <option {{ $query["perpage"]==100?'selected':'' }} value="100">100</option>
+                  </select>
+                  <div class="form-group d-none">
+                    <select class="form-control tabbar" style="height: 37px;width:80px" name="tab" id="tab">
+                      <option {{ $query["tab"]=='all'?'selected':'' }} value="all">all</option>
+                      <option {{ $query["tab"]=='active'?'selected':'' }} value="active">active</option>
+                      <option {{ $query["tab"]=='disactive'?'selected':'' }} value="disactive">disactive</option>
+                      <option {{ $query["tab"]=='empty-stock'?'selected':'' }} value="empty-stock">empty stock</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
         <div class="col-4 text-right">
           <div class="btn-group" role="group" aria-label="Basic example">
             {{-- <button type="button" class="btn btn-danger"><i class="fa fa-upload"></i> Import</button>
@@ -49,11 +64,38 @@
           </a>
         </li>
         <li class="nav-item">
-          <a data-tab="empty-stock" class="nav-link {{ $query['tab']=='empty-stock'?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="false">Stok 0</a>
+          <a data-tab="empty-stock" class="nav-link {{ $query['tab']=='empty-stock'?'active':'' }}" data-toggle="pill" href="" role="tab" aria-controls="custom-tabs-five-normal" aria-selected="false">
+            Stok Habis
+            <small><span class="badge badge-primary">{{ number_format($tab['empty-stock']) }}</span></small>
+          </a>
         </li>
       </ul>
       
     </div>
+  </div>
+
+  <div class="card p-2">
+    <div class="row m-2">
+      <div class="col-6 text-left">
+        <span >
+          Halaman : {{ $page['current_page'] }}, {{ $page['from']??0 }} - {{ $page['to']??0 }} dari {{ number_format($page['total'], 0, ',', ',') }}
+        </span>
+      </div>
+      <div class="col-6 text-right">
+        <div class="row justify-content-end">
+            Urut Berdasarkan : 
+            <select id="order-by" name="order-by">
+              <option {{ ($query['order']==='name' &&   $query['sort']==='asc')?'selected':'' }} value="name:asc">Nama [A-Z]</option>
+              <option {{ ($query['order']==='name' &&   $query['sort']==='desc')?'selected':'' }} value="name:desc">Nama [Z-A]</option>
+              <option {{ ($query['order']==='price' &&   $query['sort']==='asc')?'selected':'' }} value="price:asc">Harga Termurah</option>
+              <option {{ ($query['order']==='price' &&   $query['sort']==='desc')?'selected':'' }} value="price:desc">Harga Termalah</option>
+              <option {{ ($query['order']==='stock' && $query['sort']==='asc')?'selected':'' }} value="stock:asc">Stok Terkecil</option>
+              <option {{ ($query['order']==='stock' && $query['sort']=='desc')?'selected':'' }} value="stock:desc">Stok Terbesar</option>
+            </select>
+        </div>
+      </div>
+    </div>
+    
   </div>
 
   @if (count($stocks) == 0)
@@ -160,11 +202,6 @@
                       </div>
                     </p>
                   </div>
-                  {{-- <div class="col-">
-                    <p class="m-0 p-0">
-                      <a href="/product/{{$pr->barcode}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
-                    </p>
-                  </div> --}}
                 </div>
               </h6>
             @endforeach
@@ -173,10 +210,14 @@
       </div>
   @endforeach
 
-  <div class="d-flex justify-content-center">
-    {{ $stocks->links() }}
-    <br>
-    <p>{{ $count }}</p>
+  <div class="row pl-2 pr-2 d-flex justify-content-end">
+    <span class="pt-1">Perhalaman : </span> 
+    <select class="form-control perpage" style="height: 37px;width:80px">
+      <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
+      <option {{ $query["perpage"]==50?'selected':'' }} value="50">50</option>
+      <option {{ $query["perpage"]==100?'selected':'' }} value="100">100</option>
+    </select>
+    <span class="pl-1">{{ $stocks->links() }}</span>
   </div>
 </div>
 @endsection
@@ -211,6 +252,18 @@
     $('#custom-tabs-five-tab li a').on('click',function(){
       let query = getQueryString();
       query.tab = $(this).attr('data-tab');
+      $('#tab').val(query.tab).trigger('change')
+      let params = "?";
+      for (const key in query) {
+        params += `${key}=${query[key]}&`
+      }
+      let loc = window.location;
+      window.location=`${loc.origin}${loc.pathname}${params}`
+    })
+    $('.perpage').on('change',function(){
+      $('#perpage').val($(this).val())
+      let query = getQueryString();
+      query.perpage = $(this).val();
       let params = "?";
       for (const key in query) {
         params += `${key}=${query[key]}&`

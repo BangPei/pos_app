@@ -18,27 +18,18 @@ class StockController extends Controller
      */
     public function index()
     {
-
         switch (request('tab')) {
             case 'active':
-                $products = Product::where('is_active', 1)->get();
-                $listId = [];
-                for ($i = 0; $i < count($products); $i++) {
-                    array_push($listId, $products[$i]->stock_id);
-                }
-                $stock = Stock::whereIn('id', $listId)->orderBy('name', 'asc')->with('products');;
+                $stock = Stock::where('is_active', 1)->orderBy(request('order') ?? 'name', request('sort') ?? 'asc')->with('products');
                 break;
             case 'disactive':
-                $products = Product::where('is_active', 0)->get();
-                $listId = [];
-                for ($i = 0; $i < count($products); $i++) {
-                    array_push($listId, $products[$i]->stock_id);
-                }
-                $stock = Stock::whereIn('id', $listId)->orderBy('name', 'asc')->with('products');;
+                $stock = Stock::where('is_active', 0)->orderBy(request('order') ?? 'name', request('sort') ?? 'asc')->with('products');
                 break;
-
+            case 'empty-stock':
+                $stock = $this->getEmptyStock(request('order') ?? 'name', request('sort') ?? 'asc');
+                break;
             default:
-                $stock = Stock::orderBy('name', 'asc')->with('products');
+                $stock = Stock::orderBy(request('order') ?? 'name', request('sort') ?? 'asc')->with('products');
                 break;
         }
 
@@ -52,19 +43,35 @@ class StockController extends Controller
             }
             $stock->whereIn('id', $listId);
         }
+        $count = $stock->count();
+        $stockRecord = $stock->paginate(request('perpage') ?? 20)->withQueryString();
+        $json = json_decode($stockRecord->toJson());
+
         return view('master/product/product-stock', [
             "title" => "Stock",
             "menu" => "Master",
-            "count" => $stock->count(),
-            "stocks" => $stock->paginate(20)->withQueryString(),
+            "count" => $count,
+            "stocks" => $stockRecord,
             "tab" => [
-                "all" => Product::count(),
-                "active" => Product::where('is_active', 1)->count(),
-                "disActive" => Product::where('is_active', 0)->count(),
+                "all" => Stock::count(),
+                "active" => Stock::where('is_active', 1)->count(),
+                "disActive" => Stock::where('is_active', 0)->count(),
+                "empty-stock" => $this->getEmptyStock()->count(),
             ],
             "query" => [
                 'tab' => request('tab'),
                 "search" => request('search'),
+                "order" => request('order'),
+                "sort" => request('sort'),
+                "perpage" => request('perpage'),
+            ],
+            "page" => [
+                "total" => $json->total,
+                "per_page" => $json->per_page,
+                "current_page" => $json->current_page,
+                "last_page" => $json->last_page,
+                "from" => $json->from,
+                "to" => $json->to,
             ]
         ]);
     }
@@ -253,5 +260,18 @@ class StockController extends Controller
             ]);
         }
         return response()->json($stock);
+    }
+
+    public function getEmptyStock($order = "name", $sort = "asc")
+    {
+        $listId = [];
+        $products = Product::with('stock')->get();
+        foreach ($products as $pr) {
+            $value = ($pr->stock?->value ?? 0) / $pr->convertion;
+            if ($value < 1) {
+                array_push($listId, $pr->stock_id);
+            }
+        }
+        return Stock::whereIn('id', $listId)->orderBy($order, $sort)->with('products');
     }
 }

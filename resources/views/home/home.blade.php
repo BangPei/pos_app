@@ -11,7 +11,7 @@
     <div class="icon">
       <i class="fa fa-dollar-sign"></i>
     </div>
-    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    <a href="/report/daily?from={{ date('d F Y', time()) }}&to={{ date('d F Y', time()) }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
   </div>
 </div>
 <div class="col-lg-3 col-6">
@@ -25,7 +25,7 @@
     <div class="icon">
       <i class="ion ion-bag"></i>
     </div>
-    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    <a href="/report/daily?from={{ date('d F Y', time()) }}&to={{ date('d F Y', time()) }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
   </div>
 </div>
 <div class="col-lg-3 col-6">
@@ -39,7 +39,7 @@
     <div class="icon">
       <i class="ion ion-bag"></i>
     </div>
-    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    <a href="/stock?tab=all" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
   </div>
 </div>
 <div class="col-lg-3 col-6">
@@ -53,7 +53,7 @@
     <div class="icon">
       <i class="ion ion-bag"></i>
     </div>
-    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    <a href="/stock?tab=empty-stock" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
   </div>
 </div>
 <div class="col-md-6 col-12">
