@@ -119,7 +119,7 @@
                                     </a>
                                 </li> --}}
                                 <li class="nav-item">
-                                    <a href="/stock" class="nav-link {{Request::is('stock*')?'active':''}}">
+                                    <a href="/stock?tab=all" class="nav-link {{Request::is('stock*')?'active':''}}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Barang</p>
                                     </a>

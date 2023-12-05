@@ -87,10 +87,10 @@
             <select id="order-by" name="order-by">
               <option {{ ($query['order']==='name' &&   $query['sort']==='asc')?'selected':'' }} value="name:asc">Nama [A-Z]</option>
               <option {{ ($query['order']==='name' &&   $query['sort']==='desc')?'selected':'' }} value="name:desc">Nama [Z-A]</option>
-              <option {{ ($query['order']==='price' &&   $query['sort']==='asc')?'selected':'' }} value="price:asc">Harga Termurah</option>
-              <option {{ ($query['order']==='price' &&   $query['sort']==='desc')?'selected':'' }} value="price:desc">Harga Termalah</option>
-              <option {{ ($query['order']==='stock' && $query['sort']==='asc')?'selected':'' }} value="stock:asc">Stok Terkecil</option>
-              <option {{ ($query['order']==='stock' && $query['sort']=='desc')?'selected':'' }} value="stock:desc">Stok Terbesar</option>
+              {{-- <option {{ ($query['order']==='price' &&   $query['sort']==='asc')?'selected':'' }} value="price:asc">Harga Termurah</option>
+              <option {{ ($query['order']==='price' &&   $query['sort']==='desc')?'selected':'' }} value="price:desc">Harga Termalah</option> --}}
+              <option {{ ($query['order']==='value' && $query['sort']==='asc')?'selected':'' }} value="value:asc">Stok Terkecil</option>
+              <option {{ ($query['order']==='value' && $query['sort']=='desc')?'selected':'' }} value="value:desc">Stok Terbesar</option>
             </select>
         </div>
       </div>
@@ -115,6 +115,7 @@
             <a href="/stock/{{ $s->id }}/edit">
               <label class="m-0 p-0" for="">{{ Str::upper($s->name) }}</label>
               <a class="pl-1" href="/stock/{{ $s->id }}/edit"> <i class="fa fa-eye"></i></a>
+              <label >{{ $s->max_price }}</label>
             </a>
           </div> 
           <div class="col-3 text-right">
@@ -253,31 +254,21 @@
       let query = getQueryString();
       query.tab = $(this).attr('data-tab');
       $('#tab').val(query.tab).trigger('change')
-      let params = "?";
-      for (const key in query) {
-        params += `${key}=${query[key]}&`
-      }
-      let loc = window.location;
-      window.location=`${loc.origin}${loc.pathname}${params}`
+      navigate(query);
     })
     $('.perpage').on('change',function(){
       $('#perpage').val($(this).val())
       let query = getQueryString();
       query.perpage = $(this).val();
-      let params = "?";
-      for (const key in query) {
-        params += `${key}=${query[key]}&`
-      }
-      let loc = window.location;
-      window.location=`${loc.origin}${loc.pathname}${params}`
+      navigate(query);
     })
-    initialTab();
+    $('#order-by').on('change',function(){
+      let query = getQueryString();
+      query.order = $(this).val().split(':')[0];
+      query.sort = $(this).val().split(':')[1];
+      navigate(query);
+    })
   })
-  function initialTab(){
-    let query = getQueryString();
-    query.tab = query.tab==undefined?"all":query.tab
-    console.log(query);
-  }
   function closePrice(id){
     $(`.cancel-${id}`).on('click',function(){
       $(`.form-price-${id}`).addClass('d-none')

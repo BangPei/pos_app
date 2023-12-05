@@ -180,3 +180,13 @@ function getQueryString() {
 	});
 	return location.queryString;
 }
+
+function navigate(query){
+	let params = "?";
+	for (const key in query) {
+	  params += `${key}=${query[key]}&`
+	}
+	let loc = window.location;
+	params = params.replace(/.$/,"")
+	window.location=`${loc.origin}${loc.pathname}${params}`
+}

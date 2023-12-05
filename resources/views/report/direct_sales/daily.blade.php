@@ -228,24 +228,14 @@
       $('#perpage').val($(this).val())
       let query = getQueryString();
       query.perpage = $(this).val();
-      let params = "?";
-      for (const key in query) {
-        params += `${key}=${query[key]}&`
-      }
-      let loc = window.location;
-      window.location=`${loc.origin}${loc.pathname}${params}`
+      navigate(query);
     })
 
     $('#order-by').on('change',function(){
       let query = getQueryString();
       query.order = $(this).val().split(':')[0];
       query.sort = $(this).val().split(':')[1];
-      let params = "?";
-      for (const key in query) {
-        params += `${key}=${query[key]}&`
-      }
-      let loc = window.location;
-      window.location=`${loc.origin}${loc.pathname}${params}`
+      navigate(query);
     })
   })
 </script>
