@@ -12,7 +12,7 @@ class DashboardController extends Controller
     {
         $from = date("Y-m-d") . " 00:00:00";
         $to = date("Y-m-d") . " 23:59:59";
-        $subtotal = DirectSales::whereBetween('date', [$from, $to])->sum('subtotal');
+        $subtotal = DirectSales::whereBetween('date', [$from, $to])->sum('amount');
         $totalOrder = DirectSales::whereBetween('date', [$from, $to])->count();
 
         $transByMonth = app('App\Http\Controllers\DirectSalesController')->groupByMonth();
