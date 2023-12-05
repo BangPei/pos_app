@@ -113,14 +113,14 @@
         <div class="row pl-2 pr-2">
           <div class="col-7">
             <a href="/stock/{{ $s->id }}/edit">
-              <label class="m-0 p-0" for="">{{ Str::upper($s->name) }}</label>
+              <label class="m-0 p-0" >{{ Str::upper($s->name) }}</label>
               <a class="pl-1" href="/stock/{{ $s->id }}/edit"> <i class="fa fa-eye"></i></a>
               <label >{{ $s->max_price }}</label>
             </a>
           </div> 
           <div class="col-3 text-right">
             <label class="m-0 p-0 p-stock-{{ $s->id??"" }}">
-              Stock : {{ number_format($s->value) }} 
+              Stock : <span class="{{$s->value==0?'text-danger': '' }}">{{$s->value==0?'Habis': number_format($s->value) }} </span> 
               <i onclick="editStock({{ $s->id }})" class="fa fa-edit text-primary"></i>
             </label>
             <form method="post" action="/stock/value" class="form-stock-{{ $s->id }} d-none">
@@ -139,8 +139,8 @@
           <div class="col text-right pr-4">
             <div class="custom-control custom-switch switch-stock">
               <label class="pr-5">status : </label>
-              <input data-id="{{ $s->id }}" type="checkbox" {{ $s->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-{{ $s->id }}">
-              <label class="custom-control-label" for="switch-{{ $s->id }}"></label>
+              <input data-id="{{ $s->id }}" type="checkbox" {{ $s->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-stock-{{ $s->id }}">
+              <label class="custom-control-label" for="switch-stock-{{ $s->id }}"></label>
             </div>
           </div>
           @if (count($s->products)==0)
@@ -168,15 +168,15 @@
                     @endif
                   </div>
                   <div class="col-3 text-left">
-                    <label class="m-0 p-0" for="">{{ Str::upper($pr->name) }}</label>
-                    <p class="m-0 p-0">SKU : <label class="m-0 p-0" for="">{{ $pr->barcode }}</label></p>
-                    <p class="m-0 p-0">Satuan : <label class="m-0 p-0" for="">{{$pr->convertion."/".$pr->uom?->name??"" }}</label></p>
+                    <label class="m-0 p-0" >{{ Str::upper($pr->name) }}</label>
+                    <p class="m-0 p-0">SKU : <label class="m-0 p-0" >{{ $pr->barcode }}</label></p>
+                    <p class="m-0 p-0">Satuan : <label class="m-0 p-0" >{{$pr->convertion."/".$pr->uom?->name??"" }}</label></p>
                     
                   </div>
                   <div class="col-3">
                     <p class="m-0 p-0">Harga Jual</p>
                     <p  class="m-0 p-0 p-price-{{ $pr->id }}">
-                      <label for="">Rp. {{ number_format($pr->price, 0, ',', ',') }}</label>
+                      <label >Rp. {{ number_format($pr->price, 0, ',', ',') }}</label>
                       <i onclick="priceClick({{ $pr->id }})" class="fa fa-edit text-primary"></i>
                     </p>
                     <form method="post" action="/product/price" class="form-price-{{ $pr->id }} d-none">
@@ -193,7 +193,7 @@
                     </form>
                   </div>
                   <div class="col-3 text-right">
-                    <p class="m-0 p-0"> <label>{{ number_format(floor($s->value / $pr->convertion??0), 0, ',', ',')}}</label></p>
+                    <p class="m-0 p-0"> <label class="{{ floor($s->value / $pr->convertion??0)==0?'text-danger':'' }}">{{ floor($s->value / $pr->convertion??0)==0?"Habis": number_format(floor($s->value / $pr->convertion??0), 0, ',', ',')}}</label></p>
                   </div>
                   <div class="col text-right">
                     <p class="m-0 p-0">
@@ -213,7 +213,7 @@
 
   <div class="row pl-2 pr-2 d-flex justify-content-end">
     <span class="pt-1">Perhalaman : </span> 
-    <select class="form-control perpage" style="height: 37px;width:80px">
+    <select id="dummy" name="dummy" class="form-control perpage" style="height: 37px;width:80px">
       <option {{ $query["perpage"]==20?'selected':'' }} value="20">20</option>
       <option {{ $query["perpage"]==50?'selected':'' }} value="50">50</option>
       <option {{ $query["perpage"]==100?'selected':'' }} value="100">100</option>
