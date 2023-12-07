@@ -18,6 +18,9 @@ class StockController extends Controller
      */
     public function index()
     {
+        if (!request('tab')) {
+            return redirect()->to('stock?tab=all');
+        }
         switch (request('tab')) {
             case 'active':
                 $stock = Stock::where('is_active', 1)->orderBy(request('order') ?? 'name', request('sort') ?? 'asc')->with('products');
