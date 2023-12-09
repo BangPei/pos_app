@@ -19,17 +19,68 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::orderBy('name', 'asc')->with('stock');
+        if (!request('tab')) {
+            return redirect()->to('product?tab=all');
+        }
+        $product = Product::with('stock');
+
+        switch (request('tab')) {
+            case 'active':
+                $product->where('is_active', 1);
+                break;
+            case 'disactive':
+                $product->where('is_active', 0);
+                break;
+            case 'empty-stock':
+                $product = $this->getEmptyStock();
+                break;
+            default:
+                $product;
+                break;
+        }
+
         if (request('search')) {
             $product->where('barcode', request('search'))
                 ->orWhere('name', 'like', '%' . request('search') . '%');
         }
+        if (request('order')) {
+            if (request('order') == "value") {
+                $product->with(['stock' => function ($q) {
+                    $q->orderBy(request('order'), request('sort') ?? 'asc');
+                }]);
+            } else {
+                $product->orderBy(request('order') ?? 'name', request('sort') ?? 'asc');
+            }
+        }
+        $productRecord = $product->paginate(request('perpage') ?? 20)->withQueryString();
+        $json = json_decode($productRecord->toJson());
 
         return view('master/product/product', [
             "title" => "Product",
             "menu" => "Master",
             "search" => request('search'),
-            "products" => $product->paginate(20)->withQueryString(),
+            "products" => $productRecord,
+            "tab" => [
+                "all" => Product::count(),
+                "active" => Product::where('is_active', 1)->count(),
+                "disActive" => Product::where('is_active', 0)->count(),
+                "empty-stock" => $this->getEmptyStock()->count(),
+            ],
+            "query" => [
+                'tab' => request('tab'),
+                "search" => request('search'),
+                "order" => request('order'),
+                "sort" => request('sort'),
+                "perpage" => request('perpage'),
+            ],
+            "page" => [
+                "total" => $json->total,
+                "per_page" => $json->per_page,
+                "current_page" => $json->current_page,
+                "last_page" => $json->last_page,
+                "from" => $json->from,
+                "to" => $json->to,
+            ]
         ]);
     }
     public function dataTable(UtilitiesRequest $request)
@@ -242,5 +293,18 @@ class ProductController extends Controller
         print($product);
         die();
         return Redirect::to('product');
+    }
+
+    public function getEmptyStock()
+    {
+        $listId = [];
+        $products = Product::with('stock')->get();
+        foreach ($products as $pr) {
+            $value = ($pr->stock?->value ?? 0) / $pr->convertion;
+            if ($value < 1) {
+                array_push($listId, $pr->id);
+            }
+        }
+        return Product::whereIn('id', $listId)->with('stock');
     }
 }

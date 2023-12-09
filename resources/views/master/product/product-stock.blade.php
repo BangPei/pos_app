@@ -95,7 +95,6 @@
         </div>
       </div>
     </div>
-    
   </div>
 
   @if (count($stocks) == 0)
