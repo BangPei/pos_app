@@ -20,7 +20,7 @@ class ProductController extends Controller
     public function index()
     {
         if (!request('tab')) {
-            return redirect()->to('product?tab=all');
+            return redirect()->to('product?tab=all&order=name&sort=asc');
         }
         $product = Product::with('stock');
 
