@@ -86,8 +86,8 @@
               <option {{ ($query['order']==='name' &&   $query['sort']==='desc')?'selected':'' }} value="name:desc">Nama [Z-A]</option>
               <option {{ ($query['order']==='price' &&   $query['sort']==='asc')?'selected':'' }} value="price:asc">Harga Termurah</option>
               <option {{ ($query['order']==='price' &&   $query['sort']==='desc')?'selected':'' }} value="price:desc">Harga Termalah</option>
-              <option {{ ($query['order']==='value' && $query['sort']==='asc')?'selected':'' }} value="value:asc">Stok Terkecil</option>
-              <option {{ ($query['order']==='value' && $query['sort']=='desc')?'selected':'' }} value="value:desc">Stok Terbesar</option>
+              {{-- <option {{ ($query['order']==='value' && $query['sort']==='asc')?'selected':'' }} value="value:asc">Stok Terkecil</option>
+              <option {{ ($query['order']==='value' && $query['sort']=='desc')?'selected':'' }} value="value:desc">Stok Terbesar</option> --}}
             </select>
         </div>
       </div>
