@@ -257,8 +257,8 @@
         })
 
         formValid($('#form-stock'),function(e){
-            let productId = $('#product-id').val()
             let product = {
+                id:$('#product-id').val(),
                 name:$('#product-name').val(),
                 barcode:$('#barcode').val(),
                 convertion:$('#convertion').val(),
@@ -270,21 +270,35 @@
                     name:$('#uom_id').find('option:selected').text()
                 },
             }
-            if (productId==""||productId==null) {
+            if (product.id==""||product.id==null) {
                 stock.products.push(product)
             }else{
-                stock.products.filter(val=>{
-                    val.name=$('#product-name').val(),
-                    val.barcode=$('#barcode').val(),
-                    val.convertion=$('#convertion').val(),
-                    val.price=$('#price').val(),
-                    val.image=null,
-                    val.is_active=1,
-                    val.uom={
-                        id:$('#uom_id').val(),
-                        name:$('#uom_id').find('option:selected').text()
+                stock.products.forEach(val=>{
+                    if (val.id == product.id) {
+                        val.name=product.name,
+                        val.barcode=product.barcode,
+                        val.convertion=product.convertion,
+                        val.price=product.price,
+                        val.image=null,
+                        val.is_active=product.is_active,
+                        val.uom={
+                            id:product.uom.id,
+                            name:product.uom.name
+                        }
                     }
                 })
+                // stock.products.filter(val=>{
+                //     val.name=$('#product-name').val(),
+                //     val.barcode=$('#barcode').val(),
+                //     val.convertion=$('#convertion').val(),
+                //     val.price=$('#price').val(),
+                //     val.image=null,
+                //     val.is_active=1,
+                //     val.uom={
+                //         id:$('#uom_id').val(),
+                //         name:$('#uom_id').find('option:selected').text()
+                //     }
+                // })
             }
             reloadJsonDataTable(tblStockProduct, stock.products);
             $('#modal-product').modal('hide')
