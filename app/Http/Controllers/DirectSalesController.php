@@ -6,10 +6,14 @@ use App\Models\DirectSales;
 use App\Models\Atm;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
+use App\Models\Product;
 use App\Models\Stock;
 use App\Models\TempTransaction;
 use Carbon\Carbon;
+use Facade\FlareClient\Http\Response;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
@@ -155,6 +159,166 @@ class DirectSalesController extends Controller
         }
         return response()->json($ds);
     }
+
+    public function randomTransaction()
+    {
+
+        $listProductName = [
+            'milna', 'prenagen', 'morinaga', 'chil go', 'nutrive', 'benecol', 'zee', 'diabetasol',
+            "BMT", 'chilmil', 'chil mil', 'chilkid', "chil kid", 'chil school', 'chilschool', 'fitbar',
+            'slim & fit', 'entrasol', 'CHILSHOOL', "CHILSCH0OL",
+        ];
+        $morinaga = [
+            'morinaga', 'chil go', "BMT", 'chilmil', 'chil mil', 'chilkid',
+            "chil kid", 'chil school', 'chilschool', 'CHILSHOOL', "CHILSCH0OL"
+        ];
+
+        $listDiscount = [
+            ["barcode" => "8992802180047", 'discount' => 10000],
+            ["barcode" => "8992802001137", 'discount' => 10000],
+            ["barcode" => "8992802180085", 'discount' => 10000],
+            ["barcode" => "8992802180030", 'discount' => 10000],
+            ["barcode" => "8992802001144", 'discount' => 14000],
+            ["barcode" => "8992802001151", 'discount' => 14000],
+
+            ["barcode" => "8992802003032", 'discount' => 14000],
+            ["barcode" => "8992802003049", 'discount' => 14000],
+            ["barcode" => "8992802180153", 'discount' => 10000],
+            ["barcode" => "8992802180146", 'discount' => 10000],
+        ];
+        $products = [];
+        for ($i = 0; $i < count($listProductName); $i++) {
+            $product = Product::where('name', 'LIKE', '%' . $listProductName[$i] . '%')->where('is_active', 1)->where('price', '>', 0)->get();
+            if (count($product) > 0) {
+                for ($j = 0; $j < count($product); $j++) {
+                    array_push($products, $product[$j]);
+                }
+            }
+        }
+
+        $morinagas = [];
+        for ($i = 0; $i < count($morinaga); $i++) {
+            $product = Product::where('name', 'LIKE', '%' . $morinaga[$i] . '%')->where('is_active', 1)->where('price', '>', 0)->get();
+            if (count($product) > 0) {
+                for ($j = 0; $j < count($product); $j++) {
+                    array_push($morinagas, $product[$j]);
+                }
+            }
+        }
+
+        for ($i = 0; $i < 10; $i++) {
+            $ds = $this->setRandomTrans($products, $listDiscount, $morinagas);
+            $this->printReceipt($ds);
+        }
+        return  Response()->json($ds);
+    }
+
+    private function setRandomTrans($products, $listDiscount, $morinagas)
+    {
+        $more = true;
+
+        $strDate = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $str = $i < 10 ? "0" . $i : "" . $i . "";
+            array_push($strDate, date('ym' . $str));
+        }
+
+        //to get random array index from list
+        $k = array_rand($strDate);
+        $v = $strDate[$k];
+
+        $ds = new DirectSales();
+        $ds->code = "DS" . $v . random_int(1000, 9999);
+        $ds->date = $v;
+        $ds->customer_name = "";
+        $ds->discount = 0;
+        $ds->additional_discount = 25000;
+        $ds->subtotal = 0;
+        $ds->amount = 0;
+        $ds->cash = 0;
+        $ds->change = 0;
+        $ds->total_item = 0;
+        $ds->created_by_id = auth()->user()->id;
+        $ds->edit_by_id = auth()->user()->id;
+        $ds->payment_type_id = 3;
+        $ds->reduce = 0;
+        $ds->is_cash = 1;
+        $ds->bank_id = null;
+        $ds->reduce_value = 0;
+
+        $details = [];
+        while ($more) {
+            $pr = $products[array_rand($products)];
+            $barcode = $pr['barcode'];
+            $detail = new DirectSalesDetail();
+            $detail->direct_sales_id = $ds["id"];
+            $detail->product_barcode = $barcode;
+            $detail->price = $pr->price;
+            $detail->qty = 1;
+            $detail->product_name = $pr['name'];
+            $detail->discount = 0;
+            $detail->program = 0;
+            $detail->subtotal = $pr->price;
+            $detail->convertion = $pr['convertion'];
+            $detail->uom = '';
+            $detail->category = "";
+            for ($i = 0; $i < count($listDiscount); $i++) {
+                $discount = $listDiscount[$i];
+                if ($barcode == $discount['barcode']) {
+                    $detail->discount = $discount['discount'];
+                    $ds->discount = $ds->discount + $detail->discount;
+                }
+            }
+            if (count($details) == 0) {
+                $ds->total_item = $ds->total_item + $detail->qty;
+                $ds->subtotal = $ds->subtotal + $detail->subtotal;
+                array_push($details, $detail);
+            } else {
+                $filter = Arr::where($details, function ($value, $key) use ($barcode, $ds) {
+                    if ($value['barcode'] == $barcode) {
+                        $value['qty'] = $value['qty'] + 1;
+                        $value['subtotal'] = $value['subtotal'] + $value['price'];
+                        $ds->total_item = $ds->total_item + 1;
+                        $ds->subtotal = $ds->subtotal + $value['price'];
+                    }
+                });
+                if (count($filter) == 0) {
+                    $ds->total_item = $ds->total_item + $detail->qty;
+                    $ds->subtotal = $ds->subtotal + $detail->subtotal;
+                    array_push($details, $detail);
+                }
+            }
+
+            if (($ds->subtotal - $ds->discount) > 300000) {
+                $intCheck = 0;
+                foreach ($details as $dt) {
+                    // $moriFilter = $morinagas->filter(function ($mr) use ($dt) {
+                    //     return $mr['barcode'] === $dt->barcode;
+                    // });
+                    $moriFilter = Arr::where($morinagas, function ($value, $key) use ($dt) {
+                        return $value['barcode'] == $dt->barcode;
+                    });
+                    if (count($moriFilter) == 0) {
+                        $intCheck = $intCheck + 1;
+                    }
+                }
+                if ($intCheck > 0) {
+                    $more = false;
+                } else {
+                    $more = true;
+                    if (($ds->subtotal - $ds->discount) > 500000) {
+                        $more = false;
+                    }
+                }
+            }
+        }
+        if (!$more) {
+            $ds->amount = $ds->subtotal - ($ds->additional_discount + $ds->discount);
+        }
+        $ds->details = $details;
+        return $ds;
+    }
+
     public function printStruct(Request $request)
     {
         $date = date('ymd');
@@ -445,5 +609,15 @@ class DirectSalesController extends Controller
         $dateHour = $date . " " . $hour;
         $directSales = DirectSales::where('date', 'like', '%' . $dateHour . '%')->get();
         return response()->json($directSales);
+    }
+
+    private function checkBarcode($myArray, $barcode)
+    {
+        foreach ($myArray as $element) {
+            if (($element->barcode == $barcode || (!empty($myArray['barcode']) && $this->checkBarcode($myArray['barcode'], $barcode)))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
