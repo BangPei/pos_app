@@ -172,6 +172,7 @@ class DirectSalesController extends Controller
         ];
 
         $listDiscount = [
+            //chil school gold 800-1600 gr
             ["barcode" => "8992802180047", 'discount' => 10000],
             ["barcode" => "8992802001137", 'discount' => 10000],
             ["barcode" => "8992802180085", 'discount' => 10000],
@@ -179,6 +180,7 @@ class DirectSalesController extends Controller
             ["barcode" => "8992802001144", 'discount' => 14000],
             ["barcode" => "8992802001151", 'discount' => 14000],
 
+            //chil kid gold 800-1600 gr
             ["barcode" => "8992802003032", 'discount' => 14000],
             ["barcode" => "8992802003049", 'discount' => 14000],
             ["barcode" => "8992802180153", 'discount' => 10000],
