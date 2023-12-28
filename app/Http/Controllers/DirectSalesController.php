@@ -10,8 +10,6 @@ use App\Models\Product;
 use App\Models\Stock;
 use App\Models\TempTransaction;
 use Carbon\Carbon;
-use Facade\FlareClient\Http\Response;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -205,12 +203,13 @@ class DirectSalesController extends Controller
                 }
             }
         }
-
-        for ($i = 0; $i < 10; $i++) {
+        $arrDs = [];
+        for ($i = 0; $i < 2; $i++) {
             $ds = $this->setRandomTrans($products, $listDiscount, $morinagas);
             $this->printReceipt($ds);
+            array_push($arrDs, $ds);
         }
-        return  Response()->json($ds);
+        return  Response()->json($arrDs);
     }
 
     private function setRandomTrans($products, $listDiscount, $morinagas)
@@ -218,19 +217,35 @@ class DirectSalesController extends Controller
         $more = true;
 
         $strDate = [];
+        $strHours = [];
+        $minutesSeconds = [];
         for ($i = 1; $i <= 31; $i++) {
             $str = $i < 10 ? "0" . $i : "" . $i . "";
-            array_push($strDate, date('ym' . $str));
+            array_push($strDate, date('Y-m-' . $str));
+        }
+        for ($i = 8; $i <= 21; $i++) {
+            $str = $i < 10 ? "0" . $i : "" . $i . "";
+            array_push($strHours, $str);
+        }
+        for ($i = 0; $i <= 59; $i++) {
+            $str = $i < 10 ? "0" . $i : "" . $i . "";
+            array_push($minutesSeconds, $str);
         }
 
         //to get random array index from list
         $k = array_rand($strDate);
         $v = $strDate[$k];
 
+        $j = array_rand($strHours);
+        $i = $strHours[$j];
+
+        $s = array_rand($minutesSeconds);
+        $m = $minutesSeconds[$s];
+
         $ds = new DirectSales();
-        $ds->code = "DS" . $v . random_int(1000, 9999);
-        $ds->date = $v;
-        $ds->customer_name = "";
+        $ds->code = str_replace("-", "", "DS" . ltrim($v, "2") . random_int(1000, 9999));
+        $ds->date = $v . " " . $i . ":" . $m . ":" . $m;
+        $ds->customer_name = "--";
         $ds->discount = 0;
         $ds->additional_discount = 25000;
         $ds->subtotal = 0;
@@ -274,31 +289,29 @@ class DirectSalesController extends Controller
                 $ds->subtotal = $ds->subtotal + $detail->subtotal;
                 array_push($details, $detail);
             } else {
-                $filter = Arr::where($details, function ($value, $key) use ($barcode, $ds) {
-                    if ($value['barcode'] == $barcode) {
-                        $value['qty'] = $value['qty'] + 1;
-                        $value['subtotal'] = $value['subtotal'] + $value['price'];
-                        $ds->total_item = $ds->total_item + 1;
-                        $ds->subtotal = $ds->subtotal + $value['price'];
-                    }
-                });
-                if (count($filter) == 0) {
+                if (!($this->checkBarcode($details, $barcode))) {
                     $ds->total_item = $ds->total_item + $detail->qty;
                     $ds->subtotal = $ds->subtotal + $detail->subtotal;
                     array_push($details, $detail);
+                } else {
+                    foreach ($details as $d) {
+                        if ($d->product_barcode === $barcode) {
+                            $d->qty = $d->qty + 1;
+                            $d->subtotal = $d->price * $d->qty;
+                            $ds->total_item = $ds->total_item + 1;
+                            $ds->subtotal = $ds->subtotal + $d->price;
+                        }
+                    }
                 }
             }
 
-            if (($ds->subtotal - $ds->discount) > 300000) {
+            if (($ds->subtotal - $ds->discount) >= 300000 && ($ds->subtotal - $ds->discount) <= 500000) {
                 $intCheck = 0;
                 foreach ($details as $dt) {
-                    // $moriFilter = $morinagas->filter(function ($mr) use ($dt) {
-                    //     return $mr['barcode'] === $dt->barcode;
-                    // });
                     $moriFilter = Arr::where($morinagas, function ($value, $key) use ($dt) {
-                        return $value['barcode'] == $dt->barcode;
+                        return $value['barcode'] === $dt->product_barcode;
                     });
-                    if (count($moriFilter) == 0) {
+                    if (count($moriFilter) === 0) {
                         $intCheck = $intCheck + 1;
                     }
                 }
@@ -306,15 +319,40 @@ class DirectSalesController extends Controller
                     $more = false;
                 } else {
                     $more = true;
-                    if (($ds->subtotal - $ds->discount) > 500000) {
-                        $more = false;
-                    }
                 }
+            }
+
+            if (($ds->subtotal - $ds->discount) > 500000) {
+                $more = false;
             }
         }
         if (!$more) {
             $ds->amount = $ds->subtotal - ($ds->additional_discount + $ds->discount);
+            if ($ds->amount > 300000 && $ds->amount <= 350000) {
+                $ds->cash = 350000;
+            } elseif ($ds->amount > 350000 && $ds->amount <= 400000) {
+                $ds->cash = 400000;
+            } elseif ($ds->amount > 400000 && $ds->amount <= 450000) {
+                $ds->cash = 450000;
+            } elseif ($ds->amount > 450000 && $ds->amount <= 500000) {
+                $ds->cash = 500000;
+            } elseif ($ds->amount > 500000 && $ds->amount <= 550000) {
+                $ds->cash = 550000;
+            } elseif ($ds->amount > 550000 && $ds->amount <= 600000) {
+                $ds->cash = 600000;
+            } elseif ($ds->amount <= 300000) {
+                $ds->cash = 300000;
+            } elseif ($ds->amount > 600000 && $ds->amount <= 650000) {
+                $ds->cash = 650000;
+            } elseif ($ds->amount > 650000 && $ds->amount <= 700000) {
+                $ds->cash = 700000;
+            } elseif ($ds->amount > 700000 && $ds->amount <= 750000) {
+                $ds->cash = 750000;
+            } else {
+                $ds->cash = 800000;
+            }
         }
+        $ds->change = $ds->cash - $ds->amount;
         $ds->details = $details;
         return $ds;
     }
@@ -614,7 +652,7 @@ class DirectSalesController extends Controller
     private function checkBarcode($myArray, $barcode)
     {
         foreach ($myArray as $element) {
-            if (($element->barcode == $barcode || (!empty($myArray['barcode']) && $this->checkBarcode($myArray['barcode'], $barcode)))) {
+            if (($element->product_barcode == $barcode || (!empty($myArray['product_barcode']) && $this->checkBarcode($myArray['product_barcode'], $barcode)))) {
                 return true;
             }
         }
