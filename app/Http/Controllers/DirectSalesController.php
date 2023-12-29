@@ -164,11 +164,11 @@ class DirectSalesController extends Controller
         $listProductName = [
             'milna', 'prenagen', 'morinaga', 'chil go', 'nutrive', 'benecol', 'zee', 'diabetasol',
             "BMT", 'chilmil', 'chil mil', 'chilkid', "chil kid", 'chil school', 'chilschool', 'fitbar',
-            'slim & fit', 'entrasol', 'CHILSHOOL', "CHILSCH0OL",
+            'entrasol',
         ];
         $morinaga = [
             'morinaga', 'chil go', "BMT", 'chilmil', 'chil mil', 'chilkid',
-            "chil kid", 'chil school', 'chilschool', 'CHILSHOOL', "CHILSCH0OL"
+            "chil kid", 'chil school', 'chilschool'
         ];
 
         $listDiscount = [
@@ -206,7 +206,7 @@ class DirectSalesController extends Controller
             }
         }
         $arrDs = [];
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $ds = $this->setRandomTrans($products, $listDiscount, $morinagas);
             $this->printReceipt($ds);
             array_push($arrDs, $ds);
@@ -220,7 +220,8 @@ class DirectSalesController extends Controller
 
         $strDate = [];
         $strHours = [];
-        $minutesSeconds = [];
+        $minutes = [];
+        $seconds = [];
         for ($i = 1; $i <= 31; $i++) {
             $str = $i < 10 ? "0" . $i : "" . $i . "";
             array_push($strDate, date('Y-m-' . $str));
@@ -231,7 +232,11 @@ class DirectSalesController extends Controller
         }
         for ($i = 0; $i <= 59; $i++) {
             $str = $i < 10 ? "0" . $i : "" . $i . "";
-            array_push($minutesSeconds, $str);
+            array_push($minutes, $str);
+        }
+        for ($i = 0; $i <= 59; $i++) {
+            $str = $i < 10 ? "0" . $i : "" . $i . "";
+            array_push($seconds, $str);
         }
 
         //to get random array index from list
@@ -241,12 +246,15 @@ class DirectSalesController extends Controller
         $j = array_rand($strHours);
         $i = $strHours[$j];
 
-        $s = array_rand($minutesSeconds);
-        $m = $minutesSeconds[$s];
+        $s = array_rand($minutes);
+        $m = $minutes[$s];
+
+        $ss = array_rand($seconds);
+        $cs = $seconds[$ss];
 
         $ds = new DirectSales();
         $ds->code = str_replace("-", "", "DS" . ltrim($v, "2") . random_int(1000, 9999));
-        $ds->date = $v . " " . $i . ":" . $m . ":" . $m;
+        $ds->date = $v . " " . $i . ":" . $m . ":" . $cs;
         $ds->customer_name = "--";
         $ds->discount = 0;
         $ds->additional_discount = 25000;
