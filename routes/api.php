@@ -68,5 +68,4 @@ Route::resource('platform', OnlineShopeApiController::class);
 
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 
-Route::resource('receipt', ReceiptApiController::class);
 Route::resource('dashboard', DashboardApiController::class);
