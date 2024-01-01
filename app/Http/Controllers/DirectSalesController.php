@@ -49,7 +49,7 @@ class DirectSalesController extends Controller
         }
         for ($i = 0; $i < count($prevDs); $i++) {
             $ds = $prevDs[$i];
-            $prevTotal = $ds['amount']++;
+            $prevTotal =$prevTotal+ $ds['amount'];
         }
         return [
             $year => $currDs,

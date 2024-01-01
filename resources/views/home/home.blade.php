@@ -115,6 +115,46 @@
 </div>
 <div class="col-12">
   <div class="row">
+  <div class="col-lg-6 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Penjualan Tahun - {{ date('Y', time())-1 }}</h2>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Bulan</th>
+                <th class="text-right">Total Transaksi</th>
+                <th class="text-right">Total (Rp.)</th>
+                <th class="text-center">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($trans[(string)(date('Y', time())-1)] as $tran)
+                <tr>
+                  <td>{{ $loop->index+1}}</td>
+                  <td>{{ $tran['month'] }}</td>
+                  <td class="text-right">{{ number_format($tran['data']) }}</td>
+                  <td class="text-right">{{ number_format($tran['amount']) }}</td>
+                  <td class="text-center">
+                    <a  target="_blank" rel="noopener noreferrer" href="/report/monthly?month={{ $tran['month'] }} {{ date('Y', time())-1 }}">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+          <hr>
+          <div class="row">
+            <div class="col-6 text-left font-weight-bold">Grand Total :</div>
+            <div class="col-6 text-right font-weight-bold">{{ number_format($trans['total'.(string)(date('Y', time())-1)]) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="col-lg-6 col-12">
       <div class="card">
         <div class="card-header">
@@ -155,46 +195,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-6 col-12">
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">Penjualan Tahun - {{ date('Y', time())-1 }}</h2>
-        </div>
-        <div class="card-body">
-          <table class="table table-sm table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Bulan</th>
-                <th class="text-right">Total Transaksi</th>
-                <th class="text-right">Total (Rp.)</th>
-                <th class="text-center">Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($trans[(string)(date('Y', time())-1)] as $tran)
-                <tr>
-                  <td>{{ $loop->index+1}}</td>
-                  <td>{{ $tran['month'] }}</td>
-                  <td class="text-right">{{ number_format($tran['data']) }}</td>
-                  <td class="text-right">{{ number_format($tran['amount']) }}</td>
-                  <td class="text-center">
-                    <a  target="_blank" rel="noopener noreferrer" href="/report/monthly?month={{ $tran['month'] }} {{ date('Y', time())-1 }}">
-                      <i class="fas fa-eye"></i>
-                    </a>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-          <hr>
-          <div class="row">
-            <div class="col-6 text-left font-weight-bold">Grand Total :</div>
-            <div class="col-6 text-right font-weight-bold">{{ number_format($trans['total'.(string)(date('Y', time())-1)]) }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
   {{-- <p>{{ $trans[(string)date('Y', time())] }}</p> --}}
 </div>
