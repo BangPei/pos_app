@@ -206,7 +206,7 @@ class DirectSalesController extends Controller
             }
         }
         $arrDs = [];
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             $ds = $this->setRandomTrans($products, $listDiscount, $morinagas);
             $this->printReceipt($ds);
             array_push($arrDs, $ds);
