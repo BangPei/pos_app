@@ -102,7 +102,7 @@ class ShopeeApiController extends Controller
         $path = "/api/v2/auth/token/get";
         $timestamp = time();
         $partner_id = 2005013;
-        $code = "62466149514656424c45504a4c4b4242";
+        $code = "6662474c747775477a76467242726c69";
         $shop_id = 285374341;
         $partner_key = "f0d2dcf11820ed84a4937f7ab3c2f9bceb3a1904ecd51ef604a0c9f263fa3fd6";
         $sign = hash_hmac('sha256', utf8_encode($partner_id . $path . $timestamp), $partner_key, false);
