@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ExpeditionApiController;
 use App\Http\Controllers\API\JdIdApiController;
 use App\Http\Controllers\API\lazadaApiController;
 use App\Http\Controllers\API\OnlineShopeApiController;
+use App\Http\Controllers\API\ProductApiController;
 use App\Http\Controllers\API\ShopeeApiController;
 use App\Http\Controllers\API\TiktokApiController;
 use App\Http\Controllers\API\TransactionOnlineApiController;
@@ -69,3 +70,4 @@ Route::resource('platform', OnlineShopeApiController::class);
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 
 Route::resource('dashboard', DashboardApiController::class);
+Route::resource('product', ProductApiController::class);
