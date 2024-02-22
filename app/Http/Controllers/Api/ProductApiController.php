@@ -15,8 +15,12 @@ class ProductApiController extends Controller
      */
     public function index()
     {
-        $products = Product::orderBy('name', 'asc')->get();
-        return response()->json($products);
+        $products = Product::orderBy('name', 'asc');
+        if (request('search')) {
+            $products->where('barcode', request('search'))
+                ->orWhere('name', 'like', "%" . request('search') . "%");
+        }
+        return response()->json($products->paginate(request('perpage ') ?? 20)->withQueryString());
     }
 
     /**
