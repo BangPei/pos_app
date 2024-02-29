@@ -16,6 +16,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchTaskController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SkuController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TempTransactionController;
@@ -104,4 +105,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::get('report/daily', [ReportController::class, 'daily'])->middleware('auth');
     Route::get('report/monthly', [ReportController::class, 'monthly'])->middleware('auth');
     Route::get('report/yearly', [ReportController::class, 'yearly'])->middleware('auth');
+
+    Route::resource('sku', SkuController::class)->middleware('auth');
 });

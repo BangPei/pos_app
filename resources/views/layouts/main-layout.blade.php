@@ -273,6 +273,12 @@
                         </li>
                         <li class="nav-header">Online Shop</li>
                         <li class="nav-item">
+                            <a href="/sku" class="nav-link {{Request::is('sku*')?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>SKU</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/platform" class="nav-link">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
                                 <p>Platform</p>
