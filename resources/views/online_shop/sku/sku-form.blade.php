@@ -23,7 +23,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="name">Nama</label>
-                            <input readonly value="" type="text" class="form-control" name="name" id="name">
+                            <input value="" type="text" class="form-control" name="name" id="name">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
@@ -58,7 +58,7 @@
                 </div>
                 <div class="row">
                     <div class="col md-12 text-center">
-                        <button type="button" onclick="savesku()" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                        <button type="button" onclick="submitSKU()" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</button>
                     </div>
                 </div>
             </form>
@@ -107,6 +107,7 @@
         id:null,
         code:null,
         name:null,
+        total_item:null,
         details:[],
     }
     $(document).ready(function(){
@@ -250,12 +251,14 @@
             }else{
                 sku.details.splice(detail, 1);
             }
+            $('#total-item').val(sku.details.length)
             reloadJsonDataTable(tblProductSku, sku.details);
         })
 
         $('#table-product-sku').on('click','.delete-product',function(){
             let data = tblProductSku.row($(this).parents('tr')).index();
             sku.details.splice(data, 1);
+            $('#total-item').val(sku.details.length)
             reloadJsonDataTable(tblProductSku, sku.details);
         })
         $('#table-product-sku').on('change','.is-variant',function(){
@@ -268,7 +271,18 @@
             let data = tblProductSku.row($(this).parents('tr')).data();
             data.is_gift = bool?1:0;
         })
+        $('#table-product-sku').on('change','.qty-order',function(){
+            let value = $(this).val();
+            let data = tblProductSku.row($(this).parents('tr')).data();
+            data.qty = value;
+        })
     })
+
+    function submitSKU() {
+        sku.name = $('#name').val();
+        sku.total_item = sku.details.length;
+        console.log(sku)
+    }
 </script>
 @endsection
 
