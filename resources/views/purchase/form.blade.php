@@ -10,39 +10,42 @@
 
 @section('content-child')
 <div class="col-md-12">
+  {{-- header --}}
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Form Pembelian <em id="edit-area"></em></h2>
-      <div class="card-tools">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-          <i class="fas fa-eye"></i> List Produk
-        </a>
+    </div>
+  </div>
+  {{-- Pilih sumber barang --}}
+  <div class="row">
+    <div class="col-md-12">
+      <label for="">Pilih Sumber Barang : </label>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input value="distributor" type="radio" id="customRadioInline1" name="customRadioInline" class="custom-control-input">
+        <label class="custom-control-label" for="customRadioInline1">Distributor</label>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input value="mandiri" type="radio" id="customRadioInline2" name="customRadioInline" class="custom-control-input">
+        <label class="custom-control-label" for="customRadioInline2">Mandiri</label>
       </div>
     </div>
-    <div class="card-body table-responsive">
-      <div class="row">
-        <div class="col-md-4 col-sm-12">
+  </div>
+  {{-- form purchase --}}
+  <div class="row">
+    {{-- purchase informtion --}}
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
           <div class="row">
-            <div class="col-12">
+            <div class="col-md-4">
               <div class="form-group">
-                <input type="text" id="barcode" name="barcode" autocomplete="off" autofocus placeholder="Scann Barcode" class="form-control">
+                <label for="invoice-no">No. Faktur</label>
+                <input type="text" class="form-control" name="invoice-no" id="invoice-no">
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">No Faktur</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
+            <div class="col-md-4">
               <div class="form-group">
-                <input type="text" placeholder="No Invoice / Faktur" id="invoice-no" class="font-weight-bold form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">Supplier</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
-              <div class="form-group">
+                <label for="supplier">Supplier</label>
                 <select name="supplier" id="supplier" class="form-control select2">
                   <option disabled selected>-- pilih supplier--</option>
                   @foreach ($supplier as $s)
@@ -51,73 +54,94 @@
                 </select>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">PIC / Supir</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
+            <div class="col-md-4">
               <div class="form-group">
-                <input type="text" placeholder="pic" id="pic" class="font-weight-bold form-control">
+                <label for="pic">PIC / Salesman</label>
+                <input type="text" class="form-control" name="pic" id="invoice-name">
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">Tipe Pembayaran</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
+            <div class="col-md-4">
               <div class="form-group">
+                <label for="payment-type">Tipe Pembayaran</label>
                 <select name="payment-type" id="payment-type" class="form-control">
                   <option value="tempo">Tempo</option>
                   <option value="lunas">Lunas</option>
               </select>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">Tgl Datang</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
+            <div class="col-md-4">
               <div class="form-group">
-                <input type="text" placeholder="Tgl Datang Barang" id="date-time" class="font-weight-bold form-control">
+                <label for="date-time">Tgl Datang Barang</label>
+                <input type="text" class="form-control" name="date-time" id="date-time">
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4 font-weight-bold">Tgl Tempo</div>
-            <div class="col-2 font-weight-bold">:</div>
-            <div class="col-6">
+            <div class="col-md-4">
               <div class="form-group">
-                <input type="text" placeholder="Tgl Jatuh Tempo" id="due-date" class="font-weight-bold form-control">
+                <label for="due-date">Tgl Jatuh Tempo</label>
+                <input type="text" class="form-control" name="due-date" id="due-date">
               </div>
             </div>
-          </div>
-          <hr>
-          <div class="row">
-            <div class="col-4 font-weight-bolder"><h4>Total</h4></div>
-            <div class="col-2 font-weight-bolder"><h4>:</h4></div>
-            <div class="col-2 font-weight-bolder"><h4>Rp.</h4></div>
-            <div class="col-4 font-weight-bolder text-right"><h4 id="total">0</h4></div>
           </div>
         </div>
-        <div class="col-md-8 col-sm-12">
-          <table class="table table-striped table-bordered table-sm" id="table-order">
-            <thead>
-              <tr>
-                <th>Nama</th>
-                <th>Qty</th>
-                <th>Subtotal</th>
-                <th>Harga (pcs)</th>
-                <th>Pajak (pcs)</th>
-                <th>Harga (dpp/pcs)</th>
-                <th>#</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+      </div>
+    </div>
+
+    {{-- purcase total --}}
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6"><label for="">Subtotal</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="">120.000.000</label></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><label for="">Total Diskon</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="">10.000.000</label></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><label for="">Diskon Extra</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right">
+                <input type="text" placeholder="0" id="discount-2" class="text-right font-weight-bold number2" style="width: 100%">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6"><label for="">Total</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="">110.000.000</label></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><label for="">PPN (11%)</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="">12.100.000</label></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><label for="">Total Faktur</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="">122.100.000</label></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
+  <div class="row">
+    <div class="col-md-12 text-right">
+      <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+        <i class="fas fa-eye"></i> List Produk
+      </a>
+    </div>
+  </div>
+  <br>
 </div>
 
 <div class="modal fade" id="modal-product" tabindex="-1">
@@ -137,7 +161,7 @@
                 <tr>
                   <th>Barcode</th>
                   <th>Nama</th>
-                  <th>Kategori</th>
+                  <th>Harga Jual</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -182,16 +206,19 @@
       ordering:  false,
       bInfo:false,
       data:purchase.details,
+      columns:[
+
+      ],
     })
 
-    keyupTableNumber($('#table-order'))
+    // keyupTableNumber($('#table-order'))
 
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
         processing:true,
         serverSide:true,
         ajax:{
-          url:"{{URL::to('product')}}",
+          url:"{{URL::to('product/dataTable')}}",
           type:"GET",
         },
         columns:[
@@ -201,73 +228,60 @@
           },
           {
             data:"name",
-            defaultContent:"--"
+            defaultContent:"--",
+            
           },
           {
-            data:"category.name",
-            defaultContent:"--"
+            data:"price",
+            defaultContent:"--",
+            className:"text-right",
+            mRender:function(data,type,full){
+              return `Rp. ${formatNumber(data)}`
+            }
           },
           {
             data: 'id',
+            className:"text-center",
             mRender: function(data, type, full) {
-              return `<a title="delete" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
+              return `<a title="add" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
             }
           }
         ],
-        columnDefs: [
-            { 
-              className: "text-center",
-              targets: [2,3]
-            },
-            {
-              width: '12%',
-              targets: 0,
-            },
-            {
-              width: '20%',
-              targets: 2,
-            },
-            {
-              width: '10%',
-              targets: 3,
-            },
-          ],
+        columnDefs:[
+          { width: '10%',
+            targets: 3
+          },
+          { width: '15%',
+            targets: [0,2]
+          },
+        ],
       })
-      $('div.dataTables_filter input', tblProduct.table().container()).focus();
     })
 
-    
-    $(window).bind('beforeunload', function(){
-      if (purchase.details.length!=0) {
-        return "Do you want to exit this page?";
-      }
-    });
+    $('#table-product').on('click','.add-product',function() {
+      let product = tblProduct.row($(this).parents('tr')).data();
+      getStockBy(product.stock.id,function(data){
+        console.log(data)
+      });
+      $("#modal-product").modal('hide');
+    })
 
     $('#modal-product').on('hidden.bs.modal', function (e) {
-      $('#barcode').focus()
       $('#table-product').DataTable().destroy();
     })
  
-    $('#barcode').on('keypress',function(e){
-      if(e.keyCode == 13){
-        let val = $(this).val();
-        if (val !="") {
-          ajax({"barcode":val}, `{{URL::to('/item-convertion/show')}}`, "GET",
-              function(item) {
-                if (Object.keys(item).length != 0) {
-                  console.log(item)
-                  // addProduct(item);
-                  // $("#barcode").val("")
-                }else{
-                  $("#barcode").val(val.toLowerCase())
-                }
-          })
-          
-        }
-      }
-    })
-    
     // dsCode!=""?getDirectSales():null;
   })
+
+  function getStockBy(id,callback) {
+    let data = {id:id}
+    ajax(data, `{{URL::to('/stock/show')}}`, "GET",
+      function(data) {
+        callback(data)
+      },function(json){
+       console.log(json)
+      }
+    )
+  }
 </script>
 @endsection

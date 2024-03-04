@@ -36,6 +36,7 @@ return array(
     'App\\Http\\Controllers\\ShopInfoController' => $baseDir . '/app/Http/Controllers/ShopInfoController.php',
     'App\\Http\\Controllers\\ShopeAccessTokenController' => $baseDir . '/app/Http/Controllers/ShopeAccessTokenController.php',
     'App\\Http\\Controllers\\SkuController' => $baseDir . '/app/Http/Controllers/SkuController.php',
+    'App\\Http\\Controllers\\SkuDetailController' => $baseDir . '/app/Http/Controllers/SkuDetailController.php',
     'App\\Http\\Controllers\\StockController' => $baseDir . '/app/Http/Controllers/StockController.php',
     'App\\Http\\Controllers\\SupplierController' => $baseDir . '/app/Http/Controllers/SupplierController.php',
     'App\\Http\\Controllers\\TempTransactionController' => $baseDir . '/app/Http/Controllers/TempTransactionController.php',

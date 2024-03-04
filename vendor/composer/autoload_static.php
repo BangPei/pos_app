@@ -683,6 +683,7 @@ class ComposerStaticInit8fc54b11611faedeafd944d8c28b4eea
         'App\\Http\\Controllers\\ShopInfoController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShopInfoController.php',
         'App\\Http\\Controllers\\ShopeAccessTokenController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShopeAccessTokenController.php',
         'App\\Http\\Controllers\\SkuController' => __DIR__ . '/../..' . '/app/Http/Controllers/SkuController.php',
+        'App\\Http\\Controllers\\SkuDetailController' => __DIR__ . '/../..' . '/app/Http/Controllers/SkuDetailController.php',
         'App\\Http\\Controllers\\StockController' => __DIR__ . '/../..' . '/app/Http/Controllers/StockController.php',
         'App\\Http\\Controllers\\SupplierController' => __DIR__ . '/../..' . '/app/Http/Controllers/SupplierController.php',
         'App\\Http\\Controllers\\TempTransactionController' => __DIR__ . '/../..' . '/app/Http/Controllers/TempTransactionController.php',
