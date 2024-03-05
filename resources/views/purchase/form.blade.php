@@ -56,7 +56,7 @@
             </div>
             <div class="col-md-4">
               <div class="form-group">
-                <label for="pic">PIC / Salesman</label>
+                <label for="pic">PIC</label>
                 <input type="text" class="form-control" name="pic" id="invoice-name">
               </div>
             </div>
@@ -94,13 +94,13 @@
             <div class="col-md-6"><label for="">Subtotal</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="">120.000.000</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-subtotal">0</label></div>
           </div>
           <div class="row">
             <div class="col-md-6"><label for="">Total Diskon</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="">10.000.000</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-total-discount">0</label></div>
           </div>
           <div class="row">
             <div class="col-md-6"><label for="">Diskon Extra</label></div>
@@ -115,19 +115,19 @@
             <div class="col-md-6"><label for="">Total</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="">110.000.000</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-total">0</label></div>
           </div>
           <div class="row">
             <div class="col-md-6"><label for="">PPN (11%)</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="">12.100.000</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-ppn">0</label></div>
           </div>
           <div class="row">
             <div class="col-md-6"><label for="">Total Faktur</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="">122.100.000</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-amount"></label></div>
           </div>
         </div>
       </div>
@@ -141,6 +141,11 @@
       </a>
     </div>
   </div>
+  <br>
+  <div class="card-detail">
+
+  </div>
+  
   <br>
 </div>
 
@@ -183,35 +188,23 @@
   let dsCode = "<?=isset($directSales)?$directSales->code:null?>";
   let purchase = {
         invoice_no:null,
-        pic:null,
         supplier:null,
-        amount:0,
-        subtotal:0,
-        discount:0,
-        dpp:0,
-        tax_paid:0,
-        total_item:0,
-        tax:0,
-        date_time:null,
-        due_date:null,
+        pic:null,
         payment_type:null,
-        picture:null,
-        delails:[],
+        date:null,
+        due_date:null,
+        subtotal:null,
+        total_discount:null,
+        discount_extra:null,
+        is_tax:null,
+        tax:null,
+        tax_paid:null,
+        amount:null,
+        is_distributor:null,
+        details:[]
   }
   $(document).ready(function(){
     $('a[data-widget="pushmenu"]').click()
-    tblOrder = $('#table-order').DataTable({
-      paging: false,
-      searching: false,
-      ordering:  false,
-      bInfo:false,
-      data:purchase.details,
-      columns:[
-
-      ],
-    })
-
-    // keyupTableNumber($('#table-order'))
 
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
@@ -261,17 +254,76 @@
     $('#table-product').on('click','.add-product',function() {
       let product = tblProduct.row($(this).parents('tr')).data();
       getStockBy(product.stock.id,function(data){
-        console.log(data)
+        let detail = {
+          stock:data,
+          qty:1,
+          price_per_pcs:0,
+          subtotal:0,
+          discount1:0,
+          discount2:0,
+          total_net:0,
+          convertion:product.convertion,
+          uom:product.uom,
+          product_barcode:product.barcode,
+          detail_modals:[],
+        }
+        data.products.forEach(e => {
+          let detail_modal = {
+            product:e,
+            modal:0,
+            current_price:e.price,
+            new_price:e.price,
+            periode:$('#date').val()
+          }
+          detail.detail_modals.push(detail_modal)
+        });
+        detail.price_per_pcs = detail.subtotal/(detail.qty*detail.convertion)
+        purchase.details.push(detail)
+        renderDetailElement();
       });
+      
       $("#modal-product").modal('hide');
+      
     })
 
     $('#modal-product').on('hidden.bs.modal', function (e) {
       $('#table-product').DataTable().destroy();
     })
- 
-    // dsCode!=""?getDirectSales():null;
+
+    $('.card-detail').on('click','table .btn-detele',function(){
+      let id = $(this).attr('data-id');
+      let filter =  purchase.details.filter(e=>e.stock.id !=id);
+      purchase.details = filter;
+      renderDetailElement();
+    })
+    $('.card-detail').on('change','select',function(){
+      let id =parseInt($(this).find('option:selected').attr("data-id"));
+      let convertion =parseInt($(this).val());
+      purchase.details.forEach(e=>{
+        if (e.stock.id == id) {
+          e.convertion = convertion;
+          e.product_barcode = e.stock.products.filter(p=>p.convertion==convertion)[0].barcode;
+          e.uom = e.stock.products.filter(p=>p.convertion==convertion)[0].uom??null;
+          renderDetailElement();
+        }
+      })
+    })
   })
+
+  function renderDetailElement(){
+    $('.card-detail').empty();
+    purchase.details.forEach(e=>{
+      $('.card-detail').append(renderDetail(e))
+      e.stock.products.forEach(d=>{
+        $(`.card-detail #stock-${e.stock.id} table tbody #uom-${e.stock.id}`).append(`
+          <option ${e.product_barcode==d.barcode?'selected':''} data-id=${e.stock.id} value="${d.convertion}">${d.convertion} / ${d.uom?.name??'--'}</option>
+        `)
+      })
+      e.detail_modals.forEach(modal=>{
+        $(`.card-detail #stock-${e.stock.id} .card-body`).append(renderProduct(modal))
+      })
+    })
+  }
 
   function getStockBy(id,callback) {
     let data = {id:id}
@@ -282,6 +334,77 @@
        console.log(json)
       }
     )
+  }
+
+  function renderDetail(data){
+    let rowDetail =  `
+    <div class="card" id='stock-${data.stock.id}'>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+          <table class="table table-striped table-bordered table-sm">
+            <thead>
+              <th>Stok Group</th>
+              <th>Satuan</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+              <th>Harga Satuan</th>
+              <th>Diskon</th>
+              <th>Diskon Ext</th>
+              <th>Total Net</th>
+              <th>#</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${data.stock.name}</td>
+                <td>
+                  <select name="uom-${data.stock.id}" id="uom-${data.stock.id}" class="form-control select2">
+                  </select>
+                </td>
+                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);"value="${data.qty}"></td>
+                <td class="text-center"><input type="text" class="number2 text-right"style="width: 150" onkeypress="return IsNumeric(event);"value="${data.subtotal}"></td>
+                <td class="text-right">${formatNumber(data.price_per_pcs)}</td>
+                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount1}"></td>
+                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount2}"></td>
+                <td class="text-right">${formatNumber(data.total_net)}</td>
+                <td class="text-center"><button class="btn bg-gradient-danger btn-detele" data-id="${data.stock.id}"> <i class="fa fa-trash"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div>`
+    return rowDetail;
+  }
+
+  function renderProduct(data){
+    return `
+    <div class="row text-center product-${data.product.barcode}">
+          <div class="col-3 text-left">
+            <label class="m-0 p-0" >${data.product.name}</label>
+            <p class="m-0 p-0">SKU : <label class="m-0 p-0" >${data.product.barcode}</label></p>
+          </div>
+          <div class="col-2">
+            <p class="m-0 p-0">Satuan</p>
+            <p class="m-0 p-0"><label class="m-0 p-0" >${data.product.convertion}/${data.product.uom?.name??'--'}</label></p>
+          </div>
+          <div class="col-2">
+            <p class="m-0 p-0">Modal</p>
+            <p class="m-0 p-0"><label class="m-0 p-0" >Rp. ${formatNumber(data.modal)}</label></p>
+          </div>
+          <div class="col-2">
+            <p class="m-0 p-0">Harga Jual Saat Ini</p>
+            <p  class="m-0 p-0 p-price-"><label >Rp. ${formatNumber(data.current_price)}</label></p>
+          </div>
+          <div class="col-3 text-right">
+            <p class="m-0 p-0">Harga Jual Baru</p>
+            <p  class="m-0 p-0 p-price-">
+              <input type="text" value="${data.new_price}" class="form-control text-right">
+            </p>
+          </div>
+        </div>
+    `
   }
 </script>
 @endsection
