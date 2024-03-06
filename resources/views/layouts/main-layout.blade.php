@@ -388,7 +388,7 @@
         <script src="/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
         
         {{-- <script src="/plugins/gijgo/js/gijgo.js" type="text/javascript"></script> --}}
-        <script src="/js/script.js?v=1.2.1"></script>
+        <script src="/js/script.js?v=1.2.2"></script>
         @yield('content-script')
         <!-- AdminLTE App -->
     </body>

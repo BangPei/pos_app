@@ -107,7 +107,7 @@
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
             <div class="col-md-4 text-right">
-                <input type="text" placeholder="0" id="discount-2" class="text-right font-weight-bold number2" style="width: 100%">
+                <input type="text" placeholder="0" id="po-discount-extra" class="text-right font-weight-bold number2" style="width: 100%">
             </div>
           </div>
           
@@ -115,19 +115,19 @@
             <div class="col-md-6"><label for="">Total</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-total">0</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
           </div>
           <div class="row">
-            <div class="col-md-6"><label for="">PPN (11%)</label></div>
+            <div class="col-md-6"><label for="">PPN (<span id="po-tax">0</span> %)</label> <a data-toggle="modal" data-target="#modal-ppn" data-backdrop="static" data-keyboard="false"><i class="fa fa-edit text-primary"></i></a></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-ppn">0</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-tax-paid">0</label></div>
           </div>
           <div class="row">
             <div class="col-md-6"><label for="">Total Faktur</label></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-amount"></label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-total-amount">0</label></div>
           </div>
         </div>
       </div>
@@ -147,6 +147,32 @@
   </div>
   
   <br>
+</div>
+
+<div class="modal fade" id="modal-ppn" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">PPN</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="ppn-text">Masukan Nilai PPN (%)</label>
+              <input autocomplete="off" type="text" class="form-control number2 text-right" id="ppn-text" name="ppn-text">
+            </div>
+          </div>
+          <div class="col-md-12 text-center">
+            <button onclick="setPPN()" class="btn btn-primary" type="button">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="modal-product" tabindex="-1">
@@ -193,14 +219,15 @@
         payment_type:null,
         date:null,
         due_date:null,
-        subtotal:null,
-        total_discount:null,
-        discount_extra:null,
-        is_tax:null,
-        tax:null,
-        tax_paid:null,
-        amount:null,
+        subtotal:0,
+        total_discount:0,
+        discount_extra:0,
+        is_tax:false,
+        tax:0,
+        tax_paid:0,
+        amount:0,
         is_distributor:null,
+        total_amount:0,
         details:[]
   }
   $(document).ready(function(){
@@ -279,7 +306,7 @@
         });
         detail.price_per_pcs = detail.subtotal/(detail.qty*detail.convertion)
         purchase.details.push(detail)
-        renderDetailElement();
+        calculate();
       });
       
       $("#modal-product").modal('hide');
@@ -289,12 +316,13 @@
     $('#modal-product').on('hidden.bs.modal', function (e) {
       $('#table-product').DataTable().destroy();
     })
+    
 
     $('.card-detail').on('click','table .btn-detele',function(){
       let id = $(this).attr('data-id');
       let filter =  purchase.details.filter(e=>e.stock.id !=id);
       purchase.details = filter;
-      renderDetailElement();
+      calculate();
     })
     $('.card-detail').on('change','select',function(){
       let id =parseInt($(this).find('option:selected').attr("data-id"));
@@ -304,11 +332,107 @@
           e.convertion = convertion;
           e.product_barcode = e.stock.products.filter(p=>p.convertion==convertion)[0].barcode;
           e.uom = e.stock.products.filter(p=>p.convertion==convertion)[0].uom??null;
-          renderDetailElement();
         }
       })
+      calculate()
+    })
+    $('.card-detail').on('change','.qty-order',function(){
+      let id =parseInt($(this).attr("data-id"));
+      let val  = $(this).val();
+      val = (val== null||val =="")?0:parseInt(val);
+      
+      purchase.details.forEach(e=>{
+        if (e.stock.id == id) {
+          e.qty = val;
+        }
+      })
+      calculate()
+    })
+    $('.card-detail').on('change','.subtotal-order',function(){
+      let id =parseInt($(this).attr("data-id"));
+      let val  = $(this).val();
+      val = (val== null||val =="")?0:parseInt(val);
+      
+      purchase.details.forEach(e=>{
+        if (e.stock.id == id) {
+          e.subtotal = val;
+        }
+      })
+      calculate();
+    })
+    $('.card-detail').on('change','.discount1-order',function(){
+      let id =parseInt($(this).attr("data-id"));
+      let val  = $(this).val();
+      val = (val== null||val =="")?0:parseInt(val);
+      
+      purchase.details.forEach(e=>{
+        if (e.stock.id == id) {
+          e.discount1 = val;
+        }
+      })
+      calculate();
+    })
+    $('.card-detail').on('change','.discount2-order',function(){
+      let id =parseInt($(this).attr("data-id"));
+      let val  = $(this).val();
+      val = (val== null||val =="")?0:parseInt(val);
+      
+      purchase.details.forEach(e=>{
+        if (e.stock.id == id) {
+          e.discount2 = val;
+        }
+      })
+      calculate();
+    })
+
+    $('#po-discount-extra').on('change',function(){
+      let val = $(this).val().replace(/,/g, "");
+      purchase.discount_extra = (val==""||val==null)?0:parseInt(val);
+      calculate();
     })
   })
+
+  function setPPN(){
+    if ($('#ppn-text').val()=="" || $('#ppn-text').val()==null) {
+      purchase.is_tax = false;
+      purchase.tax = 0
+    }else{
+      purchase.is_tax = true;
+      purchase.tax = parseInt($('#ppn-text').val())
+    }
+    $('#modal-ppn').modal('hide');
+    calculate();
+  }
+
+  function calculate(){
+    let subtotal = 0;
+    let totalDiscount = 0;
+    purchase.details.forEach(e=>{
+      subtotal = subtotal+e.subtotal;
+      e.total_net = (e.subtotal-e.discount1)-e.discount2;
+      e.price_per_pcs = e.total_net/(e.qty*e.convertion)
+      totalDiscount = totalDiscount+(e.discount1+e.discount2);
+      e.detail_modals.forEach(m=>{
+        let modal = m.product.convertion*e.price_per_pcs
+        m.modal = modal+(modal*(purchase.tax/100))
+      })
+    })
+    purchase.subtotal = subtotal;
+    purchase.total_discount = totalDiscount;
+    purchase.amount = purchase.subtotal-(purchase.total_discount+purchase.discount_extra);
+    purchase.tax_paid = purchase.amount*(purchase.tax/100)
+    purchase.total_amount = purchase.amount+purchase.tax_paid;
+
+
+    $('#po-amount').text(formatNumber(purchase.amount));
+    $('#po-total-amount').text(formatNumber(purchase.total_amount));
+    $('#po-subtotal').text(formatNumber(purchase.subtotal));
+    $('#po-total-discount').text(formatNumber(purchase.total_discount));
+    $('#po-tax').text(purchase.tax)
+    $('#po-tax-paid').text(formatNumber(purchase.tax_paid));
+
+    renderDetailElement()
+  }
 
   function renderDetailElement(){
     $('.card-detail').empty();
@@ -348,24 +472,24 @@
               <th>Satuan</th>
               <th>Qty</th>
               <th>Subtotal</th>
-              <th>Harga Satuan</th>
               <th>Diskon</th>
               <th>Diskon Ext</th>
+              <th>Harga</th>
               <th>Total Net</th>
               <th>#</th>
             </thead>
             <tbody>
               <tr>
-                <td>${data.stock.name}</td>
+                <td  style="width:250px">${data.stock.name}</td>
                 <td>
                   <select name="uom-${data.stock.id}" id="uom-${data.stock.id}" class="form-control select2">
                   </select>
                 </td>
-                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);"value="${data.qty}"></td>
-                <td class="text-center"><input type="text" class="number2 text-right"style="width: 150" onkeypress="return IsNumeric(event);"value="${data.subtotal}"></td>
-                <td class="text-right">${formatNumber(data.price_per_pcs)}</td>
-                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount1}"></td>
-                <td class="text-center"><input type="text" class="number2 text-right" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount2}"></td>
+                <td class="text-center" style="width:80px"><input type="text" class="text-right qty-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.qty}"></td>
+                <td class="text-center"><input type="text" class="text-right subtotal-order" data-id="${data.stock.id}" style="width: 100px" onkeypress="return IsNumeric(event);" value="${data.subtotal}"></td>
+                <td class="text-center"><input type="text" class="text-right discount1-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount1}"></td>
+                <td class="text-center"><input type="text" class="text-right discount2-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount2}"></td>
+                <td class="text-right" style="width: 100px">${formatNumber(data.price_per_pcs)}</td>
                 <td class="text-right">${formatNumber(data.total_net)}</td>
                 <td class="text-center"><button class="btn bg-gradient-danger btn-detele" data-id="${data.stock.id}"> <i class="fa fa-trash"></i></button></td>
               </tr>
