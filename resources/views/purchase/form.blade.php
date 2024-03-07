@@ -118,6 +118,14 @@
             <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
           </div>
           <div class="row">
+            <div class="col-5">
+              <label for="is-cash">
+                <i style="font-size: 12px !important">Harga sudah termasuk PPN</i>
+              </label>
+              <input type="checkbox" id="is-ppn">
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-6"><label for="">PPN (<span id="po-tax">0</span> %)</label> <a data-toggle="modal" data-target="#modal-ppn" data-backdrop="static" data-keyboard="false"><i class="fa fa-edit text-primary"></i></a></div>
             <div class="col-md-1"><label for="">:</label></div>
             <div class="col-md-1"><label for="">Rp.</label></div>
@@ -222,8 +230,8 @@
         subtotal:0,
         total_discount:0,
         discount_extra:0,
-        is_tax:false,
-        tax:0,
+        tax_in_price:false,
+        tax:11,
         tax_paid:0,
         amount:0,
         is_distributor:null,
@@ -298,6 +306,8 @@
           let detail_modal = {
             product:e,
             modal:0,
+            dpp:0,
+            tax_paid:0,
             current_price:e.price,
             new_price:e.price,
             periode:$('#date').val()
@@ -390,14 +400,17 @@
       purchase.discount_extra = (val==""||val==null)?0:parseInt(val);
       calculate();
     })
+
+    $('#is-ppn').on('change',function () {
+      purchase.tax_in_price = $(this).prop('checked')
+      calculate();
+    })
   })
 
   function setPPN(){
     if ($('#ppn-text').val()=="" || $('#ppn-text').val()==null) {
-      purchase.is_tax = false;
       purchase.tax = 0
     }else{
-      purchase.is_tax = true;
       purchase.tax = parseInt($('#ppn-text').val())
     }
     $('#modal-ppn').modal('hide');
@@ -414,13 +427,27 @@
       totalDiscount = totalDiscount+(e.discount1+e.discount2);
       e.detail_modals.forEach(m=>{
         let modal = m.product.convertion*e.price_per_pcs
-        m.modal = modal+(modal*(purchase.tax/100))
+        if(purchase.tax_in_price){
+          m.dpp = modal*(100/(100+purchase.tax));
+          m.tax_paid = modal- m.dpp;
+          m.modal = modal;
+        }else{
+          m.dpp = modal;
+          m.modal = modal+(modal*(purchase.tax/100));
+          m.tax_paid = m.modal-m.dpp;
+        }
       })
     })
-    purchase.subtotal = subtotal;
     purchase.total_discount = totalDiscount;
-    purchase.amount = purchase.subtotal-(purchase.total_discount+purchase.discount_extra);
-    purchase.tax_paid = purchase.amount*(purchase.tax/100)
+    if (purchase.tax_in_price) {
+      purchase.amount = subtotal;
+      purchase.subtotal = purchase.amount+purchase.total_discount+purchase.discount_extra;
+      purchase.tax_paid = purchase.amount*(100/(100+purchase.tax))
+    }else{
+      purchase.subtotal = subtotal;
+      purchase.amount = purchase.subtotal-(purchase.total_discount+purchase.discount_extra);
+      purchase.tax_paid = purchase.amount*(purchase.tax/100)
+    }
     purchase.total_amount = purchase.amount+purchase.tax_paid;
 
 
@@ -515,6 +542,7 @@
           </div>
           <div class="col-2">
             <p class="m-0 p-0">Modal</p>
+            <p class="m-0 p-0"><i>${formatNumber(data.dpp)} + ${formatNumber(data.tax_paid)}</i></p>
             <p class="m-0 p-0"><label class="m-0 p-0" >Rp. ${formatNumber(data.modal)}</label></p>
           </div>
           <div class="col-2">
