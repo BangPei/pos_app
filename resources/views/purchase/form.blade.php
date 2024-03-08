@@ -91,38 +91,39 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6"><label for="">Subtotal</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-subtotal">0</label></div>
-          </div>
-          <div class="row">
-            <div class="col-md-6"><label for="">Total Diskon</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-total-discount">0</label></div>
-          </div>
-          <div class="row">
-            <div class="col-md-6"><label for="">Diskon Extra</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right">
-                <input type="text" placeholder="0" id="po-discount-extra" class="text-right font-weight-bold number2" style="width: 100%">
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6"><label for="">Total</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
-          </div>
-          <div class="row">
             <div class="col-5">
               <label for="is-cash">
                 <i style="font-size: 12px !important">Harga sudah termasuk PPN</i>
               </label>
               <input type="checkbox" id="is-ppn">
+            </div>
+          </div>
+          <div class="row dpp d-none">
+            <div class="col-md-6"><label for="">Dpp</label></div>
+            <div class="col-md-1"><label for="">:</label></div>
+            <div class="col-md-1"><label for="">Rp.</label></div>
+            <div class="col-md-4 text-right"><label for="" id="po-dpp">0</label></div>
+          </div>
+          <div class="non-dpp d-none">
+            <div class="row">
+              <div class="col-md-6"><label for="">Subtotal</label></div>
+              <div class="col-md-1"><label for="">:</label></div>
+              <div class="col-md-1"><label for="">Rp.</label></div>
+              <div class="col-md-4 text-right"><label for="" id="po-subtotal">0</label></div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><label for="">Diskon Extra</label></div>
+              <div class="col-md-1"><label for="">:</label></div>
+              <div class="col-md-1"><label for="">Rp.</label></div>
+              <div class="col-md-4 text-right">
+                  <input type="text" placeholder="0" id="po-discount-extra" class="text-right font-weight-bold number2" style="width: 100%">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><label for="">Total</label></div>
+              <div class="col-md-1"><label for="">:</label></div>
+              <div class="col-md-1"><label for="">Rp.</label></div>
+              <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
             </div>
           </div>
           <div class="row">
@@ -228,7 +229,7 @@
         date:null,
         due_date:null,
         subtotal:0,
-        total_discount:0,
+        dpp:0,
         discount_extra:0,
         tax_in_price:false,
         tax:11,
@@ -240,7 +241,7 @@
   }
   $(document).ready(function(){
     $('a[data-widget="pushmenu"]').click()
-
+    initDpp();
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
         processing:true,
@@ -294,9 +295,6 @@
           qty:1,
           price_per_pcs:0,
           subtotal:0,
-          discount1:0,
-          discount2:0,
-          total_net:0,
           convertion:product.convertion,
           uom:product.uom,
           product_barcode:product.barcode,
@@ -370,30 +368,6 @@
       })
       calculate();
     })
-    $('.card-detail').on('change','.discount1-order',function(){
-      let id =parseInt($(this).attr("data-id"));
-      let val  = $(this).val();
-      val = (val== null||val =="")?0:parseInt(val);
-      
-      purchase.details.forEach(e=>{
-        if (e.stock.id == id) {
-          e.discount1 = val;
-        }
-      })
-      calculate();
-    })
-    $('.card-detail').on('change','.discount2-order',function(){
-      let id =parseInt($(this).attr("data-id"));
-      let val  = $(this).val();
-      val = (val== null||val =="")?0:parseInt(val);
-      
-      purchase.details.forEach(e=>{
-        if (e.stock.id == id) {
-          e.discount2 = val;
-        }
-      })
-      calculate();
-    })
 
     $('#po-discount-extra').on('change',function(){
       let val = $(this).val().replace(/,/g, "");
@@ -402,10 +376,22 @@
     })
 
     $('#is-ppn').on('change',function () {
-      purchase.tax_in_price = $(this).prop('checked')
+      initDpp();
       calculate();
     })
   })
+
+  function initDpp(){
+    let val = $('#is-ppn').prop('checked')
+    purchase.tax_in_price = val;
+    if (val) {
+      $('.non-dpp').addClass('d-none')
+      $('.dpp').removeClass('d-none')
+    }else{
+      $('.non-dpp').removeClass('d-none')
+      $('.dpp').addClass('d-none')
+    }
+  }
 
   function setPPN(){
     if ($('#ppn-text').val()=="" || $('#ppn-text').val()==null) {
@@ -419,12 +405,9 @@
 
   function calculate(){
     let subtotal = 0;
-    let totalDiscount = 0;
     purchase.details.forEach(e=>{
       subtotal = subtotal+e.subtotal;
-      e.total_net = (e.subtotal-e.discount1)-e.discount2;
-      e.price_per_pcs = e.total_net/(e.qty*e.convertion)
-      totalDiscount = totalDiscount+(e.discount1+e.discount2);
+      e.price_per_pcs = e.subtotal/(e.qty*e.convertion)
       e.detail_modals.forEach(m=>{
         let modal = m.product.convertion*e.price_per_pcs
         if(purchase.tax_in_price){
@@ -438,23 +421,25 @@
         }
       })
     })
-    purchase.total_discount = totalDiscount;
     if (purchase.tax_in_price) {
-      purchase.amount = subtotal;
-      purchase.subtotal = purchase.amount+purchase.total_discount+purchase.discount_extra;
-      purchase.tax_paid = purchase.amount*(100/(100+purchase.tax))
+      purchase.total_amount = subtotal;
+      purchase.dpp = purchase.total_amount*(100/(100+purchase.tax));
+      purchase.subtotal = purchase.dpp;
+      purchase.amount = purchase.subtotal-purchase.discount_extra;
+      purchase.tax_paid = purchase.total_amount-purchase.dpp;
     }else{
       purchase.subtotal = subtotal;
-      purchase.amount = purchase.subtotal-(purchase.total_discount+purchase.discount_extra);
+      purchase.amount = purchase.subtotal-purchase.discount_extra;
+      purchase.dpp = purchase.amount;
       purchase.tax_paid = purchase.amount*(purchase.tax/100)
+      purchase.total_amount = purchase.amount+purchase.tax_paid;
     }
-    purchase.total_amount = purchase.amount+purchase.tax_paid;
 
 
+    $('#po-dpp').text(formatNumber(purchase.dpp));
     $('#po-amount').text(formatNumber(purchase.amount));
     $('#po-total-amount').text(formatNumber(purchase.total_amount));
     $('#po-subtotal').text(formatNumber(purchase.subtotal));
-    $('#po-total-discount').text(formatNumber(purchase.total_discount));
     $('#po-tax').text(purchase.tax)
     $('#po-tax-paid').text(formatNumber(purchase.tax_paid));
 
@@ -499,10 +484,7 @@
               <th>Satuan</th>
               <th>Qty</th>
               <th>Subtotal</th>
-              <th>Diskon</th>
-              <th>Diskon Ext</th>
               <th>Harga</th>
-              <th>Total Net</th>
               <th>#</th>
             </thead>
             <tbody>
@@ -514,10 +496,7 @@
                 </td>
                 <td class="text-center" style="width:80px"><input type="text" class="text-right qty-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.qty}"></td>
                 <td class="text-center"><input type="text" class="text-right subtotal-order" data-id="${data.stock.id}" style="width: 100px" onkeypress="return IsNumeric(event);" value="${data.subtotal}"></td>
-                <td class="text-center"><input type="text" class="text-right discount1-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount1}"></td>
-                <td class="text-center"><input type="text" class="text-right discount2-order" data-id="${data.stock.id}" style="width: 80px" onkeypress="return IsNumeric(event);" value="${data.discount2}"></td>
                 <td class="text-right" style="width: 100px">${formatNumber(data.price_per_pcs)}</td>
-                <td class="text-right">${formatNumber(data.total_net)}</td>
                 <td class="text-center"><button class="btn bg-gradient-danger btn-detele" data-id="${data.stock.id}"> <i class="fa fa-trash"></i></button></td>
               </tr>
             </tbody>
