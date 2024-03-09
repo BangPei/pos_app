@@ -116,6 +116,7 @@ return array(
     'App\\Models\\DirectSalesDetail' => $baseDir . '/app/Models/DirectSalesDetail.php',
     'App\\Models\\Expedition' => $baseDir . '/app/Models/Expedition.php',
     'App\\Models\\JdIdAccessToken' => $baseDir . '/app/Models/JdIdAccessToken.php',
+    'App\\Models\\ModalPrice' => $baseDir . '/app/Models/ModalPrice.php',
     'App\\Models\\MultipleDiscount' => $baseDir . '/app/Models/MultipleDiscount.php',
     'App\\Models\\MultipleDiscountDetail' => $baseDir . '/app/Models/MultipleDiscountDetail.php',
     'App\\Models\\OnlineOrder' => $baseDir . '/app/Models/OnlineOrder.php',

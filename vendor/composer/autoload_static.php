@@ -763,6 +763,7 @@ class ComposerStaticInit8fc54b11611faedeafd944d8c28b4eea
         'App\\Models\\DirectSalesDetail' => __DIR__ . '/../..' . '/app/Models/DirectSalesDetail.php',
         'App\\Models\\Expedition' => __DIR__ . '/../..' . '/app/Models/Expedition.php',
         'App\\Models\\JdIdAccessToken' => __DIR__ . '/../..' . '/app/Models/JdIdAccessToken.php',
+        'App\\Models\\ModalPrice' => __DIR__ . '/../..' . '/app/Models/ModalPrice.php',
         'App\\Models\\MultipleDiscount' => __DIR__ . '/../..' . '/app/Models/MultipleDiscount.php',
         'App\\Models\\MultipleDiscountDetail' => __DIR__ . '/../..' . '/app/Models/MultipleDiscountDetail.php',
         'App\\Models\\OnlineOrder' => __DIR__ . '/../..' . '/app/Models/OnlineOrder.php',

@@ -21,141 +21,150 @@
     <div class="col-md-12">
       <label for="">Pilih Sumber Barang : </label>
       <div class="custom-control custom-radio custom-control-inline">
-        <input value="distributor" type="radio" id="customRadioInline1" name="customRadioInline" class="custom-control-input">
+        <input value="true" type="radio" id="customRadioInline1" name="customRadioInline" class="custom-control-input">
         <label class="custom-control-label" for="customRadioInline1">Distributor</label>
       </div>
       <div class="custom-control custom-radio custom-control-inline">
-        <input value="mandiri" type="radio" id="customRadioInline2" name="customRadioInline" class="custom-control-input">
-        <label class="custom-control-label" for="customRadioInline2">Mandiri</label>
+        <input value="false" type="radio" id="customRadioInline2" name="customRadioInline" class="custom-control-input">
+        <label class="custom-control-label" for="customRadioInline2">Non distributor / Trader</label>
       </div>
     </div>
   </div>
   {{-- form purchase --}}
-  <div class="row">
-    {{-- purchase informtion --}}
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="invoice-no">No. Faktur</label>
-                <input type="text" class="form-control" name="invoice-no" id="invoice-no">
+  <div class="d-none" id="body-purchase">
+    <div class="row">
+      {{-- purchase informtion --}}
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="invoice-no">No. Faktur</label>
+                  <input type="text" class="form-control" name="invoice-no" id="invoice-no">
+                </div>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="supplier">Supplier</label>
-                <select name="supplier" id="supplier" class="form-control select2">
-                  <option disabled selected>-- pilih supplier--</option>
-                  @foreach ($supplier as $s)
-                      <option value="{{ $s->id }}">{{ $s->name }}</option>
-                  @endforeach
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="supplier">Supplier</label>
+                  <select name="supplier" id="supplier" class="form-control select2">
+                    <option disabled selected>-- pilih supplier--</option>
+                    @foreach ($supplier as $s)
+                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="pic">PIC</label>
+                  <input type="text" class="form-control" name="pic" id="invoice-name">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="payment-type">Tipe Pembayaran</label>
+                  <select name="payment-type" id="payment-type" class="form-control">
+                    <option value="tempo">Tempo</option>
+                    <option value="lunas">Lunas</option>
                 </select>
+                </div>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="pic">PIC</label>
-                <input type="text" class="form-control" name="pic" id="invoice-name">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="date-time">Tgl Datang Barang</label>
+                  <input type="text" class="form-control" name="date-time" id="date-time">
+                </div>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="payment-type">Tipe Pembayaran</label>
-                <select name="payment-type" id="payment-type" class="form-control">
-                  <option value="tempo">Tempo</option>
-                  <option value="lunas">Lunas</option>
-              </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="date-time">Tgl Datang Barang</label>
-                <input type="text" class="form-control" name="date-time" id="date-time">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="due-date">Tgl Jatuh Tempo</label>
-                <input type="text" class="form-control" name="due-date" id="due-date">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="due-date">Tgl Jatuh Tempo</label>
+                  <input type="text" class="form-control" name="due-date" id="due-date">
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    {{-- purcase total --}}
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-5">
-              <label for="is-cash">
-                <i style="font-size: 12px !important">Harga sudah termasuk PPN</i>
-              </label>
-              <input type="checkbox" id="is-ppn">
-            </div>
-          </div>
-          <div class="row dpp d-none">
-            <div class="col-md-6"><label for="">Dpp</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-dpp">0</label></div>
-          </div>
-          <div class="non-dpp d-none">
+  
+      {{-- purcase total --}}
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
             <div class="row">
-              <div class="col-md-6"><label for="">Subtotal</label></div>
+              <div class="col-5">
+                <label for="is-cash">
+                  <i style="font-size: 12px !important">Harga sudah termasuk PPN</i>
+                </label>
+                <input type="checkbox" id="is-ppn">
+              </div>
+            </div>
+            <div class="row dpp d-none">
+              <div class="col-md-6"><label for="">Dpp</label></div>
               <div class="col-md-1"><label for="">:</label></div>
               <div class="col-md-1"><label for="">Rp.</label></div>
-              <div class="col-md-4 text-right"><label for="" id="po-subtotal">0</label></div>
+              <div class="col-md-4 text-right"><label for="" id="po-dpp">0</label></div>
             </div>
-            <div class="row">
-              <div class="col-md-6"><label for="">Diskon Extra</label></div>
-              <div class="col-md-1"><label for="">:</label></div>
-              <div class="col-md-1"><label for="">Rp.</label></div>
-              <div class="col-md-4 text-right">
-                  <input type="text" placeholder="0" id="po-discount-extra" class="text-right font-weight-bold number2" style="width: 100%">
+            <div class="non-dpp d-none">
+              <div class="row">
+                <div class="col-md-6"><label for="">Subtotal</label></div>
+                <div class="col-md-1"><label for="">:</label></div>
+                <div class="col-md-1"><label for="">Rp.</label></div>
+                <div class="col-md-4 text-right"><label for="" id="po-subtotal">0</label></div>
+              </div>
+              <div class="row">
+                <div class="col-md-6"><label for="">Diskon Extra</label></div>
+                <div class="col-md-1"><label for="">:</label></div>
+                <div class="col-md-1"><label for="">Rp.</label></div>
+                <div class="col-md-4 text-right">
+                    <input type="text" placeholder="0" id="po-discount-extra" class="text-right font-weight-bold number2" style="width: 100%">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6"><label for="">Total</label></div>
+                <div class="col-md-1"><label for="">:</label></div>
+                <div class="col-md-1"><label for="">Rp.</label></div>
+                <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6"><label for="">Total</label></div>
+              <div class="col-md-6"><label for="">PPN (<span id="po-tax">0</span> %)</label> <a data-toggle="modal" data-target="#modal-ppn" data-backdrop="static" data-keyboard="false"><i class="fa fa-edit text-primary"></i></a></div>
               <div class="col-md-1"><label for="">:</label></div>
               <div class="col-md-1"><label for="">Rp.</label></div>
-              <div class="col-md-4 text-right"><label for="" id="po-amount">0</label></div>
+              <div class="col-md-4 text-right"><label for="" id="po-tax-paid">0</label></div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><label for="">Total Faktur</label></div>
+              <div class="col-md-1"><label for="">:</label></div>
+              <div class="col-md-1"><label for="">Rp.</label></div>
+              <div class="col-md-4 text-right"><label for="" id="po-total-amount">0</label></div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-6"><label for="">PPN (<span id="po-tax">0</span> %)</label> <a data-toggle="modal" data-target="#modal-ppn" data-backdrop="static" data-keyboard="false"><i class="fa fa-edit text-primary"></i></a></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-tax-paid">0</label></div>
-          </div>
-          <div class="row">
-            <div class="col-md-6"><label for="">Total Faktur</label></div>
-            <div class="col-md-1"><label for="">:</label></div>
-            <div class="col-md-1"><label for="">Rp.</label></div>
-            <div class="col-md-4 text-right"><label for="" id="po-total-amount">0</label></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
+          <i class="fas fa-eye"></i> List Produk
+        </a>
+      </div>
+    </div>
+    <br>
+    <div class="card-detail">
+  {{-- body detai; --}}
+    </div>
+    <div class="row">
+      <div class="col-12 text-center">
+        <div class="card">
+          <div class="card-body">
+            <button class="btn btn-primary" type="button"><i class="fa fa-save"></i> Simpan</button>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <div class="row">
-    <div class="col-md-12 text-right">
-      <a class="btn btn-primary" data-toggle="modal" data-target="#modal-product" data-backdrop="static" data-keyboard="false">
-        <i class="fas fa-eye"></i> List Produk
-      </a>
-    </div>
-  </div>
-  <br>
-  <div class="card-detail">
-
-  </div>
-  
-  <br>
 </div>
 
 <div class="modal fade" id="modal-ppn" tabindex="-1">
@@ -232,7 +241,7 @@
         dpp:0,
         discount_extra:0,
         tax_in_price:false,
-        tax:11,
+        tax:0,
         tax_paid:0,
         amount:0,
         is_distributor:null,
@@ -368,6 +377,23 @@
       })
       calculate();
     })
+    $('.card-detail').on('change','.new-price',function(){
+      let stockId =parseInt($(this).attr("data-stock"));
+      let barcode =$(this).attr("data-barcode");
+      let val  = $(this).val();
+      val = (val== null||val =="")?0:parseInt(val);
+      
+      purchase.details.forEach(e=>{
+        if (e.stock.id == stockId) {
+          e.detail_modals.forEach(m=>{
+            if (m.product.barcode == barcode) {
+              m.new_price = val
+            }
+          })
+        }
+      })
+      // calculate();
+    })
 
     $('#po-discount-extra').on('change',function(){
       let val = $(this).val().replace(/,/g, "");
@@ -378,6 +404,13 @@
     $('#is-ppn').on('change',function () {
       initDpp();
       calculate();
+    })
+
+    $('input[name="customRadioInline"]').on('click',function(){
+      if (purchase.is_distributor==null) {
+        $('#modal-ppn').modal()
+      }
+      purchase.is_distributor = $(this).val()==='true'
     })
   })
 
@@ -404,6 +437,7 @@
   }
 
   function calculate(){
+    $('#body-purchase').removeClass('d-none')
     let subtotal = 0;
     purchase.details.forEach(e=>{
       subtotal = subtotal+e.subtotal;
@@ -456,7 +490,7 @@
         `)
       })
       e.detail_modals.forEach(modal=>{
-        $(`.card-detail #stock-${e.stock.id} .card-body`).append(renderProduct(modal))
+        $(`.card-detail #stock-${e.stock.id} .card-body`).append(renderProduct(modal,e.stock.id))
       })
     })
   }
@@ -489,8 +523,8 @@
             </thead>
             <tbody>
               <tr>
-                <td  style="width:250px">${data.stock.name}</td>
-                <td>
+                <td  style="width:350px">${data.stock.name}</td>
+                <td >
                   <select name="uom-${data.stock.id}" id="uom-${data.stock.id}" class="form-control select2">
                   </select>
                 </td>
@@ -508,7 +542,7 @@
     return rowDetail;
   }
 
-  function renderProduct(data){
+  function renderProduct(data,stockId){
     return `
     <div class="row text-center product-${data.product.barcode}">
           <div class="col-3 text-left">
@@ -520,8 +554,8 @@
             <p class="m-0 p-0"><label class="m-0 p-0" >${data.product.convertion}/${data.product.uom?.name??'--'}</label></p>
           </div>
           <div class="col-2">
-            <p class="m-0 p-0">Modal</p>
-            <p class="m-0 p-0"><i>${formatNumber(data.dpp)} + ${formatNumber(data.tax_paid)}</i></p>
+            <p class="m-0 p-0">Modal <small>(dpp+pajak)</small></p>
+            <p class="m-0 p-0"><small>${formatNumber(data.dpp)} + ${formatNumber(data.tax_paid)}</small></p>
             <p class="m-0 p-0"><label class="m-0 p-0" >Rp. ${formatNumber(data.modal)}</label></p>
           </div>
           <div class="col-2">
@@ -531,11 +565,15 @@
           <div class="col-3 text-right">
             <p class="m-0 p-0">Harga Jual Baru</p>
             <p  class="m-0 p-0 p-price-">
-              <input type="text" value="${data.new_price}" class="form-control text-right">
+              <input type="text" data-stock = ${stockId} data-barcode = ${data.product.barcode} value="${data.new_price}" class="form-control text-right new-price">
             </p>
           </div>
         </div>
     `
+  }
+
+  function onSubmit(){
+    
   }
 </script>
 @endsection

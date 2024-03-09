@@ -7,6 +7,7 @@ use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
 use App\Models\Product;
 use App\Models\Supplier;
+use Illuminate\Http\Client\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class PurchaseController extends Controller
@@ -55,9 +56,9 @@ class PurchaseController extends Controller
      * @param  \App\Http\Requests\StorePurchaseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePurchaseRequest $request)
+    public function store(Request $request)
     {
-        //
+        return response()->json($request);
     }
 
     /**
