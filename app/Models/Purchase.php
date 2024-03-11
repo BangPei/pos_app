@@ -14,6 +14,11 @@ class Purchase extends Model
     protected $hidden = ['supplier_id'];
     protected $with = ['supplier'];
 
+    public $casts = [
+        'is_distributor' => 'boolean',
+        'tax_in_price' => 'boolean',
+    ];
+
 
     public function supplier()
     {

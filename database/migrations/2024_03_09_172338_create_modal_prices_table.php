@@ -20,6 +20,8 @@ class CreateModalPricesTable extends Migration
             $table->decimal('dpp', 10, 2)->default(0);
             $table->decimal('new_price', 10, 2)->default(0);
             $table->decimal('tax_paid', 10, 2)->default(0);
+            $table->decimal('margin_before_tax', 10, 2)->default(0);
+            $table->decimal('margin_after_tax', 10, 2)->default(0);
             $table->timestamp('periode');
             $table->string('product_barcode');
             $table->timestamps();

@@ -44,7 +44,7 @@
                   <input type="text" class="form-control" name="invoice-no" id="invoice-no">
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-4 supplier">
                 <div class="form-group">
                   <label for="supplier">Supplier</label>
                   <select name="supplier" id="supplier" class="form-control select2">
@@ -58,7 +58,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="pic">PIC</label>
-                  <input type="text" class="form-control" name="pic" id="invoice-name">
+                  <input type="text" class="form-control" name="pic" id="pic">
                 </div>
               </div>
               <div class="col-md-4">
@@ -73,13 +73,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="date-time">Tgl Datang Barang</label>
-                  <input type="text" class="form-control" name="date-time" id="date-time">
+                  <input readonly type="text" class="form-control date-picker" id="date-time" data-toggle="datetimepicker" data-target="#date-time" name="date-time">
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-4 due-date">
                 <div class="form-group">
                   <label for="due-date">Tgl Jatuh Tempo</label>
-                  <input type="text" class="form-control" name="due-date" id="due-date">
+                  <input readonly type="text" class="form-control date-picker" id="due-date" name="due-date" data-toggle="datetimepicker" data-target="#due-date">
                 </div>
               </div>
             </div>
@@ -93,10 +93,10 @@
           <div class="card-body">
             <div class="row">
               <div class="col-5">
-                <label for="is-cash">
+                <label for="is-ppn">
                   <i style="font-size: 12px !important">Harga sudah termasuk PPN</i>
                 </label>
-                <input type="checkbox" id="is-ppn">
+                <input type="checkbox" id="is-ppn" name="is-ppn">
               </div>
             </div>
             <div class="row dpp d-none">
@@ -159,7 +159,8 @@
       <div class="col-12 text-center">
         <div class="card">
           <div class="card-body">
-            <button class="btn btn-primary" type="button"><i class="fa fa-save"></i> Simpan</button>
+            <label for="" id="label-no-data" class="d-none"> Tidak Ada Data </label>
+            <button onclick="onSubmit()" id="btn-save" class="btn btn-primary d-none" type="button"><i class="fa fa-save"></i> Simpan</button>
           </div>
         </div>
       </div>
@@ -250,7 +251,7 @@
   }
   $(document).ready(function(){
     $('a[data-widget="pushmenu"]').click()
-    initDpp();
+    $('#date-time').val(moment(new Date()).format("DD MMMM YYYY"))
     $('#modal-product').on('show.bs.modal', function (e) {
       tblProduct = $('#table-product').DataTable({
         processing:true,
@@ -325,9 +326,7 @@
         purchase.details.push(detail)
         calculate();
       });
-      
       $("#modal-product").modal('hide');
-      
     })
 
     $('#modal-product').on('hidden.bs.modal', function (e) {
@@ -392,7 +391,7 @@
           })
         }
       })
-      // calculate();
+      calculate();
     })
 
     $('#po-discount-extra').on('change',function(){
@@ -401,30 +400,33 @@
       calculate();
     })
 
-    $('#is-ppn').on('change',function () {
-      initDpp();
+    $('#is-ppn').on('click',function () {
+      purchase.tax_in_price = $(this).prop('checked');
       calculate();
     })
 
     $('input[name="customRadioInline"]').on('click',function(){
-      if (purchase.is_distributor==null) {
+      if (purchase.is_distributor==null || purchase.tax == 0) {
         $('#modal-ppn').modal()
       }
       purchase.is_distributor = $(this).val()==='true'
+      if (purchase.is_distributor) {
+        $('.supplier').removeClass('d-none')
+      }else{
+        $('.supplier').addClass('d-none')
+      }
+    })
+
+    $('#payment-type').on('change',function(){
+      let val = $(this).val();
+      if (val === 'lunas') {
+        $('.due-date').addClass('d-none')
+      }else{
+        $('.due-date').removeClass('d-none')
+      }
     })
   })
 
-  function initDpp(){
-    let val = $('#is-ppn').prop('checked')
-    purchase.tax_in_price = val;
-    if (val) {
-      $('.non-dpp').addClass('d-none')
-      $('.dpp').removeClass('d-none')
-    }else{
-      $('.non-dpp').removeClass('d-none')
-      $('.dpp').addClass('d-none')
-    }
-  }
 
   function setPPN(){
     if ($('#ppn-text').val()=="" || $('#ppn-text').val()==null) {
@@ -453,6 +455,8 @@
           m.modal = modal+(modal*(purchase.tax/100));
           m.tax_paid = m.modal-m.dpp;
         }
+        m.margin_before_tax = m.new_price-m.dpp;
+        m.margin_after_tax = m.new_price-m.modal;
       })
     })
     if (purchase.tax_in_price) {
@@ -461,12 +465,16 @@
       purchase.subtotal = purchase.dpp;
       purchase.amount = purchase.subtotal-purchase.discount_extra;
       purchase.tax_paid = purchase.total_amount-purchase.dpp;
+      $('.dpp').removeClass('d-none')
+      $('.non-dpp').addClass('d-none')
     }else{
       purchase.subtotal = subtotal;
       purchase.amount = purchase.subtotal-purchase.discount_extra;
       purchase.dpp = purchase.amount;
       purchase.tax_paid = purchase.amount*(purchase.tax/100)
       purchase.total_amount = purchase.amount+purchase.tax_paid;
+      $('.dpp').addClass('d-none')
+      $('.non-dpp').removeClass('d-none')
     }
 
 
@@ -477,6 +485,13 @@
     $('#po-tax').text(purchase.tax)
     $('#po-tax-paid').text(formatNumber(purchase.tax_paid));
 
+    if (purchase.details.length !=0) {
+      $('#label-no-data').addClass('d-none')
+      $('#btn-save').removeClass('d-none')
+    }else{
+      $('#label-no-data').removeClass('d-none')
+      $('#btn-save').addClass('d-none')
+    }
     renderDetailElement()
   }
 
@@ -545,7 +560,7 @@
   function renderProduct(data,stockId){
     return `
     <div class="row text-center product-${data.product.barcode}">
-          <div class="col-3 text-left">
+          <div class="col-2 text-left">
             <label class="m-0 p-0" >${data.product.name}</label>
             <p class="m-0 p-0">SKU : <label class="m-0 p-0" >${data.product.barcode}</label></p>
           </div>
@@ -562,18 +577,55 @@
             <p class="m-0 p-0">Harga Jual Saat Ini</p>
             <p  class="m-0 p-0 p-price-"><label >Rp. ${formatNumber(data.current_price)}</label></p>
           </div>
-          <div class="col-3 text-right">
+          <div class="col-2 text-right">
             <p class="m-0 p-0">Harga Jual Baru</p>
             <p  class="m-0 p-0 p-price-">
               <input type="text" data-stock = ${stockId} data-barcode = ${data.product.barcode} value="${data.new_price}" class="form-control text-right new-price">
             </p>
+          </div>
+          <div class="col-2">
+            <p class="m-0 p-0"><small>Laba sebelum Pajak : Rp.${formatNumber(data.margin_before_tax)}</small></p>
+            <p class="m-0 p-0"><small>Laba setelah Pajak : Rp.${formatNumber(data.margin_after_tax)}</small></p>
           </div>
         </div>
     `
   }
 
   function onSubmit(){
-    
+    purchase.invoice_no = $('#invoice-no').val();
+    purchase.pic = $('#pic').val();
+    purchase.payment_type = $('#payment-type').val();
+    if ((purchase.payment_type === "lunas")) {
+      purchase.due_date = null;
+    }else{
+      if ($('#due-date').val()=="" ||$('#due-date').val()==null) {
+        alert('Tanggal Jatuh Tempo Tidak Boleh Kosong')
+        return false;
+      }else{
+        purchase.due_date = moment($('#due-date').val(),"DD MMMM YYYY").format('YYYY-MM-DD');
+      }
+    }
+    purchase.date = moment($('#date-time').val(),"DD MMMM YYYY").format('YYYY-MM-DD');
+    if (purchase.is_distributor) {
+      if ($('#supplier').val() == "" || $('#supplier').val()==null) {
+        alert('Supplier Tidak Boleh Kosong')
+        return false;
+      }else{
+        purchase.supplier = {
+            id:$('#supplier').val()
+          };
+      }
+    }else{
+      purchase.supplier= null
+    }
+    ajax(purchase, "{{ route('purchase-order.store') }}", "POST",
+      function(json) {
+        toastr.success('Transaksi Berhasil Disimpan')
+        console.log(json)
+      },function(json){
+        console.log(json)
+      }
+    )
   }
 </script>
 @endsection
