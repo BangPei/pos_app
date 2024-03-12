@@ -73,8 +73,11 @@ class PurchaseController extends Controller
             } else {
                 $po->due_date = $request->due_date;
             }
+            $po->status = 0;
         } else {
             $po->due_date = null;
+            $po->status = 1;
+            $po->payment_date = $po->date;
         }
         $po->is_distributor = $request->is_distributor == "true" ? 1 : 0;
         $po->tax_in_price = $request->tax_in_price == "true" ? 1 : 0;
@@ -139,9 +142,12 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function show(Purchase $purchase)
+    public function show($id)
     {
-        //
+        $po = Purchase::with(['details' => function ($detail) {
+            $detail->with('detail_modals');
+        }])->find($id);
+        return response()->json($po);
     }
 
     /**
@@ -150,12 +156,18 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($code)
     {
-        $po = Purchase::with(['details' => function ($detail) {
-            $detail->with('detail_modals');
-        }])->find($id);
-        return response()->json($po);
+        $supplier = Supplier::all();
+        return view(
+            'purchase.view-po',
+            [
+                "title" => "Form Pembelian",
+                "menu" => "Aplikasi Pembelian",
+                'supplier' => $supplier,
+                'poCode' => $code,
+            ]
+        );
     }
 
     /**

@@ -23,7 +23,9 @@ class CreatePurchaseTable extends Migration
             $table->decimal('discount_extra', 10, 2)->default(0);
             $table->timestamp('date');
             $table->timestamp('due_date')->nullable();
+            $table->timestamp('payment_date')->nullable();
             $table->boolean('is_distributor')->default(false);
+            $table->boolean('status')->default(false);
             $table->enum('payment_type', ['lunas', 'tempo']);
             $table->string('pic')->nullable();
             $table->decimal('subtotal', 10, 2)->default(0);

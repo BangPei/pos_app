@@ -22,7 +22,7 @@
             <th>Tanggal</th>
             <th>Supplier</th>
             <th>No. Tlp</th>
-            <th>Total Item</th>
+            <th>Pic</th>
             <th>Total</th>
             <th>Aksi</th>
           </tr>
@@ -52,10 +52,10 @@
             defaultContent:"--"
         },
         {
-            data:"date_time",
+            data:"date",
             defaultContent:"--",
             mRender:function(data, type,full){
-                return moment(data).format("DD MMMM YYYY HH:mm")
+                return moment(data).format("DD MMMM YYYY")
             }
         },
         {
@@ -67,14 +67,11 @@
             defaultContent:"--"
         },
         {
-            data:"total_item",
-            defaultContent:"0",
-            mRender:function(data,type,full){
-                return `Rp. ${formatNumber(data)}`
-            }
+            data:"pic",
+            defaultContent:"--",
         },
         {
-            data:"amount",
+            data:"total_amount",
             defaultContent:"0",
             mRender:function(data,type,full){
                 return `Rp. ${formatNumber(data)}`

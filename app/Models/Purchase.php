@@ -17,6 +17,7 @@ class Purchase extends Model
     public $casts = [
         'is_distributor' => 'boolean',
         'tax_in_price' => 'boolean',
+        'status' => 'boolean',
     ];
 
 
