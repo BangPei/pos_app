@@ -158,14 +158,13 @@ class PurchaseController extends Controller
      */
     public function edit($code)
     {
-        $supplier = Supplier::all();
+        $po = Purchase::where('code', $code)->first();
         return view(
             'purchase.view-po',
             [
                 "title" => "Form Pembelian",
                 "menu" => "Aplikasi Pembelian",
-                'supplier' => $supplier,
-                'poCode' => $code,
+                'po' => $po,
             ]
         );
     }
