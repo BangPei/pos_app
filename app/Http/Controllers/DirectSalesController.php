@@ -8,6 +8,7 @@ use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\StockHistory;
 use App\Models\TempTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class DirectSalesController extends Controller
         }
         for ($i = 0; $i < count($prevDs); $i++) {
             $ds = $prevDs[$i];
-            $prevTotal =$prevTotal+ $ds['amount'];
+            $prevTotal = $prevTotal + $ds['amount'];
         }
         return [
             $year => $currDs,
@@ -127,7 +128,6 @@ class DirectSalesController extends Controller
         $ds->reduce_value = $request->reduce_value;
         $ds->save();
 
-        $details = [];
         for ($i = 0; $i < count($request->details); $i++) {
             $stock = Stock::where('id', $request->details[$i]["product"]['stock']['id'])->first();
             $detail = new DirectSalesDetail();
@@ -146,9 +146,18 @@ class DirectSalesController extends Controller
             Stock::where('id', $request->details[$i]["product"]['stock']['id'])->update([
                 'value' => $stock->value - ($detail->convertion * $detail->qty),
             ]);
-            array_push($details, $detail);
+
+            $history = new StockHistory();
+            $history->type = -1;
+            $history->date = $ds->date;
+            $history->trans_code = $ds->code;
+            $history->qty = ($detail->convertion * $detail->qty);
+            $history->old_qty = $stock->value;
+            $history->stock_id = $request->details[$i]["product"]['stock']['id'];
+            $history->note = "Pengurangan Qty dari penjualan dengan kode barang " . $detail->product_barcode;
+            $history->save();
         }
-        // $ds->details = $details;
+
         $ds = DirectSales::where('id', $ds->id)->first();
         TempTransaction::where('user_id', auth()->user()->id)->delete();
 

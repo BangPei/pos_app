@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Stock;
 use App\Models\Product;
+use App\Models\StockHistory;
 use App\Models\TempTransaction;
 use App\Models\Uom;
 use Illuminate\Http\Request;
@@ -127,6 +128,14 @@ class StockController extends Controller
                 $product->edit_by_id = auth()->user()->id;
                 $product->save();
             }
+            $history = new StockHistory();
+            $history->type = 1;
+            $history->date = date("Y-m-d");
+            $history->qty = $stock['value'];
+            $history->old_qty = $stock->value;
+            $history->stock_id = $stock['id'];
+            $history->note = "Inisiasi Stock Baru";
+            $history->save();
         }
         session()->flash('message', 'Berhasil Menambah group Stock ' . $stock['name']);
         return back();

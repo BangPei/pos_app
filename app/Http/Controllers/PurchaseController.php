@@ -8,6 +8,7 @@ use App\Models\ModalPrice;
 use App\Models\Product;
 use App\Models\PurchaseDetail;
 use App\Models\Stock;
+use App\Models\StockHistory;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
@@ -115,6 +116,17 @@ class PurchaseController extends Controller
                 'value' => $stock->value + ($poDetail->convertion * $poDetail->qty),
             ]);
             $poDetail->save();
+
+            $history = new StockHistory();
+            $history->type = 1;
+            $history->date = $po->date;
+            $history->trans_code = $po->code;
+            $history->qty = ($poDetail->convertion * $poDetail->qty);
+            $history->old_qty = $stock->value;
+            $history->stock_id = $poDetail->stock_id;
+            $history->note = "Penambahan Qty dari kode barang " . $poDetail->product_barcode;
+            $history->save();
+
             for ($j = 0; $j < count($detail['detail_modals']); $j++) {
                 $modal = $detail['detail_modals'][$j];
                 $detailModal = new ModalPrice();
