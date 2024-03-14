@@ -7,8 +7,6 @@ use App\Models\DirectSales;
 use App\Models\DirectSalesDetail;
 use App\Models\PaymentType;
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use DateTime;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller

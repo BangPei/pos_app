@@ -34,6 +34,7 @@ class CreatePurchaseTable extends Migration
             $table->boolean('tax_in_price')->default(false);
             $table->decimal('tax_paid', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2)->default(0);
+            $table->decimal('amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }

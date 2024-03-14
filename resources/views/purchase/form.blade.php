@@ -223,6 +223,7 @@
   </div>
 </div>
 
+@include('component.base')
 @endsection
 
 @section('content-script')
@@ -249,6 +250,7 @@
         total_amount:0,
         details:[]
   }
+  let ids = [];
   $(document).ready(function(){
     $('a[data-widget="pushmenu"]').click()
     $('#date-time').val(moment(new Date()).format("DD MMMM YYYY"))
@@ -282,7 +284,7 @@
             data: 'id',
             className:"text-center",
             mRender: function(data, type, full) {
-              return `<a title="add" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></a>`
+              return `<button type="button" data-id=${data} title="add" class="btn btn-sm bg-gradient-primary add-product"><i class="fas fa-check"></i></button>`
             }
           }
         ],
@@ -294,6 +296,19 @@
             targets: [0,2]
           },
         ],
+        drawCallback: function( settings ) {
+            var api = this.api();
+            var node = api.rows().nodes()
+            for (var i = 0; i < node.length; i++) {
+                let dataId = $(node[i]).find('button').attr('data-id')
+                let isExist = ids.some(b => b==dataId)
+                if (isExist) {
+                    $(node[i]).find('button').attr('disabled','disabled')
+                      .addClass('btn-danger')
+                      .removeClass('bg-gradient-primary')
+                }
+            }
+        },
       })
     })
 
@@ -321,6 +336,7 @@
             periode:$('#date').val()
           }
           detail.detail_modals.push(detail_modal)
+          ids.push(e.id);
         });
         detail.price_per_pcs = detail.subtotal/(detail.qty*detail.convertion)
         purchase.details.push(detail)
@@ -336,6 +352,8 @@
 
     $('.card-detail').on('click','table .btn-detele',function(){
       let id = $(this).attr('data-id');
+      let stockFilter = purchase.details.filter(e=>e.stock.id == id);
+      stockFilter[0].stock.products.forEach(e=>ids.splice(e, 1));
       let filter =  purchase.details.filter(e=>e.stock.id !=id);
       purchase.details = filter;
       calculate();
@@ -621,7 +639,7 @@
     ajax(purchase, "{{ route('purchase-order.store') }}", "POST",
       function(json) {
         toastr.success('Transaksi Berhasil Disimpan')
-        console.log(json)
+        window.location.href = `${baseUrl}/purchase-order/${json.code}/edit`
       },function(json){
         console.log(json)
       }

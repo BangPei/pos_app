@@ -18,6 +18,7 @@ class CreateModalPricesTable extends Migration
             $table->foreignId('purchase_detail_id');
             $table->decimal('current_price', 10, 2)->default(0);
             $table->decimal('dpp', 10, 2)->default(0);
+            $table->decimal('modal', 10, 2)->default(0);
             $table->decimal('new_price', 10, 2)->default(0);
             $table->decimal('tax_paid', 10, 2)->default(0);
             $table->decimal('margin_before_tax', 10, 2)->default(0);

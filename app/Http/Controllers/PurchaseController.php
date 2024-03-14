@@ -86,6 +86,7 @@ class PurchaseController extends Controller
         $po->subtotal = (float) $request->subtotal;
         $po->tax_paid = (float) $request->tax_paid;
         $po->total_amount =  (float)$request->total_amount;
+        $po->amount =  (float)$request->amount;
         if ($request->is_distributor == "false" || $request->is_distributor == false) {
             $po->supplier_id = null;
         } else {
@@ -106,8 +107,10 @@ class PurchaseController extends Controller
             $poDetail->product_barcode = $detail['product_barcode'];
             $poDetail->qty = (int) $detail['qty'];
             $poDetail->subtotal = (float) $detail['subtotal'];
-            $poDetail->price_per_price = (float) $detail['price_per_pcs'];
-            $poDetail->uom_id = (int) $detail['uom']['id'] ?? null;
+            $poDetail->price_per_pcs = (float) $detail['price_per_pcs'];
+            if (isset($detail['uom'])) {
+                $poDetail->uom_id = (int) $detail['uom']['id'] ?? null;
+            }
             Stock::where('id', $poDetail->stock_id)->update([
                 'value' => $stock->value + ($poDetail->convertion * $poDetail->qty),
             ]);
@@ -118,6 +121,7 @@ class PurchaseController extends Controller
                 $detailModal->purchase_detail_id = $poDetail->id;
                 $detailModal->current_price = (float) $modal['current_price'];
                 $detailModal->dpp = (float) $modal['dpp'];
+                $detailModal->modal = (float) $modal['modal'];
                 $detailModal->new_price = (float) $modal['new_price'];
                 $detailModal->tax_paid = (float) $modal['tax_paid'];
                 $detailModal->periode = $po->date;
@@ -158,7 +162,9 @@ class PurchaseController extends Controller
      */
     public function edit($code)
     {
-        $po = Purchase::where('code', $code)->first();
+        $po = Purchase::where('code', $code)->with(['details' => function ($query) {
+            $query->with('detail_modals');
+        }])->first();
         return view(
             'purchase.view-po',
             [

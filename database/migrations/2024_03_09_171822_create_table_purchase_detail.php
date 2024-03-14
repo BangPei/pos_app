@@ -20,9 +20,9 @@ class CreateTablePurchaseDetail extends Migration
             $table->string('product_barcode');
             $table->foreignId('stock_id');
             $table->integer('qty')->default(0);
-            $table->foreignId('uom_id');
+            $table->foreignId('uom_id')->nullable();
             $table->decimal('subtotal', 10, 2)->default(0);
-            $table->decimal('price_per_price', 10, 2)->default(0);
+            $table->decimal('price_per_pcs', 10, 2)->default(0);
             $table->timestamps();
         });
     }
