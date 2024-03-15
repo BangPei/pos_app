@@ -215,6 +215,14 @@ class StockController extends Controller
             $product->save();
             // array_push($products, $product);
         }
+        $history = new StockHistory();
+        $history->type = 0;
+        $history->date = date("Y-m-d");
+        $history->qty = $request->value;
+        $history->old_qty = $request->value;
+        $history->stock_id = $stock['id'];
+        $history->note = "Perubahan Stok manual";
+        $history->save();
         // $stock['products'] = $products;
         return response()->json($stock);
     }
@@ -245,15 +253,26 @@ class StockController extends Controller
         );
         $stock['id'] = $request->input('id');
         $convertion = $request->input('convertion');
+        $qty = 0;
         if ($convertion != NULL) {
+            $qty = (int)$stock['value'] * $request->input('convertion');
             Stock::where('id', $stock['id'])->update([
-                'value' => (int)$stock['value'] * $request->input('convertion'),
+                'value' => $qty,
             ]);
         } else {
+            $qty = (int)$stock['value'];
             Stock::where('id', $stock['id'])->update([
-                'value' => (int)$stock['value'],
+                'value' => $qty,
             ]);
         }
+        $history = new StockHistory();
+        $history->type = 0;
+        $history->date = date("Y-m-d");
+        $history->qty = $qty;
+        $history->old_qty = $qty;
+        $history->stock_id = $stock['id'];
+        $history->note = "Perubahan Stok manual";
+        $history->save();
         return back();
     }
 
