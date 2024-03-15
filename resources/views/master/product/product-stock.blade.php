@@ -147,7 +147,7 @@
                     @else
                       <a class="dropdown-item stock-status" data-id="{{ $s->id }}" data-value=true href="#">Aktifkan</a>
                     @endif
-                    {{-- <a class="dropdown-item">Histori Stok</a> --}}
+                    <a class="dropdown-item" data-toggle="modal" data-target="#modal-description">Histori Stok</a>
                     <a class="dropdown-item" href="/stock/delete/{{ $s->id }}">Hapus</a>
                 </li>
             </ul>

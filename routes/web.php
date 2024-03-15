@@ -6,6 +6,7 @@ use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DirectSalesController;
 use App\Http\Controllers\ExpeditionController;
+use App\Http\Controllers\HistoryStockController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MultipleDiscountController;
 use App\Http\Controllers\MultipleDiscountDetailController;
@@ -108,4 +109,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::get('report/yearly', [ReportController::class, 'yearly'])->middleware('auth');
 
     Route::resource('sku', SkuController::class)->middleware('auth');
+
+    Route::get('stock-history/dataTable/{stockId}', [HistoryStockController::class, 'dataTable'])->middleware('auth');
+    Route::resource('stock-history', HistoryStockController::class)->middleware('auth');
 });
