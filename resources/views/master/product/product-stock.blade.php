@@ -114,7 +114,6 @@
             <a href="/stock/{{ $s->id }}/edit">
               <label class="m-0 p-0" >{{ Str::upper($s->name) }}</label>
               <a class="pl-1" href="/stock/{{ $s->id }}/edit"> <i class="fa fa-eye"></i></a>
-              <a class="pl-1" href="/stock/delete/{{ $s->id }}"> <i class="fa fa-trash text-danger"></i></a>
               <label >{{ $s->max_price }}</label>
             </a>
           </div> 
@@ -137,11 +136,26 @@
             </form>
           </div>
           <div class="col text-right pr-4">
-            <div class="custom-control custom-switch switch-stock">
+            <a class="nav-link dropdown-toggle" style="padding:0px!important" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+              Detail
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                    <a class="dropdown-item" href="/stock/{{ $s->id }}/edit">Edit</a>
+                    @if ($s->is_active)
+                      <a class="dropdown-item stock-status" data-id="{{ $s->id }}" data-value=false href="#">Non Aktifkan</a>
+                    @else
+                      <a class="dropdown-item stock-status" data-id="{{ $s->id }}" data-value=true href="#">Aktifkan</a>
+                    @endif
+                    {{-- <a class="dropdown-item">Histori Stok</a> --}}
+                    <a class="dropdown-item" href="/stock/delete/{{ $s->id }}">Hapus</a>
+                </li>
+            </ul>
+            {{-- <div class="custom-control custom-switch switch-stock">
               <label class="pr-5">status : </label>
               <input data-id="{{ $s->id }}" type="checkbox" {{ $s->is_active?'checked':'' }} name="my-switch" class="custom-control-input" id="switch-stock-{{ $s->id }}">
               <label class="custom-control-label" for="switch-stock-{{ $s->id }}"></label>
-            </div>
+            </div> --}}
           </div>
           {{-- @if (count($s->products)==0)
             <div class="col text-right">
@@ -227,8 +241,9 @@
 <script>
 
   $(document).ready(function(){
-    $('.switch-stock').on('click','.custom-control-input',function() {
-      let bool = $(this).prop('checked');
+
+    $('.stock-status').on('click',function(){
+      let bool = $(this).attr('data-value')=='true'
       let data = {
         id:$(this).attr('data-id'),
         is_active:bool?1:0

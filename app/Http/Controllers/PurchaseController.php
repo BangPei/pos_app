@@ -124,7 +124,7 @@ class PurchaseController extends Controller
             $history->qty = ($poDetail->convertion * $poDetail->qty);
             $history->old_qty = $stock->value;
             $history->stock_id = $poDetail->stock_id;
-            $history->note = "Penambahan Qty dari kode barang " . $poDetail->product_barcode;
+            $history->note = "Penambahan Qty dari kode barang " . $poDetail->product_barcode . " Sebanyak " . $history->qty;
             $history->save();
 
             for ($j = 0; $j < count($detail['detail_modals']); $j++) {

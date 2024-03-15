@@ -154,7 +154,7 @@ class DirectSalesController extends Controller
             $history->qty = ($detail->convertion * $detail->qty);
             $history->old_qty = $stock->value;
             $history->stock_id = $request->details[$i]["product"]['stock']['id'];
-            $history->note = "Pengurangan Qty dari penjualan dengan kode barang " . $detail->product_barcode;
+            $history->note = "Pengurangan Qty dari penjualan dengan kode barang " . $detail->product_barcode . " Sebanyak " . $history->qty;
             $history->save();
         }
 
