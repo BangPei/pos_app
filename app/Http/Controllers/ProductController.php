@@ -265,7 +265,9 @@ class ProductController extends Controller
     {
         $product = Product::where('barcode', $barcode)->with('stock')->first();
         if (isset($product)) {
-            return response()->json(['message' => 'Barcode sudah terdaftar pada group ' . $product->stock->name], 400);
+            if ($product->stock != null) {
+                return response()->json(['message' => 'Barcode sudah terdaftar pada group ' . $product->stock->name ?? '---'], 400);
+            }
         }
         return response()->json(true);
     }

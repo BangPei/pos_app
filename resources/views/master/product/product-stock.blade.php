@@ -114,6 +114,7 @@
             <a href="/stock/{{ $s->id }}/edit">
               <label class="m-0 p-0" >{{ Str::upper($s->name) }}</label>
               <a class="pl-1" href="/stock/{{ $s->id }}/edit"> <i class="fa fa-eye"></i></a>
+              <a class="pl-1" href="/stock/delete/{{ $s->id }}"> <i class="fa fa-trash text-danger"></i></a>
               <label >{{ $s->max_price }}</label>
             </a>
           </div> 
@@ -142,7 +143,7 @@
               <label class="custom-control-label" for="switch-stock-{{ $s->id }}"></label>
             </div>
           </div>
-          @if (count($s->products)==0)
+          {{-- @if (count($s->products)==0)
             <div class="col text-right">
               <form method="POST" action="/stock/remove">
                 @csrf
@@ -151,7 +152,7 @@
                 <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i> Hapus</button>
               </form>
             </div>
-          @endif
+          @endif --}}
         </div>
 
         @if (count($s->products)!=0)

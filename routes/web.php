@@ -53,6 +53,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::put('stock/value', [StockController::class, 'updateStock'])->middleware('auth');
     Route::put('stock/status', [StockController::class, 'changeStatus'])->middleware('auth');
     Route::delete('stock/remove', [StockController::class, 'destroy'])->middleware('auth');
+    Route::get('stock/delete/{id}', [StockController::class, 'remove'])->middleware('auth');
     Route::resource('stock', StockController::class, ['tab' => 'all'])->middleware('auth');
 
     Route::put('category/status', [CategoryController::class, 'changeStatus'])->middleware('auth');

@@ -179,9 +179,11 @@
                   </div>
                   </p>
               </div>
-              <div class="col">
-                <a href="/stock/{{$pr->stock->id}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
-              </div>
+              @if ($pr->stock !=null)    
+                <div class="col">
+                  <a href="/stock/{{$pr->stock->id}}/edit" title="Edit" class="btn btn-sm bg-gradient-success edit-product"><i class="fas fa-eye"></i> Lihat</a>
+                </div>
+              @endif
           </div>
       </h6>
     </div>

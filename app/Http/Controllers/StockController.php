@@ -237,6 +237,14 @@ class StockController extends Controller
     {
         $stock = Stock::find($request->input('stock-id'));
         $stock->delete();
+        Product::where('stock_id', $request->input('stock-id'))->delete();
+        return back();
+    }
+    public function remove($id)
+    {
+        $stock = Stock::find($id);
+        $stock->delete();
+        Product::where('stock_id', $id)->delete();
         return back();
     }
     public function delete()
