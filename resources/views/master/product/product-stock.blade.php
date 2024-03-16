@@ -1,4 +1,7 @@
 @extends('layouts.main-layout')
+@section('content-class')
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+@endsection
 
 @section('content-child')
 <div class="col-md-12">
@@ -147,7 +150,7 @@
                     @else
                       <a class="dropdown-item stock-status" data-id="{{ $s->id }}" data-value=true href="#">Aktifkan</a>
                     @endif
-                    <a class="dropdown-item" data-toggle="modal" data-target="#modal-description">Histori Stok</a>
+                    <a data-id="{{ $s->id }}" class="dropdown-item btn-history" data-toggle="modal" data-target="#modal-history">Histori Stok</a>
                     <a class="dropdown-item" href="/stock/delete/{{ $s->id }}">Hapus</a>
                 </li>
             </ul>
@@ -235,12 +238,115 @@
     <span class="pl-1">{{ $stocks->links() }}</span>
   </div>
 </div>
+
+
+<div class="modal fade" id="modal-history" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">History</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 table-responsive">
+            <input type="text" class="d-none" id="stock-id">
+            <table class="table table-striped table-bordered table-sm" id="table-history">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Tipe</th>
+                  <th>Kode Transaksi</th>
+                  <th>Qty</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('content-script')
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
 
   $(document).ready(function(){
+    
+    $('#modal-history').on('show.bs.modal', function (e) {
+      let stockId = $('#stock-id').val();
+      tblHistory = $('#table-history').DataTable({
+        processing:true,
+        serverSide:true,
+        searching: false,
+        ordering:  false,
+        dom: 'rtip',
+        info:false,
+        ajax:{
+          url:`{{URL::to('stock-history/dataTable/${stockId}')}}`,
+          type:"GET",
+        },
+        columns:[
+          {
+            data:"created_at",
+            defaultContent:"--",
+            className:"text-center",
+            mRender:function(data, type,full){
+                return moment(data).format("DD MMMM YYYY HH:mm:ss")
+            }
+          },
+          {
+            data:"type",
+            defaultContent:"--",
+            mRender:function(data, type,full){
+                switch (data) {
+                  case 1:
+                    return 'Penambah'
+                    break;
+                  case -1:
+                    return 'Pengurang'
+                    break;
+                
+                  default:
+                    return 'Manual'
+                    break;
+                }
+            }
+          },
+          {
+            data:"trans_code",
+            defaultContent:"--",
+          },
+          {
+            data:"qty",
+            defaultContent:"--",
+            mRender:function(data,full,type){
+              return `${data} <small>(satuan terkecil)</small>`
+            }
+          },
+          {
+            data:"note",
+            defaultContent:"--",
+          },
+        ],
+      })
+    })
+
+    $('#modal-history').on('hidden.bs.modal', function (e) {
+      $('#table-history').DataTable().destroy();
+    })
+
+    $('.btn-history').on('click',function(){
+      let stockId = $(this).attr('data-id');
+      $('#stock-id').val(stockId)
+    })
 
     $('.stock-status').on('click',function(){
       let bool = $(this).attr('data-value')=='true'

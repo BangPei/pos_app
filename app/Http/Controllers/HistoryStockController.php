@@ -16,9 +16,9 @@ class HistoryStockController extends Controller
 
     public function dataTable($stockId, UtilitiesRequest $request)
     {
-        $product = HistoryStock::where('stock_id', $stockId);
+        $hsitory = HistoryStock::where('stock_id', $stockId)->orderBy('created_at', 'desc');
         if ($request->ajax()) {
-            return datatables()->of($product)->make(true);
+            return datatables()->of($hsitory)->make(true);
         }
     }
     public function index()
