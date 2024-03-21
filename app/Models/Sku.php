@@ -14,4 +14,8 @@ class Sku extends Model
     {
         return $this->hasMany(SkuDetail::class);
     }
+    public function gifts()
+    {
+        return $this->hasMany(SkuGift::class);
+    }
 }

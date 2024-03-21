@@ -19,7 +19,6 @@ class CreateSkuDetailsTable extends Migration
             $table->foreignId('product_barcode');
             $table->integer('qty')->default(1);
             $table->boolean('is_variant')->default(false);
-            $table->boolean('is_gift')->default(false);
             $table->timestamps();
         });
     }

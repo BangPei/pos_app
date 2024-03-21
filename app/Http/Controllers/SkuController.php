@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sku;
+use App\Models\SkuDetail;
+use App\Models\SkuGift;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SkuController extends Controller
 {
@@ -38,6 +41,30 @@ class SkuController extends Controller
      */
     public function store(Request $request)
     {
+        $sku = new Sku();
+        $sku->code = Str::random(32);
+        $sku->name = $request->name;
+        $sku->total_item = $request->total_item;
+        $sku->save();
+
+        for ($i = 0; $i < count($request['gifts']); $i++) {
+            $data = $request->gifts[$i];
+            $gift = new SkuGift();
+            $gift->qty = $data['qty'];
+            $gift->product_barcode = $data['product']['barcode'];
+            $gift->sku_id = $sku->id;
+            $gift->save();
+        }
+        for ($i = 0; $i < count($request['details']); $i++) {
+            $data = $request->details[$i];
+            $details = new SkuDetail();
+            $details->qty = $data['qty'];
+            $details->product_barcode = $data['product']['barcode'];
+            $details->sku_id = $sku->id;
+            $details->is_variant = $data['is_variant'];
+            $details->save();
+        }
+        return response()->json($sku->with('details')->with('gifts'));
     }
 
     /**

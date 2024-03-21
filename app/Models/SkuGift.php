@@ -5,16 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SkuDetail extends Model
+class SkuGift extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
     protected $hidden = ['product_barcode'];
     protected $with = ['product'];
-
-    public $casts = [
-        'is_variant' => 'boolean',
-    ];
 
     public function product()
     {

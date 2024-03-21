@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSkusTable extends Migration
+class CreateSkuGiftsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSkusTable extends Migration
      */
     public function up()
     {
-        Schema::create('skus', function (Blueprint $table) {
+        Schema::create('sku_gifts', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->integer('total_item')->default(0);
+            $table->foreignId('sku_id');
+            $table->foreignId('product_barcode');
+            $table->integer('qty')->default(1);
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateSkusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('skus');
+        Schema::dropIfExists('sku_gifts');
     }
 }
