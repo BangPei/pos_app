@@ -5,20 +5,6 @@
 
 @section('content-child')
 <div class="col-md-12">
-    @if (session()->has('message'))
-    <div class="card card-success">
-        <div class="card-header">
-            <h3 class="card-title">{{ session('message') }}</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                </button>
-            </div>
-            <!-- /.card-tools -->
-        </div>
-    </div>
-    @endif
-</div>
-<div class="col-md-12">
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Daftar Sku Online Shope</h2>

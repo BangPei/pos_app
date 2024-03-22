@@ -17,19 +17,19 @@
                     <div class="col-lg-5 col-md-5 col-sm-12">
                         <div class="form-group">
                             <label for="name">Nama</label>
-                            <input value="" type="text" class="form-control" name="name" id="name">
+                            <input value="{{ old('name',$sku->name??'') }}"  type="text" class="form-control" name="name" id="name">
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="form-group">
                             <label for="code">SKU</label>
-                            <input readonly value=""  type="text" class="form-control" name="code" id="code">
+                            <input readonly value="{{ $sku->code??'' }}"  type="text" class="form-control" name="code" id="code">
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         <div class="form-group">
                             <label for="total-item">Total Produk</label>
-                            <input readonly value="" type="text" class="form-control" name="total-item" id="total-item">
+                            <input readonly value="{{ $sku->total_item??'' }}" type="text" class="form-control" name="total-item" id="total-item">
                         </div>
                     </div>
                 </div>
@@ -110,6 +110,7 @@
         </div>
     </div>
 </div>
+@include('component.base')
 @endsection
 
 @section('content-script')
@@ -117,7 +118,7 @@
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/dataTables-checkboxes/js/dataTables.checkboxes.min.js"></script>
 <script>
-    let dataId = "<?=isset($sku)?$sku->id:null?>";
+    let skuId = "<?=isset($sku)?$sku->id:null?>";
     let sku = {
         id:null,
         code:null,
@@ -128,6 +129,7 @@
     }
     let isGift= false;
     $(document).ready(function(){
+        skuId!=""?getSku():null;
         tblProductSku= $('#table-product-sku').DataTable({
             paging: false,
             searching: false,
@@ -349,11 +351,25 @@
         ajax(sku, "{{ route('sku.store') }}", "POST",
             function(json) {
                 toastr.success('Transaksi Berhasil Disimpan')
-                console.log(json)
+                setTimeout(() => {
+                    window.location.href = `${baseUrl}/sku/${json.id}/edit`
+                }, 200);
             },function(json){
                 console.log(json)
             }
         )
+    }
+
+    function getSku(){
+        let data = {
+            id:skuId,
+        }
+        ajax(data, `{{URL::to('sku/show')}}`, "GET",
+            function(json) {
+                sku = Object.assign({}, json);
+                reloadJsonDataTable(tblProductSku,json.details);
+                renderGift()
+        })
     }
 </script>
 @endsection
