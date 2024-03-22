@@ -9,6 +9,7 @@ class Sku extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    protected $with = ['details', 'gifts'];
 
     public function details()
     {

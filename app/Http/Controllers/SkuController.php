@@ -7,6 +7,7 @@ use App\Models\SkuDetail;
 use App\Models\SkuGift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Utilities\Request as UtilitiesRequest;
 
 class SkuController extends Controller
 {
@@ -15,8 +16,12 @@ class SkuController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UtilitiesRequest $request)
     {
+        $sku = Sku::all();
+        if ($request->ajax()) {
+            return datatables()->of($sku)->make(true);
+        }
         return view('online_shop/sku/index', ["title" => "SKU Generator", "menu" => "Online Shop",]);
     }
 
@@ -47,13 +52,15 @@ class SkuController extends Controller
         $sku->total_item = $request->total_item;
         $sku->save();
 
-        for ($i = 0; $i < count($request['gifts']); $i++) {
-            $data = $request->gifts[$i];
-            $gift = new SkuGift();
-            $gift->qty = $data['qty'];
-            $gift->product_barcode = $data['product']['barcode'];
-            $gift->sku_id = $sku->id;
-            $gift->save();
+        if (isset($request['gifts'])) {
+            for ($i = 0; $i < count($request['gifts']); $i++) {
+                $data = $request->gifts[$i];
+                $gift = new SkuGift();
+                $gift->qty = $data['qty'];
+                $gift->product_barcode = $data['product']['barcode'];
+                $gift->sku_id = $sku->id;
+                $gift->save();
+            }
         }
         for ($i = 0; $i < count($request['details']); $i++) {
             $data = $request->details[$i];
@@ -61,10 +68,10 @@ class SkuController extends Controller
             $details->qty = $data['qty'];
             $details->product_barcode = $data['product']['barcode'];
             $details->sku_id = $sku->id;
-            $details->is_variant = $data['is_variant'];
+            $details->is_variant = $data['is_variant'] == "true" ? 1 : 0;;
             $details->save();
         }
-        return response()->json($sku->with('details')->with('gifts'));
+        return response()->json(Sku::find($sku->id)->with('gift'));
     }
 
     /**

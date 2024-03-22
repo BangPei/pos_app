@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="card-body table-responsive">
-      <table class="table table-striped table-bordered table-sm " id="table-uom">
+      <table class="table table-striped table-bordered table-sm " id="table-sku">
         <thead>
           <tr>
             <th>Code</th>
@@ -48,6 +48,39 @@
 @section('content-script')
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="js/script.js"></script>
+<script>
+
+  $(document).ready(function(){
+    tblSku = $('#table-sku').DataTable({
+      processing:true,
+      serverSide:true,
+      ajax:{
+        url:"{{ route('sku.index') }}",
+        type:"GET",
+      },
+      columns:[
+          {
+              data:"code",
+              defaultContent:"--"
+          },
+          {
+              data:"name",
+              defaultContent:"--",
+          },
+          {
+              data:"total_item",
+              defaultContent:"--"
+          },
+          {
+              data: 'id',
+              mRender: function(data, type, full) {
+                  return `<a href="/sku/${data}/edit" title="Edit" class="btn btn-sm bg-gradient-primary edit-sku"><i class="fas fa-edit"></i></a></form>`
+              }
+          }
+        ],
+    })
+  })
+
+</script>
 
 @endsection
