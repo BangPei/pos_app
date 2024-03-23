@@ -354,7 +354,7 @@
             function(json) {
                 toastr.success('Transaksi Berhasil Disimpan')
                 setTimeout(() => {
-                    window.location.href = `${baseUrl}/sku/${skuId}/edit`
+                    window.location.href = `${baseUrl}/sku/${skuId==""?json.id:skuId}/edit`
                 }, 200);
             }
         )
