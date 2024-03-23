@@ -14,9 +14,10 @@ class CreateSkuGiftsTable extends Migration
     public function up()
     {
         Schema::create('sku_gifts', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->id();
             $table->foreignId('sku_id');
-            $table->foreignId('product_barcode');
+            $table->string('product_barcode')->references('barcode')->on('products');
             $table->integer('qty')->default(1);
             $table->timestamps();
         });

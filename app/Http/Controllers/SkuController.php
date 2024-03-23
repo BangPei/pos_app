@@ -85,9 +85,8 @@ class SkuController extends Controller
      * @param  \App\Models\Sku  $sku
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function show(Sku $sku)
     {
-        $sku = Sku::where('id', $request->id)->first();
         return response()->json($sku);
     }
 
@@ -115,7 +114,32 @@ class SkuController extends Controller
      */
     public function update(Request $request, Sku $sku)
     {
-        //
+        Sku::where('id', $request->id)->update([
+            'name' => $request->name,
+            'total_item' => $request->total_item,
+        ]);
+        SkuDetail::where('sku_id', $request->id)->delete();
+
+        foreach ($request['details'] as $d) {
+            $details = new SkuDetail();
+            $details->qty = $d['qty'];
+            $details->product_barcode = $d['product']['barcode'];
+            $details->sku_id = $request->id;
+            $details->is_variant = $d['is_variant'] == "true" ? 1 : 0;;
+            $details->save();
+        }
+        SkuGift::where('sku_id', $request->id)->delete();
+        if (isset($request['gifts'])) {
+            for ($i = 0; $i < count($request['gifts']); $i++) {
+                $data = $request->gifts[$i];
+                $gift = new SkuGift();
+                $gift->qty = $data['qty'];
+                $gift->product_barcode = $data['product']['barcode'];
+                $gift->sku_id = $sku->id;
+                $gift->save();
+            }
+        }
+        return response()->json(Sku::find($request->id));
     }
 
     /**

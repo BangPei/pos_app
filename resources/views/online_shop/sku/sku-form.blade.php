@@ -348,28 +348,26 @@
     function submitSKU() {
         sku.name = $('#name').val();
         sku.total_item = sku.details.length;
-        ajax(sku, "{{ route('sku.store') }}", "POST",
+        let url = skuId!=""?`{{URL::to('sku/${skuId}')}}`:"{{ route('sku.store') }}"
+        let method = skuId!=""?`PUT`:"POST";
+        ajax(sku, url, method,
             function(json) {
                 toastr.success('Transaksi Berhasil Disimpan')
                 setTimeout(() => {
-                    window.location.href = `${baseUrl}/sku/${json.id}/edit`
+                    window.location.href = `${baseUrl}/sku/${skuId}/edit`
                 }, 200);
-            },function(json){
-                console.log(json)
             }
         )
     }
 
     function getSku(){
-        let data = {
-            id:skuId,
-        }
-        ajax(data, `{{URL::to('sku/show')}}`, "GET",
+        ajax(null, `{{URL::to('sku/${skuId}')}}`, "GET",
             function(json) {
                 sku = Object.assign({}, json);
                 reloadJsonDataTable(tblProductSku,json.details);
                 renderGift()
-        })
+            },
+        )
     }
 </script>
 @endsection
