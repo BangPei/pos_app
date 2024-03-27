@@ -343,11 +343,11 @@ class lazadaApiController extends Controller
         $itemData['product_id'] = (int)$detail->product_id;
         $itemData['order_id'] = (int)$detail->order_id;
         $itemData['order_type'] = $detail->order_type;
-        $itemData['tracking_number'] = $detail->tracking_code;
+        $itemData['tracking_number'] = $detail->tracking_code ?? "";
         if ($detail->tracking_code !== "") {
             $headerObject->tracking_number = $detail->tracking_code;
         }
-        $itemData['order_status'] = $this->getOrderStatus($detail->status, $detail->tracking_code)['status'];
+        $itemData['order_status'] = $this->getOrderStatus($detail->status, $detail->tracking_code ?? "")['status'];
         $headerObject->status = $detail->status;
         // if (($detail->status == "pending") || ($detail->status == "canceled")) {
         //     $headerObject->status = $detail->status;
@@ -376,9 +376,9 @@ class lazadaApiController extends Controller
         $fixData["message_to_seller"] = null;
         $fixData["order_no"] = (string)$headerObject->order_number;
         $fixData["tracking_number"] = $headerObject->tracking_number ?? "";
-        $fixData["order_status"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number)['status'];
-        $fixData["show_request"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number)['show_request'];
-        $fixData["show_button"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number)['show_button'];
+        $fixData["order_status"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number ?? "")['status'];
+        $fixData["show_request"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number ?? "")['show_request'];
+        $fixData["show_button"] = $this->getOrderStatus($headerObject->status, $headerObject->tracking_number ?? "")['show_button'];
         $fixData["delivery_by"] = $deliveryBy;
         $fixData["pickup_by"] = $pickupBy;
         $fixData["total_amount"] = (float) $headerObject->price;
@@ -393,7 +393,7 @@ class lazadaApiController extends Controller
         return $fixData;
     }
 
-    private function getOrderStatus($status, $trackingNumber)
+    private function getOrderStatus($status, $trackingNumber = null)
     {
         $orderStatus = array();
         switch ($status) {
