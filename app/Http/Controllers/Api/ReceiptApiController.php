@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Receipt;
 use Illuminate\Http\Request;
 
 class ReceiptApiController extends Controller
@@ -34,9 +35,9 @@ class ReceiptApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($barcode)
     {
-        //
+        return response()->json(Receipt::where('number', $barcode)->first());
     }
 
     /**

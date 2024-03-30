@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Expedition;
 use App\Models\OnlineShop;
+use App\Models\Receipt;
 use App\Models\ShopeAccessToken;
 use Illuminate\Http\Request;
 
@@ -22,8 +23,8 @@ class ShopeeApiController extends Controller
 
     public function index()
     {
-        // return $this->getOrderByNoV2("221214MET95VCM");
-        // return $this->getAccessToken();
+        return $this->getOrderByNoV2("240328938M088K");
+        // return $this->getRefreshToken();
         // return $this->getLink();
     }
 
@@ -92,7 +93,7 @@ class ShopeeApiController extends Controller
         $timestamp = time();
         $sign = hash_hmac('sha256', utf8_encode($this->partner_id . $path . $timestamp), $this->partner_key, false);
         $url = $host . $path . "?partner_id=" . $this->partner_id . "&timestamp=" . $timestamp . "&sign=" . $sign . "&redirect=https://www.google.com";
-        $newUrl=str_replace(" ","",$url);
+        $newUrl = str_replace(" ", "", $url);
         return $newUrl;
     }
 
@@ -251,8 +252,9 @@ class ShopeeApiController extends Controller
                 $fixData["update_time_online"] = date('Y-m-d H:i:s', $order->update_time);
                 $fixData["message_to_seller"] = $order->message_to_seller;
                 $fixData["order_no"] = $order->order_sn;
-                $fixData["order_status"] = $this->getOrderStatus($order->order_status)['status'];
-                $fixData["show_request"] = $this->getOrderStatus($order->order_status)['show_request'];
+                $fixData["order_status"] = $this->getOrderStatus($order->order_status, $$trackingNumber ?? "")['status'];
+                $fixData["show_request"] = $this->getOrderStatus($order->order_status, $$trackingNumber ?? "")['show_request'];
+                $fixData["show_button"] = $this->getOrderStatus($order->order_status, $$trackingNumber ?? "")['show_button'];
                 $fixData["tracking_number"] = $trackingNumber;
                 $fixData["delivery_by"] = $order->shipping_carrier;
                 $fixData["pickup_by"] = $order->shipping_carrier;
@@ -277,7 +279,7 @@ class ShopeeApiController extends Controller
                     $item['sku_id'] = null;
                     $item['order_id'] = null;
                     $item['order_type'] = null;
-                    $item['order_status'] = $this->getOrderStatus($order->order_status)['status'];
+                    $item['order_status'] = $this->getOrderStatus($order->order_status, $$trackingNumber ?? "")['status'];
                     $item['tracking_number'] = null;
                     $total_qty = $total_qty + $item['qty'];
                     array_push($items, $item);
@@ -457,62 +459,75 @@ class ShopeeApiController extends Controller
         return $response;
     }
 
-    private function getOrderStatus($status)
+    private function getOrderStatus($status, $trackingNumber)
     {
         $orderStatus = array();
         switch ($status) {
             case "READY_TO_SHIP":
                 $orderStatus = [
                     "status" => "DIKEMAS",
-                    "show_request" => true
+                    "show_request" => true,
+                    "show_button" => true,
                 ];
                 break;
             case "IN_CANCEL":
                 $orderStatus = [
                     "status" => "PENGAJUAN PEMBATALAN",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case "CANCELLED":
                 $orderStatus = [
                     "status" => "BATAL",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case "COMPLETED":
                 $orderStatus = [
                     "status" => "SELESAI",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case "PROCESSED":
+                $receipt = Receipt::where('number', $trackingNumber)->first();
+                $bool = isset($receipt);
+                $showRequest = ($bool && $receipt->status == 1) ? true : false;
+                $status = ($bool && $receipt->status == 1) ? "Proses Kemas" : "Tercetak";
                 $orderStatus = [
-                    "status" => "SIAP KIRIM",
-                    "show_request" => false
+                    "status" => $status,
+                    "show_request" => $showRequest,
+                    "show_button" => true,
                 ];
                 break;
             case "UNPAID":
                 $orderStatus = [
                     "status" => "BELUM BAYAR",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case "SHIPPED":
                 $orderStatus = [
                     "status" => "DALAM PENGIRIMAN",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case "INVOICE_PENDING":
                 $orderStatus = [
                     "status" => "INVOICE PENDING",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             default:
                 $orderStatus = [
                     "status" => $status,
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
         }

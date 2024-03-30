@@ -159,7 +159,7 @@ class TiktokApiController extends Controller
         $itemData = null;
         $itemData['image_url'] = $detail['sku_image'];
         $itemData['item_name'] = $detail['product_name'];
-        $itemData['item_sku'] = $detail['seller_sku']??"";
+        $itemData['item_sku'] = $detail['seller_sku'] ?? "";
         $itemData['variation'] = $detail['sku_name'];
         $itemData['order_item_id'] = null;
         $itemData['sku_id'] = $detail['sku_id'];
@@ -169,8 +169,8 @@ class TiktokApiController extends Controller
         $itemData['product_id'] = (int)$detail['product_id'];
         $itemData['order_id'] = (int)$detail['order_line_id'];
         $itemData['order_type'] = null;
-        $itemData['order_status'] = $this->getOrderStatus($detail['display_status'])['status'];
         $itemData['tracking_number'] = $detail['tracking_number'];
+        $itemData['order_status'] = $this->getOrderStatus($detail['display_status'], $itemData['tracking_number'] ?? "")['status'];
 
         return $itemData;
     }
@@ -183,8 +183,9 @@ class TiktokApiController extends Controller
         $fixData["update_time_online"] = date('Y-m-d H:i:s', (int)$headerObject['update_time']);
         $fixData["message_to_seller"] = $headerObject['buyer_message'];
         $fixData["order_no"] = $headerObject['order_id'];
-        $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'])['status'];
         $fixData["tracking_number"] = $headerObject['tracking_number'] ?? "";
+        $fixData["order_status"] = $this->getOrderStatus($headerObject['order_status'], $fixData["tracking_number"] ?? "")['status'];
+        $fixData["show_button"] = $this->getOrderStatus($headerObject->status, $fixData["tracking_number"] ?? "")['show_button'];
         $fixData["delivery_by"] = $headerObject['shipping_provider'] ?? "";
         $fixData["pickup_by"] = $headerObject['shipping_provider'] ?? "";
         $fixData["total_amount"] = 0;
@@ -202,63 +203,76 @@ class TiktokApiController extends Controller
         return $fixData;
     }
 
-    private function getOrderStatus($status)
+    private function getOrderStatus($status, $trackingNumber)
     {
         $orderStatus = array();
         switch ($status) {
             case 100:
                 $orderStatus = [
                     "status" => "BELUM BAYAR",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 111:
                 $orderStatus = [
                     "status" => "MENUNGGU DIPROSES",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 112:
+                $receipt = Receipt::where('number', $trackingNumber)->first();
+                $bool = isset($receipt);
+                $showRequest = ($bool && $receipt->status == 1) ? true : false;
+                $status = ($bool && $receipt->status == 1) ? "Proses Kemas" : "Tercetak";
                 $orderStatus = [
-                    "status" => "SIAP KIRIM",
-                    "show_request" => false
+                    "status" => $status,
+                    "show_request" => $showRequest,
+                    "show_button" => true,
                 ];
                 break;
             case 114:
                 $orderStatus = [
                     "status" => "PENGIRIMAN PARSIAL",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 121:
                 $orderStatus = [
                     "status" => "TRANSIT",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 122:
                 $orderStatus = [
                     "status" => "TERKIRIM",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 130:
                 $orderStatus = [
                     "status" => "SELESAI",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
             case 140:
                 $orderStatus = [
                     "status" => "BATAL",
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
 
             default:
                 $orderStatus = [
                     "status" => (string)$status,
-                    "show_request" => false
+                    "show_request" => false,
+                    "show_button" => false,
                 ];
                 break;
         }

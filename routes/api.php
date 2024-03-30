@@ -10,6 +10,7 @@ use App\Http\Controllers\API\ProductApiController;
 use App\Http\Controllers\API\ShopeeApiController;
 use App\Http\Controllers\API\TiktokApiController;
 use App\Http\Controllers\API\TransactionOnlineApiController;
+use App\Http\Controllers\API\ReceiptApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -70,4 +71,5 @@ Route::resource('platform', OnlineShopeApiController::class);
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 
 Route::resource('dashboard', DashboardApiController::class);
+Route::resource('receipt-api', ReceiptApiController::class);
 Route::resource('product', ProductApiController::class);
