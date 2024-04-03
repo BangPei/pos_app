@@ -157,7 +157,7 @@
     })
 
     function getDailyTask(){
-        ajax(null, `${baseApi}/daily-task/${$('#id').val()}`, "GET",
+        ajax(null, `${baseApi}/daily-task-api/${$('#id').val()}`, "GET",
             function(item) {
                 dailyTask = item;
                 $('#total-scann').html(`Total Scan = ${dailyTask.receipts.length} / ${dailyTask.total_package}`)
@@ -168,7 +168,7 @@
     }
 
     function receiptHandler() {
-        ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
+        ajax(dailyTask, `${baseApi}/daily-task-api/${dailyTask.id}`, "PUT",
             function(json){
                 console.log('ok')
                 $('#scanner').val('')
@@ -184,7 +184,7 @@
     }
 
     function postReceipt(receipt) {
-        ajax(receipt, `${baseApi}/daily-task/receipt/${dailyTask.id}`, "POST",
+        ajax(receipt, `${baseApi}/daily-task-api/receipt/${dailyTask.id}`, "POST",
             function(json){
                 getDailyTask()
                 $('#scanner').val('')
@@ -199,7 +199,7 @@
         )
     }
     function deleteReceipt(number) {
-        ajax(null, `${baseApi}/daily-task/receipt/${number}`, "DELETE",
+        ajax(null, `${baseApi}/daily-task-api/receipt/${number}`, "DELETE",
             function(json){
                 getDailyTask()
                 $('#scanner').val('')
@@ -227,7 +227,7 @@
             toastr.error('Silahkan masukan nomor Resi');
             return false;
         }
-        ajax(dailyTask, `${baseApi}/daily-task/${dailyTask.id}`, "PUT",
+        ajax(dailyTask, `${baseApi}/daily-task-api/${dailyTask.id}`, "PUT",
             function(json){
                 toastr.success('Data Berhasil Tersimpan')
             setTimeout(() => {

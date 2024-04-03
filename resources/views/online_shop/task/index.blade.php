@@ -176,7 +176,7 @@
       let date = moment(data.date).format('YYYY-MM-DD')
       let picked = data.picked;
       $.blockUI({ message: "Silahkan Tunggu !!" });
-      ajax({total_package:val,date:date,picked:picked}, `${baseApi}/daily-task/total/${data.id}`, "PATCH",  
+      ajax({total_package:val,date:date,picked:picked}, `${baseApi}/daily-task-api/total/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
           location.reload();
@@ -192,7 +192,7 @@
       let date = moment(data.date).format('YYYY-MM-DD')
       let total_package = data.total_package
       $.blockUI({ message: "Silahkan Tunggu !!" });
-      ajax({picked:val,date:date,total_package:total_package}, `${baseApi}/daily-task/picked/${data.id}`, "PATCH",  
+      ajax({picked:val,date:date,total_package:total_package}, `${baseApi}/daily-task-api/picked/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
           location.reload();
@@ -207,7 +207,7 @@
       let data = tblDailyTask.row($(this).parents('tr')).data();
       let date = moment(data.date).format('YYYY-MM-DD')
       $.blockUI({ message: "Silahkan Tunggu !!" });
-      ajax({date:date}, `${baseApi}/daily-task/finish/${data.id}`, "PATCH",  
+      ajax({date:date}, `${baseApi}/daily-task-api/finish/${data.id}`, "PATCH",  
         function(json) {
           toastr.success('Berhasil')
           location.reload();
@@ -232,7 +232,7 @@
         total_package:$('#total_package').val(),
         date:moment($('#date').val(),"DD MMMM YYYY").format('YYYY-MM-DD')
       }
-      ajax(dailyTask, `${baseApi}/daily-task`, "POST",
+      ajax(dailyTask, `${baseApi}/daily-task-api`, "POST",
         function(json) {
           toastr.success('Berhasil Menambah Tugas Harian')
           setTimeout(() => {

@@ -32,7 +32,7 @@ class lazadaApiController extends Controller
         // return $this->getRefreshToken();
         // return $this->getToken();
         // return $this->printAWB();
-        // return $this->show(1381385181117347);
+        return $this->show(1411646029919487);
     }
 
     public function packed($sorting)
@@ -386,6 +386,7 @@ class lazadaApiController extends Controller
         $fixData["items"] = $headerObject->items;
         $fixData["status"] = 1;
         $fixData["online_shop_id"] = $platform->id;
+        $fixData["platform"] = $platform;
         $fixData["order_id"] = (string)$headerObject->order_id;
         $fixData["shipping_provider_type"] = $headerObject->shipping_provider_type ?? "";
         $fixData["product_picture"] = null;

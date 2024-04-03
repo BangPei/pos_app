@@ -224,7 +224,7 @@
         ordering:  false,
         bInfo : false
       })
-        ajax(null, `${baseApi}/shopee-order`, "GET",
+        ajax(null, `${baseApi}/lazada-order`, "GET",
         function(json) {
           toastr.success('Berhasil')
           $.unblockUI()

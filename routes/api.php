@@ -31,18 +31,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('expedition/dataTable', [ExpeditionApiController::class, 'dataTable']);
-Route::resource('expedition', ExpeditionApiController::class);
+Route::resource('expedition-api', ExpeditionApiController::class);
 
-Route::get('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receiptByDailyTaskId']);
-Route::post('daily-task/receipt/{id}', [DailyTaskApiController::class, 'receipt']);
-Route::post('daily-task/multiple', [DailyTaskApiController::class, 'multiple']);
-Route::delete('daily-task/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
-Route::patch('daily-task/total/{id}', [DailyTaskApiController::class, 'total']);
-Route::patch('daily-task/picked/{id}', [DailyTaskApiController::class, 'picked']);
-Route::patch('daily-task/finish/{id}', [DailyTaskApiController::class, 'finish']);
-Route::get('daily-task/dataTable', [DailyTaskApiController::class, 'dataTable']);
-Route::get('daily-task/current', [DailyTaskApiController::class, 'getCurrentTask']);
-Route::resource('daily-task', DailyTaskApiController::class);
+Route::get('daily-task-api/receipt/{id}', [DailyTaskApiController::class, 'receiptByDailyTaskId']);
+Route::post('daily-task-api/receipt/{id}', [DailyTaskApiController::class, 'receipt']);
+Route::post('daily-task-api/multiple', [DailyTaskApiController::class, 'multiple']);
+Route::delete('daily-task-api/receipt/{number}', [DailyTaskApiController::class, 'deleteReceipt']);
+Route::patch('daily-task-api/total/{id}', [DailyTaskApiController::class, 'total']);
+Route::patch('daily-task-api/picked/{id}', [DailyTaskApiController::class, 'picked']);
+Route::patch('daily-task-api/finish/{id}', [DailyTaskApiController::class, 'finish']);
+Route::get('daily-task-api/dataTable', [DailyTaskApiController::class, 'dataTable']);
+Route::get('daily-task-api/current', [DailyTaskApiController::class, 'getCurrentTask']);
+Route::resource('daily-task-api', DailyTaskApiController::class);
 
 Route::post('lazada-order/rts/{tracking_number}/{shipment_provider}/{order_item_ids}', [lazadaApiController::class, 'readyToShipp']);
 Route::get('lazada-order/pending/{sorting}', [lazadaApiController::class, 'pending']);
@@ -65,11 +65,11 @@ Route::resource('tiktok-order', TiktokApiController::class);
 Route::get('jd-order/rts/{id}', [JdIdApiController::class, 'rts']);
 Route::resource('jd-order', JdIdApiController::class);
 
-Route::get('platform/active', [OnlineShopeApiController::class, 'active']);
-Route::resource('platform', OnlineShopeApiController::class);
+Route::get('platform-api/active', [OnlineShopeApiController::class, 'active']);
+Route::resource('platform-api', OnlineShopeApiController::class);
 
 Route::resource('transaction-online', TransactionOnlineApiController::class);
 
 Route::resource('dashboard', DashboardApiController::class);
 Route::resource('receipt-api', ReceiptApiController::class);
-Route::resource('product', ProductApiController::class);
+Route::resource('product-api', ProductApiController::class);

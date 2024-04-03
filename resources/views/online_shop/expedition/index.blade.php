@@ -144,7 +144,7 @@
           description:$('#description').val(),
           alias:$('#alias').val(),
         }
-        let url = expeditionId?`${baseApi}/expedition/${expedition.id}`:`${baseApi}/expedition`
+        let url = expeditionId?`${baseApi}/expedition-api/${expedition.id}`:`${baseApi}/expedition-api`
         ajax(expedition, url, method,
           function(json) {
             toastr.success('Data Berhasil Diprosess')
