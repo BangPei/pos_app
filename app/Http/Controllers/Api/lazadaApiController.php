@@ -15,9 +15,9 @@ class lazadaApiController extends Controller
     public $lazadaUrl = "https://api.lazada.co.id/rest";
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
-    public $code = "0_112922_C9LRI7fPFZPazWQraUmT0qC61607";
-    public $accessToken = "500000016261pSfirhWsdWgFp5lTUinDRoygR01d1b96b9AfaHTqgMQVrvzAZrCg"; // 12 FEB 2024
-    public $refresh_token = "50001000826dztgr8porwmuEY0gVDnx9zwfZCi12869668q6O0YelgvGxn37nPKD";
+    public $code = "0_112922_whFxJI4JqkfOJQPOiLr0boPj50399";
+    public $accessToken = "50000001020q5Lsaa6KxdhuErqd8Cgxd1c68d4a2szwfGlKjZmVuFfYiqynYSiDq"; // 12 FEB 2024
+    public $refresh_token = "50001001820wmGsatwHacauiktuEGjRG113571663ltvkkxBSxFLuyRLo58JSOef";
 
     // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
@@ -31,7 +31,7 @@ class lazadaApiController extends Controller
         // return $this->getRefreshToken();
         // return $this->getToken();
         // return $this->printAWB();
-        // return $this->show(1381385181117347);
+        return $this->show(1381385181117347);
     }
 
     public function packed($sorting)
