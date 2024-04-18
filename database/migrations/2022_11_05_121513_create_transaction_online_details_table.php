@@ -22,7 +22,6 @@ class CreateTransactionOnlineDetailsTable extends Migration
             $table->string("order_type");
             $table->integer("order_item_id");
             $table->integer("order_id");
-            $table->integer("product_id");
             $table->integer("qty");
             $table->float("original_price");
             $table->float("discounted_price");
