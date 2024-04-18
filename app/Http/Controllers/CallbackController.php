@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AutorizationCode;
-use App\Http\Requests\StoreAutorizationCodeRequest;
-use App\Http\Requests\UpdateAutorizationCodeRequest;
+use Illuminate\Http\Request;
 
-class AutorizationCodeController extends Controller
+class CallbackController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +13,13 @@ class AutorizationCodeController extends Controller
      */
     public function index()
     {
-        //
+        $code = request('code');
+        return view(
+            'callback',
+            [
+                "code" => $code,
+            ]
+        );
     }
 
     /**
@@ -31,10 +35,10 @@ class AutorizationCodeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreAutorizationCodeRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAutorizationCodeRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -42,10 +46,10 @@ class AutorizationCodeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\AutorizationCode  $autorizationCode
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(AutorizationCode $autorizationCode)
+    public function show($id)
     {
         //
     }
@@ -53,10 +57,10 @@ class AutorizationCodeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\AutorizationCode  $autorizationCode
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(AutorizationCode $autorizationCode)
+    public function edit($id)
     {
         //
     }
@@ -64,11 +68,11 @@ class AutorizationCodeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateAutorizationCodeRequest  $request
-     * @param  \App\Models\AutorizationCode  $autorizationCode
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAutorizationCodeRequest $request, AutorizationCode $autorizationCode)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -76,10 +80,10 @@ class AutorizationCodeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\AutorizationCode  $autorizationCode
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AutorizationCode $autorizationCode)
+    public function destroy($id)
     {
         //
     }

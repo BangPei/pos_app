@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AtmController;
+use App\Http\Controllers\CallbackController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\DashboardController;
@@ -109,6 +110,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
     Route::get('report/yearly', [ReportController::class, 'yearly'])->middleware('auth');
 
     Route::resource('sku', SkuController::class)->middleware('auth');
+    Route::resource('callback', CallbackController::class)->middleware('auth');
 
     Route::get('stock-history/dataTable/{stockId}', [HistoryStockController::class, 'dataTable'])->middleware('auth');
     Route::resource('stock-history', HistoryStockController::class)->middleware('auth');

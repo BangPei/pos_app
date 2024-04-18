@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\LazadaAccessToken;
 use App\Models\OnlineShop;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Lazada\LazopClient;
 use Lazada\LazopRequest;
@@ -16,8 +18,8 @@ class lazadaApiController extends Controller
     public $apiKey = "112922";
     public $apiSecret = "4XaWknTPJSPdwCXcL8HUOWHKuTMQPyvq";
     public $code = "0_112922_whFxJI4JqkfOJQPOiLr0boPj50399";
-    public $accessToken = "50000001020q5Lsaa6KxdhuErqd8Cgxd1c68d4a2szwfGlKjZmVuFfYiqynYSiDq"; // 12 FEB 2024
-    public $refresh_token = "50001001820wmGsatwHacauiktuEGjRG113571663ltvkkxBSxFLuyRLo58JSOef";
+    // public $accessToken = "50000000c25tGGCoxuUdZykYcjqBSuk6jis6L1358c0eczufJmyi1gSSBm9NSbyO"; // 12 FEB 2024
+    public $refresh_token = "50001001525b8EwdjxEvpcbGar4MSzkFlRjyE1d05405cytCG5nqudvOxzy1ZiSt";
 
     // https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://www.google.com&client_id=112922
     /**
@@ -29,9 +31,10 @@ class lazadaApiController extends Controller
     {
         // return $this->getFullOrder('ready_to_ship', "ASC");
         // return $this->getRefreshToken();
-        // return $this->getToken();
-        // return $this->printAWB();
-        return $this->show(1381385181117347);
+        // return $this->authorization();
+        // return $this->authorizationLink();
+        return $this->getExpiredDateToken();
+        // return $this->show(1381385181117347);
     }
 
     public function packed($sorting)
@@ -78,12 +81,12 @@ class lazadaApiController extends Controller
         $orderUrl->addApiParam('limit', $limit);
         $orderUrl->addApiParam('created_after', Carbon::now()->subDays(6)->format('c'));
         $orderUrl->addApiParam('status', $status);
-        $orders =  $c->execute($orderUrl, $this->accessToken);
+        $orders =  $c->execute($orderUrl, $this->getToken()->access_token);
         if (json_decode($orders)->code == "0") {
             $jsonObject = json_decode($orders)->data;
             foreach ($jsonObject->orders as $od) {
                 $itemsUrl->addApiParam('order_id', $od->order_id);
-                $items = $c->execute($itemsUrl, $this->accessToken);
+                $items = $c->execute($itemsUrl, $this->getToken()->access_token);
                 $itemDecode = json_decode($items);
                 $validItems = [];
                 if ($od->statuses[0] == "pending") {
@@ -118,7 +121,7 @@ class lazadaApiController extends Controller
                 $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
                 $itemsUrl = new LazopRequest('/order/items/get', 'GET');
                 $itemsUrl->addApiParam('order_id', $order->order_id);
-                $items = $c->execute($itemsUrl, $this->accessToken);
+                $items = $c->execute($itemsUrl, $this->getToken()->access_token);
                 $itemDecode = json_decode($items);
                 $validItems = [];
                 if ($order->statuses[0] == "pending") {
@@ -146,7 +149,7 @@ class lazadaApiController extends Controller
                     $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
                     $itemsUrl = new LazopRequest('/order/items/get', 'GET');
                     $itemsUrl->addApiParam('order_id', $order->order_id);
-                    $items = $c->execute($itemsUrl, $this->accessToken);
+                    $items = $c->execute($itemsUrl, $this->getToken()->access_token);
                     $itemDecode = json_decode($items);
                     $validItems = [];
                     foreach ($itemDecode->data as $item) {
@@ -175,7 +178,7 @@ class lazadaApiController extends Controller
             $orderUrl->addApiParam('offset', $offset);
             $orderUrl->addApiParam('created_after', Carbon::now()->subDays(4)->format('c'));
             $orderUrl->addApiParam('status', $status);
-            $orders =  $c->execute($orderUrl, $this->accessToken);
+            $orders =  $c->execute($orderUrl, $this->getToken()->access_token);
             return json_decode($orders)->data;
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -187,7 +190,7 @@ class lazadaApiController extends Controller
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $request = new LazopRequest('/logistic/order/trace');
         $request->addApiParam('order_id', '997587686886125');
-        $response =  $c->execute($request, $this->accessToken);
+        $response =  $c->execute($request, $this->getToken()->access_token);
         return $response;
     }
 
@@ -210,7 +213,7 @@ class lazadaApiController extends Controller
         $request->addApiParam('shipment_provider',  $shipment_provider);
         $request->addApiParam('order_item_ids', $order_item_ids);
         $request->addApiParam('tracking_number', $tracking_number);
-        $orders =  $c->execute($request, $this->accessToken);
+        $orders =  $c->execute($request, $this->getToken()->access_token);
         return $orders;
     }
 
@@ -233,7 +236,7 @@ class lazadaApiController extends Controller
         $c = new LazopClient($this->lazadaUrl, $this->apiKey, $this->apiSecret);
         $request = new LazopRequest('/im/session/open');
         $request->addApiParam('order_id',  1026840299421197);
-        $orders =  $c->execute($request, $this->accessToken);
+        $orders =  $c->execute($request, $this->getToken()->access_token);
         return $orders;
     }
     public function printAWB()
@@ -247,7 +250,7 @@ class lazadaApiController extends Controller
                 'packages' => [["package_id" => "FP040513068471942"]],
             )
         ));
-        $document =  $c->execute($request, $this->accessToken);
+        $document =  $c->execute($request, $this->getToken()->access_token);
         return json_decode($document)->result->data;
     }
 
@@ -266,12 +269,12 @@ class lazadaApiController extends Controller
 
             //get order
             $request->addApiParam('order_id', $id);
-            $order = $c->execute($request, $this->accessToken);
+            $order = $c->execute($request, $this->getToken()->access_token);
             $jsonObject = json_decode($order)->data;
 
             // get items order and tracking number
             $itemsUrl->addApiParam('order_id', $jsonObject->order_id);
-            $items = $c->execute($itemsUrl, $this->accessToken);
+            $items = $c->execute($itemsUrl, $this->getToken()->access_token);
             $itemDecode = json_decode($items);
 
             $validItems = [];
@@ -324,7 +327,7 @@ class lazadaApiController extends Controller
         $request->addApiParam('limit', '50');
         $request->addApiParam('options', '1');
         // $request->addApiParam('sku_seller_list', '["7099610043-1668618486975-0"]');
-        $response = $c->execute($request, $this->accessToken);
+        $response = $c->execute($request, $this->getToken()->access_token);
         return $response;
     }
     private function mapingOrder($headerObject, $detail)
@@ -495,20 +498,100 @@ class lazadaApiController extends Controller
         return $orderStatus;
     }
 
-    public function getToken()
+    public function authorizationLink()
     {
-        $c = new LazopClient("https://auth.lazada.com/rest", $this->apiKey, $this->apiSecret);
-        $request = new LazopRequest('/auth/token/create', 'GET');
-        $request->addApiParam('code', $this->code);
-        $response = $c->execute($request);
-        return $response;
+        return "https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=http://192.168.100.11:3000/callback&client_id=" . $this->apiKey;
     }
+
+    public function authorization($code)
+    {
+        try {
+            $c = new LazopClient("https://auth.lazada.com/rest", $this->apiKey, $this->apiSecret);
+            $request = new LazopRequest('/auth/token/create', 'GET');
+            $request->addApiParam('code', $code);
+            $res = json_decode($c->execute($request));
+
+            $lazData = LazadaAccessToken::get()->first();
+            if (isset($lazData)) {
+                LazadaAccessToken::destroy($lazData->id);
+            }
+            $lazAuth = new LazadaAccessToken();
+            $lazAuth->api_key = $this->apiKey;
+            $lazAuth->api_secret = $this->apiSecret;
+            $lazAuth->access_token = $res->access_token;
+            $lazAuth->refresh_token = $res->refresh_token;
+            $lazAuth->expired_in = $res->expires_in;
+
+            $day = 2592000 / 60 / 60 / 24;
+            $strDay = '+' . $day . ' day';
+            $now = new DateTime();
+            $nextMonth = $now->modify($strDay);
+            $lazAuth->expired_date = $nextMonth->format('Y-m-d');
+
+            $lazAuth->refresh_expires_in = $res->refresh_expires_in;
+            $lazAuth->save();
+            return response()->json(true);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'something went wrong'], $th->getCode());
+        }
+    }
+
+    private function getToken()
+    {
+        $auth = LazadaAccessToken::get()->first();
+        return $auth;
+    }
+
+    public function getExpiredDateToken()
+    {
+        $auth = LazadaAccessToken::get()->first();
+
+        $date = Date('Y-m-d');
+        $now = new DateTime('2024-05-17');
+        $target = new DateTime($auth->expired_date);
+        $interval = $now->diff($target);
+        $days = ($now > $target) ? (int)-$interval->days : $interval->days;
+        $message = "";
+        $showWarning = true;
+        if ($days < 3 && $days > 0) {
+            $message = "Token Lazada anda akan habis dalam " . $days . " kedepan, Segera perbarui...";
+        } elseif ($days == 0) {
+            $message = "Token Lazada anda akan habis hari ini, Segera perbarui...";
+        } elseif ($days < 0) {
+            $message = "Token Lazada anda sudah habis,silahkan atur ulang token anda...";
+        } else {
+            $message = "Token Lazada anda aktif sampai dengan " . $auth->expired_date;
+            $showWarning = false;
+        }
+        $data = [
+            "expired_date" => $auth->expired_date,
+            "days" => $days,
+            "message" => $message,
+            "show_warning" => $showWarning,
+
+        ];
+        return response()->json($data);
+    }
+
     public function getRefreshToken()
     {
         $c = new LazopClient("https://auth.lazada.com/rest", $this->apiKey, $this->apiSecret);
         $request = new LazopRequest('/auth/token/refresh', 'GET');
-        $request->addApiParam('refresh_token', $this->refresh_token);
+        $request->addApiParam('refresh_token', $this->getToken()->refresh_token);
         $response = $c->execute($request);
-        return $response;
+        $res = json_decode($response);
+
+        $day = $res->expires_in / 60 / 60 / 24;
+        $strDay = '+' . $day . ' day';
+        $now = new DateTime();
+        $nextMonth = $now->modify($strDay);
+        LazadaAccessToken::where('access_token', $this->getToken()->access_token)->update([
+            'access_token' => $res->access_token,
+            'refresh_token' => $res->refresh_token,
+            'expired_in' => $res->expires_in,
+            'refresh_expires_in' => $res->refresh_expires_in,
+            'expired_date' => $nextMonth->format('Y-m-d')
+        ]);
+        return $res;
     }
 }

@@ -49,6 +49,9 @@ Route::get('lazada-order/rts/{sorting}', [lazadaApiController::class, 'rts']);
 Route::get('lazada-order/packed/{sorting}', [lazadaApiController::class, 'packed']);
 Route::get('lazada/order/{status}/{sorting}', [lazadaApiController::class, 'getFullOrder']);
 Route::get('lazada-order/count', [lazadaApiController::class, 'getCount']);
+Route::get('lazada-order/link', [lazadaApiController::class, 'authorizationLink']);
+Route::get('lazada-order/authorization/{code}', [lazadaApiController::class, 'authorization']);
+Route::get('lazada-order/auth-date', [lazadaApiController::class, 'getExpiredDateToken']);
 Route::resource('lazada-order', lazadaApiController::class);
 
 Route::get('shopee-order/order/{orderSn}', [ShopeeApiController::class, 'getOrderByNo']);
