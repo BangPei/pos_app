@@ -51,6 +51,7 @@ Route::get('lazada/order/{status}/{sorting}', [lazadaApiController::class, 'getF
 Route::get('lazada-order/count', [lazadaApiController::class, 'getCount']);
 Route::get('lazada-order/link', [lazadaApiController::class, 'authorizationLink']);
 Route::get('lazada-order/authorization/{code}', [lazadaApiController::class, 'authorization']);
+Route::get('lazada-order/token/refresh', [lazadaApiController::class, 'getRefreshToken']);
 Route::get('lazada-order/auth-date', [lazadaApiController::class, 'getExpiredDateToken']);
 Route::resource('lazada-order', lazadaApiController::class);
 

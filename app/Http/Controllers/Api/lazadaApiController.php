@@ -546,30 +546,40 @@ class lazadaApiController extends Controller
     {
         $auth = LazadaAccessToken::get()->first();
 
-        $date = Date('Y-m-d');
-        $now = new DateTime('2024-05-17');
-        $target = new DateTime($auth->expired_date);
-        $interval = $now->diff($target);
-        $days = ($now > $target) ? (int)-$interval->days : $interval->days;
-        $message = "";
-        $showWarning = true;
-        if ($days < 3 && $days > 0) {
-            $message = "Token Lazada anda akan habis dalam " . $days . " kedepan, Segera perbarui...";
-        } elseif ($days == 0) {
-            $message = "Token Lazada anda akan habis hari ini, Segera perbarui...";
-        } elseif ($days < 0) {
-            $message = "Token Lazada anda sudah habis,silahkan atur ulang token anda...";
-        } else {
-            $message = "Token Lazada anda aktif sampai dengan " . $auth->expired_date;
-            $showWarning = false;
-        }
-        $data = [
-            "expired_date" => $auth->expired_date,
-            "days" => $days,
-            "message" => $message,
-            "show_warning" => $showWarning,
 
-        ];
+        $showWarning = true;
+        if (isset($auth)) {
+            $date = Date('Y-m-d');
+            $now = new DateTime($date);
+            $target = new DateTime($auth->expired_date);
+            $interval = $now->diff($target);
+            $days = ($now > $target) ? (int)-$interval->days : $interval->days;
+            $message = "";
+            if ($days < 3 && $days > 0) {
+                $message = "Token Lazada anda akan habis dalam " . $days . " kedepan, Segera perbarui...";
+            } elseif ($days == 0) {
+                $message = "Token Lazada anda akan habis hari ini, Segera perbarui...";
+            } elseif ($days < 0) {
+                $message = "Token Lazada anda sudah habis,silahkan atur ulang token anda...";
+            } else {
+                $message = "Token Lazada anda aktif sampai dengan " . $auth->expired_date;
+                $showWarning = false;
+            }
+            $data = [
+                "expired_date" => $auth->expired_date,
+                "days" => $days,
+                "message" => $message,
+                "show_warning" => $showWarning,
+
+            ];
+        } else {
+            $data = [
+                "expired_date" => null,
+                "days" => -1,
+                "message" => "Anda Tidak memiliki token Lazada, Silahkan Perbarui Token anda",
+                "show_warning" => $showWarning,
+            ];
+        }
         return response()->json($data);
     }
 
@@ -592,6 +602,6 @@ class lazadaApiController extends Controller
             'refresh_expires_in' => $res->refresh_expires_in,
             'expired_date' => $nextMonth->format('Y-m-d')
         ]);
-        return $res;
+        return;
     }
 }

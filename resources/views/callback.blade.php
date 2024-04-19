@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Callback Page</title>
-
+<!-- Font Awesome -->
+<link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -22,7 +23,11 @@
     </head>
     <body class="antialiased">
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
-            
+            <div class="row">
+                <div class="col-12">
+                    <p id="message"></p>
+                </div>
+            </div>
         </div>
         @include('component.base')
 
@@ -30,7 +35,9 @@
         <script>
             let code = `<?=isset($code)?$code:''?>`;
             $(document).ready(function(){
-                getToken();
+                if (code!="") {
+                    getToken();
+                }
             })
             function getToken() {
                 $.ajax({
@@ -41,10 +48,12 @@
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     success: function (json,text) {
-                        console.log("success");
+                        $('#message').html('Token Berhasil di perbarui, silahkan kembali ke halaman utama');
+                        alert("Token Berhasil di perbarui, Silahkan kembali kehalaman utama.");
+                        history.back();
                     },
                     error: function (err) {
-                        console.log(err.responseJSON);
+                        $('#message').html('Gagal Memperbarui token, silakan ulangi kembali');
                         alert(`${err.responseJSON.message}`)
                     }
                 });
