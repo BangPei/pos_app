@@ -500,7 +500,7 @@ class lazadaApiController extends Controller
 
     public function authorizationLink()
     {
-        return "https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=http://192.168.100.11:3000/callback&client_id=" . $this->apiKey;
+        return "https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=http://192.168.100.2:8000/callback&client_id=" . $this->apiKey;
     }
 
     public function authorization($code)
