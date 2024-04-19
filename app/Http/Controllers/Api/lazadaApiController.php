@@ -33,7 +33,7 @@ class lazadaApiController extends Controller
         // return $this->getRefreshToken();
         // return $this->authorization();
         // return $this->authorizationLink();
-        return $this->getExpiredDateToken();
+        // return $this->getExpiredDateToken();
         // return $this->show(1381385181117347);
     }
 
